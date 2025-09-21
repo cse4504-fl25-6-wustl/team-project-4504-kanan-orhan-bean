@@ -151,7 +151,9 @@ public class PackingAndShipping {
 
     /**
      * Assign boxes to pallets or crates.
-     * Ensures boxes never overhang pallet edge and groups similar-height boxes together.
+     * Groups similar-height boxes together and respects pallet capacity rules:
+     * - Non-oversized boxes: 4 per pallet
+     * - Oversized boxes: 3 per pallet
      */
     private Map<String, List<List<List<LineItem>>>> assignBoxesToPallets(
             Map<String, List<List<LineItem>>> boxes, String clientName) {
@@ -161,19 +163,34 @@ public class PackingAndShipping {
         for (String productType : boxes.keySet()) {
             List<List<LineItem>> boxList = new ArrayList<>(boxes.get(productType)); // copy to avoid modifying original
     
-            // === Step 1: Sort boxes by total height (descending) ===
+            // === Step 1: Sort boxes by tallest item height (descending) ===
             boxList.sort((boxA, boxB) -> {
                 double heightA = boxA.stream().mapToDouble(LineItem::getHeight).max().orElse(0);
                 double heightB = boxB.stream().mapToDouble(LineItem::getHeight).max().orElse(0);
                 return Double.compare(heightB, heightA); // tallest first
             });
     
-            // === Step 2: Assign boxes to pallets (e.g., 10 boxes per pallet) ===
             List<List<List<LineItem>>> pallets = new ArrayList<>();
-            int palletCapacity = 10; // can be adjusted or made dynamic later
+            List<List<LineItem>> currentPallet = new ArrayList<>();
+            int palletCapacity = 0;
     
-            for (int i = 0; i < boxList.size(); i += palletCapacity) {
-                pallets.add(boxList.subList(i, Math.min(i + palletCapacity, boxList.size())));
+            for (List<LineItem> box : boxList) {
+                // Determine capacity for this pallet based on box type
+                boolean isOversized = box.stream().anyMatch(LineItem::isOversized);
+                palletCapacity = isOversized ? 3 : 4;
+    
+                // Start a new pallet if current one is full
+                if (currentPallet.size() >= palletCapacity) {
+                    pallets.add(new ArrayList<>(currentPallet));
+                    currentPallet.clear();
+                }
+    
+                currentPallet.add(box);
+            }
+    
+            // Add any remaining boxes as the last pallet
+            if (!currentPallet.isEmpty()) {
+                pallets.add(new ArrayList<>(currentPallet));
             }
     
             palletAssignments.put(productType, pallets);
