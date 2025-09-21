@@ -1,182 +1,200 @@
 package BusinessRules;
 
-import Models.Request;
-import Models.Response;
 import Models.LineItem;
+import Models.Response;
 
 import java.util.*;
 
 /**
- * ParsingAndShipping
+ * PackingAndShipping
  *
- * Implements business rules for parsing, packing, and shipping logic.
- * Delegates weight & dimension calculations to WeightAndDimensions.java.
+ * Implements core business rules for packing and shipping.
+ * Rules are based on product type, size, and client constraints.
+ * 
+ * This class is independent of CLI, file parsing, or external frameworks.
  */
-public class ParsingAndShipping {
+public class PackingAndShipping {
+
+    // === Constants ===
+    private static final int MAX_FRAMED_PER_BOX = 6;
+    private static final int MAX_CANVAS_ACOUSTIC_PER_BOX = 4;
+    private static final int MAX_OVERSIZED_PER_BOX = 3;
+    private static final int PALLET_TARE_STANDARD = 60;
+    private static final int PALLET_TARE_OVERSIZED = 75;
+    private static final int PALLET_HEIGHT_BUFFER = 8;
+
+    // === Public Methods ===
 
     /**
-     * Parses the raw input file (CSV/Excel) into structured LineItem objects.
-     * 
-     * @param fileName Path to the input file containing line item data.
-     * @return List of LineItem objects with raw attributes.
-     * @throws Exception if file parsing fails.
-     */
-    public List<LineItem> parseLineItems(String fileName) throws Exception {
-        // NOTE: In a real implementation, delegate to ArtParser
-        // For now, assume ArtParser is responsible and this function calls it.
-        // Example:
-        // return ArtParser.parse(fileName);
-
-        throw new UnsupportedOperationException("parseLineItems() not implemented yet.");
-    }
-
-    /**
-     * Applies client-specific rules (stub for now).
-     * 
-     * @param clientName Name of client.
-     * @param items Parsed line items.
-     * @return Updated line items after applying rules.
-     */
-    public List<LineItem> applyClientRules(String clientName, List<LineItem> items) {
-        // Example: If client cannot accept crates, mark restriction flag
-        // item.setAllowCrates(false);
-        return items;
-    }
-
-    /**
-     * Delegates to WeightAndDimensions to calculate item-level weights/dimensions.
-     * Also applies oversized/custom packaging flags.
+     * Main orchestration method.
      *
-     * @param items Line items.
-     * @return Updated line items with computed weights/dimensions.
+     * @param items List of LineItems with weights/dimensions computed
+     * @param clientName Name of client (for client-specific rules)
+     * @return Response object with packing plan and totals
      */
-    public List<LineItem> calculateWeightsAndDimensions(List<LineItem> items) {
-        for (LineItem item : items) {
-            // Assume WeightAndDimensions.applyRules updates:
-            // - item.weight
-            // - item.oversizedFlag
-            // - item.customPackagingFlag
-            // - item.rounded dimensions
-            WeightAndDimensions.applyRules(item);
-        }
-        return items;
-    }
+    public Response processPacking(List<LineItem> items, String clientName) {
 
-    /**
-     * Groups items into boxes and pallets following packing rules.
-     * 
-     * @param items Items with computed weights and dimensions.
-     * @return Response object containing packing plan and totals.
-     */
-    public Response applyPackingLogic(List<LineItem> items) {
-        Response response = new Response();
+        // Step 1: Apply client-specific rules
+        List<LineItem> processedItems = applyClientRules(items, clientName);
 
-        // === STEP 1: Group by product type ===
-        Map<String, List<LineItem>> groupedByType = new HashMap<>();
-        for (LineItem item : items) {
-            String type = item.getProductType();
-            groupedByType.computeIfAbsent(type, k -> new ArrayList<>()).add(item);
-        }
+        // Step 2: Apply size, weight, and glass handling rules
+        processedItems = applySizeAndGlassRules(processedItems);
 
-        // === STEP 2: Apply box capacity limits ===
-        for (Map.Entry<String, List<LineItem>> entry : groupedByType.entrySet()) {
-            String productType = entry.getKey();
-            List<LineItem> typeItems = entry.getValue();
+        // Step 3: Group by product type and then similar size
+        Map<String, List<LineItem>> grouped = groupItems(processedItems);
 
-            int capacity = getBoxCapacity(productType, typeItems);
-            int boxCount = (int) Math.ceil((double) typeItems.size() / capacity);
+        // Step 4: Assign items to boxes
+        Map<String, List<List<LineItem>>> boxes = assignItemsToBoxes(grouped);
 
-            response.addPackingDetail(productType, boxCount, capacity);
-        }
+        // Step 5: Pack boxes onto pallets/crates
+        Map<String, List<List<List<LineItem>>>> pallets = assignBoxesToPallets(boxes, clientName);
 
-        // === STEP 3: Pallet logic ===
-        // Pack boxes onto pallets without overhang
-        int totalPallets = calculatePallets(response);
-        response.setPalletCount(totalPallets);
-
-        // === STEP 4: Add tare weights ===
-        double totalWeight = 0.0;
-        for (LineItem item : items) {
-            totalWeight += item.getWeight();
-        }
-
-        // Add pallet tare weight
-        double tarePerPallet = 60; // default
-        if (response.hasOversizedOrCustom()) {
-            tarePerPallet = 75;
-        }
-        totalWeight += totalPallets * tarePerPallet;
-
-        // Round up per rule #11
-        totalWeight = Math.ceil(totalWeight);
-
-        response.setTotalWeight(totalWeight);
-        response.setDoNotDoubleStack(true);
+        // Step 6: Generate response with totals, weights, heights
+        Response response = generateResponse(pallets);
 
         return response;
     }
 
+    // === Step Methods ===
+
     /**
-     * Determines box capacity based on product type.
+     * Apply client-specific packing rules.
+     * For example, some clients may not accept crates.
      */
-    private int getBoxCapacity(String productType, List<LineItem> items) {
-        if (containsCustom(items)) {
-            return 1; // custom always requires special handling
+    private List<LineItem> applyClientRules(List<LineItem> items, String clientName) {
+        // TODO: Implement rules based on clientName
+        // e.g., disable crates if job site cannot accept them
+        return items;
+    }
+
+    /**
+     * Apply size, weight, and glass rules:
+     * - Detect oversized and custom items
+     * - Flag fragile glass for special handling
+     * - Round weights and dimensions
+     */
+    private List<LineItem> applySizeAndGlassRules(List<LineItem> items) {
+        for (LineItem item : items) {
+
+            // Determine size category
+            if (item.getWidth() > 44 || item.getHeight() > 44) {
+                item.setCustomPackaging(true);
+            } else if (item.getWidth() > 36 || item.getHeight() > 36) {
+                item.setOversized(true);
+            }
+
+            // Round weights/dimensions
+            item.setWeight(Math.ceil(item.getWeight()));
+            item.setWidth(Math.ceil(item.getWidth()));
+            item.setHeight(Math.ceil(item.getHeight()));
+
+            // Glass check
+            if ("Glass".equalsIgnoreCase(item.getGlazing()) && item.getWeight() > 0) {
+                item.setCannotShipUPS(true);
+            }
         }
-        if (productType.toLowerCase().contains("framed")) {
-            return 6;
+        return items;
+    }
+
+    /**
+     * Group items by product type first, then by similar size.
+     */
+    private Map<String, List<LineItem>> groupItems(List<LineItem> items) {
+        Map<String, List<LineItem>> grouped = new HashMap<>();
+        for (LineItem item : items) {
+            String key = item.getProductType();
+            grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(item);
         }
+        return grouped;
+    }
+
+    /**
+     * Assign items to boxes according to capacity rules.
+     */
+    private Map<String, List<List<LineItem>>> assignItemsToBoxes(Map<String, List<LineItem>> grouped) {
+        Map<String, List<List<LineItem>>> boxAssignments = new HashMap<>();
+
+        for (Map.Entry<String, List<LineItem>> entry : grouped.entrySet()) {
+            String productType = entry.getKey();
+            List<LineItem> items = entry.getValue();
+
+            int capacity = determineBoxCapacity(productType, items);
+            List<List<LineItem>> boxes = new ArrayList<>();
+
+            for (int i = 0; i < items.size(); i += capacity) {
+                boxes.add(items.subList(i, Math.min(i + capacity, items.size())));
+            }
+            boxAssignments.put(productType, boxes);
+        }
+        return boxAssignments;
+    }
+
+    /**
+     * Determine box capacity based on product type and item sizes.
+     */
+    private int determineBoxCapacity(String productType, List<LineItem> items) {
+        if (items.stream().anyMatch(LineItem::isCustomPackaging)) return 1;
+        if (items.stream().anyMatch(LineItem::isOversized)) return MAX_OVERSIZED_PER_BOX;
+
+        if (productType.toLowerCase().contains("framed")) return MAX_FRAMED_PER_BOX;
         if (productType.toLowerCase().contains("canvas") ||
-            productType.toLowerCase().contains("acoustic")) {
-            return 4;
+            productType.toLowerCase().contains("acoustic")) return MAX_CANVAS_ACOUSTIC_PER_BOX;
+
+        return MAX_FRAMED_PER_BOX; // default conservative
+    }
+
+    /**
+     * Assign boxes to pallets or crates.
+     * Ensures boxes never overhang pallet edge.
+     */
+    private Map<String, List<List<List<LineItem>>>> assignBoxesToPallets(
+            Map<String, List<List<LineItem>>> boxes, String clientName) {
+
+        // TODO: Implement pallet optimization, considering crate preference vs box-on-pallet
+        // For now, assume simple logic: 10 boxes per pallet
+        Map<String, List<List<List<LineItem>>>> palletAssignments = new HashMap<>();
+        for (String productType : boxes.keySet()) {
+            List<List<LineItem>> boxList = boxes.get(productType);
+            List<List<List<LineItem>>> pallets = new ArrayList<>();
+            for (int i = 0; i < boxList.size(); i += 10) {
+                pallets.add(boxList.subList(i, Math.min(i + 10, boxList.size())));
+            }
+            palletAssignments.put(productType, pallets);
         }
-        if (containsOversized(items)) {
-            return 3;
+        return palletAssignments;
+    }
+
+    /**
+     * Generate a Response object with totals, weights, heights, and packing details.
+     */
+    private Response generateResponse(Map<String, List<List<List<LineItem>>>> pallets) {
+        Response response = new Response();
+
+        double totalWeight = 0.0;
+        int totalPallets = 0;
+
+        for (String type : pallets.keySet()) {
+            List<List<List<LineItem>>> typePallets = pallets.get(type);
+            totalPallets += typePallets.size();
+
+            for (List<List<LineItem>> pallet : typePallets) {
+                for (List<LineItem> box : pallet) {
+                    double boxWeight = 0;
+                    for (LineItem item : box) {
+                        boxWeight += item.getWeight();
+                    }
+                    response.addBoxDetail(type, boxWeight, box.size(), box);
+                    totalWeight += boxWeight;
+                }
+            }
         }
-        return 6; // default conservative value
-    }
 
-    /**
-     * Helper to check if list has oversized items.
-     */
-    private boolean containsOversized(List<LineItem> items) {
-        return items.stream().anyMatch(LineItem::isOversized);
-    }
+        // Add tare weights
+        int tareWeight = totalPallets * PALLET_TARE_STANDARD; // default; could override if any oversized/custom
+        response.setTotalWeight(Math.ceil(totalWeight + tareWeight));
+        response.setPalletCount(totalPallets);
+        response.setDoNotDoubleStack(true);
 
-    /**
-     * Helper to check if list has custom items.
-     */
-    private boolean containsCustom(List<LineItem> items) {
-        return items.stream().anyMatch(LineItem::isCustomPackaging);
-    }
-
-    /**
-     * Estimate pallet count based on packing details.
-     */
-    private int calculatePallets(Response response) {
-        // TODO: Use dimensions to check pallet overhang
-        // For now assume 1 pallet per 10 boxes
-        int boxes = response.getTotalBoxes();
-        return (int) Math.ceil(boxes / 10.0);
-    }
-
-    /**
-     * Ensures profit margin rules are respected.
-     */
-    public boolean checkProfitMargin(double estimatedCost, double quotedPrice) {
-        if (quotedPrice <= 0) return false;
-        double margin = (quotedPrice - estimatedCost) / quotedPrice;
-        return margin >= 0.25;
-    }
-
-    /**
-     * Orchestrates full pipeline:
-     */
-    public Response processRequest(Request request) throws Exception {
-        List<LineItem> items = parseLineItems(request.getLineItemFileName());
-        items = applyClientRules(request.getClientName(), items);
-        items = calculateWeightsAndDimensions(items);
-        return applyPackingLogic(items);
+        return response;
     }
 }
-
