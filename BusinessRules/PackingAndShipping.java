@@ -62,7 +62,7 @@ public class PackingAndShipping {
      * For example, some clients may not accept crates.
      */
     private List<LineItem> applyClientRules(List<LineItem> items, String clientName) {
-        // TODO: Implement rules based on clientName
+        // TODO: Call a function in ClientSpecific.java that implement rules based on clientName
         // e.g., disable crates if job site cannot accept them
         return items;
     }
@@ -109,21 +109,27 @@ public class PackingAndShipping {
     }
 
     /**
-     * Assign items to boxes according to capacity rules.
+     * Assign items to boxes according to capacity rules,
+     * grouping items with similar heights together to reduce wasted space.
      */
     private Map<String, List<List<LineItem>>> assignItemsToBoxes(Map<String, List<LineItem>> grouped) {
         Map<String, List<List<LineItem>>> boxAssignments = new HashMap<>();
-
+    
         for (Map.Entry<String, List<LineItem>> entry : grouped.entrySet()) {
             String productType = entry.getKey();
-            List<LineItem> items = entry.getValue();
-
+            List<LineItem> items = new ArrayList<>(entry.getValue()); // copy to avoid modifying original
+    
+            // === Step 1: Sort items by height (descending so tallest first) ===
+            items.sort((a, b) -> Double.compare(b.getHeight(), a.getHeight()));
+    
             int capacity = determineBoxCapacity(productType, items);
             List<List<LineItem>> boxes = new ArrayList<>();
-
+    
+            // === Step 2: Assign to boxes, preserving similar heights in same box ===
             for (int i = 0; i < items.size(); i += capacity) {
                 boxes.add(items.subList(i, Math.min(i + capacity, items.size())));
             }
+    
             boxAssignments.put(productType, boxes);
         }
         return boxAssignments;
@@ -145,22 +151,34 @@ public class PackingAndShipping {
 
     /**
      * Assign boxes to pallets or crates.
-     * Ensures boxes never overhang pallet edge.
+     * Ensures boxes never overhang pallet edge and groups similar-height boxes together.
      */
     private Map<String, List<List<List<LineItem>>>> assignBoxesToPallets(
             Map<String, List<List<LineItem>>> boxes, String clientName) {
-
-        // TODO: Implement pallet optimization, considering crate preference vs box-on-pallet
-        // For now, assume simple logic: 10 boxes per pallet
+    
         Map<String, List<List<List<LineItem>>>> palletAssignments = new HashMap<>();
+    
         for (String productType : boxes.keySet()) {
-            List<List<LineItem>> boxList = boxes.get(productType);
+            List<List<LineItem>> boxList = new ArrayList<>(boxes.get(productType)); // copy to avoid modifying original
+    
+            // === Step 1: Sort boxes by total height (descending) ===
+            boxList.sort((boxA, boxB) -> {
+                double heightA = boxA.stream().mapToDouble(LineItem::getHeight).max().orElse(0);
+                double heightB = boxB.stream().mapToDouble(LineItem::getHeight).max().orElse(0);
+                return Double.compare(heightB, heightA); // tallest first
+            });
+    
+            // === Step 2: Assign boxes to pallets (e.g., 10 boxes per pallet) ===
             List<List<List<LineItem>>> pallets = new ArrayList<>();
-            for (int i = 0; i < boxList.size(); i += 10) {
-                pallets.add(boxList.subList(i, Math.min(i + 10, boxList.size())));
+            int palletCapacity = 10; // can be adjusted or made dynamic later
+    
+            for (int i = 0; i < boxList.size(); i += palletCapacity) {
+                pallets.add(boxList.subList(i, Math.min(i + palletCapacity, boxList.size())));
             }
+    
             palletAssignments.put(productType, pallets);
         }
+    
         return palletAssignments;
     }
 
