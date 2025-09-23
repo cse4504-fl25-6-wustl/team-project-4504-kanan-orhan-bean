@@ -18,8 +18,8 @@ public class PackingAndShipping {
      * Output: Response with packing info
      */
     public Response processPacking(List<LineItem> items, boolean acceptsPallets, boolean acceptsCrates) {
-        // Step 1: Apply size and glass rules
-        applySizeAndGlassRules(items);
+        // Step 1: Apply size, glass, and rounding rules
+        preprocessItems(items);
 
         // Step 2: Group items by product type
         Map<String, List<LineItem>> grouped = groupItemsByType(items);
@@ -36,7 +36,8 @@ public class PackingAndShipping {
 
     // === Helper Functions ===
 
-    private void applySizeAndGlassRules(List<LineItem> items) {
+    /** Round weights/dimensions and mark oversized or UPS-restricted items */
+    private void preprocessItems(List<LineItem> items) {
         for (LineItem item : items) {
             double w = Math.ceil(item.getWidth());
             double h = Math.ceil(item.getHeight());
@@ -44,14 +45,15 @@ public class PackingAndShipping {
             item.setHeight(h);
             item.setWeight(Math.ceil(item.getWeight()));
 
-            if (w > PackingRules.OversizeRules.STANDARD_BOX_LIMIT || h > PackingRules.OversizeRules.STANDARD_BOX_LIMIT)
-                item.setOversized(true);
+            item.setOversized(PackingRules.isOversized(item));
 
-            if ("Glass".equalsIgnoreCase(item.getGlazing()))
+            if ("Glass".equalsIgnoreCase(item.getGlazing())) {
                 item.setCannotShipUPS(true);
+            }
         }
     }
 
+    /** Group LineItems by their product type */
     private Map<String, List<LineItem>> groupItemsByType(List<LineItem> items) {
         Map<String, List<LineItem>> grouped = new HashMap<>();
         for (LineItem item : items) {
@@ -60,11 +62,16 @@ public class PackingAndShipping {
         return grouped;
     }
 
+    /** Assign LineItems into boxes based on PackingRules */
     private Map<String, List<Box>> assignItemsToBoxes(Map<String, List<LineItem>> grouped) {
         Map<String, List<Box>> boxMap = new HashMap<>();
-        for (String type : grouped.keySet()) {
-            List<LineItem> items = new ArrayList<>(grouped.get(type));
-            items.sort((a,b) -> Double.compare(b.getHeight(), a.getHeight()));
+
+        for (Map.Entry<String, List<LineItem>> entry : grouped.entrySet()) {
+            String type = entry.getKey();
+            List<LineItem> items = entry.getValue();
+
+            // Sort items by height descending (tallest first)
+            items.sort(Comparator.comparingDouble(LineItem::getHeight).reversed());
 
             int capacity = PackingRules.getBoxCapacity(type, items);
 
@@ -72,37 +79,48 @@ public class PackingAndShipping {
             for (int i = 0; i < items.size(); i += capacity) {
                 boxes.add(new Box(items.subList(i, Math.min(i + capacity, items.size()))));
             }
+
             boxMap.put(type, boxes);
         }
+
         return boxMap;
     }
 
+    /** Assign boxes into containers (pallets or crates) */
     private Map<String, List<Container>> assignBoxesToContainers(
-            Map<String, List<Box>> boxesMap, boolean acceptsPallets, boolean acceptsCrates) {
+            Map<String, List<Box>> boxesMap,
+            boolean acceptsPallets,
+            boolean acceptsCrates) {
+
         Map<String, List<Container>> containerMap = new HashMap<>();
 
-        for (String type : boxesMap.keySet()) {
-            List<Box> boxes = new ArrayList<>(boxesMap.get(type));
-            boxes.sort((b1, b2) -> Double.compare(
-                    b2.getBoxesHeight(), b1.getBoxesHeight()
-            ));
+        // Determine container type once
+        Container.Type containerType = acceptsCrates ? Container.Type.CRATE : Container.Type.PALLET;
+
+        for (Map.Entry<String, List<Box>> entry : boxesMap.entrySet()) {
+            String type = entry.getKey();
+            List<Box> boxes = entry.getValue();
+
+            // Sort boxes by tallest height first
+            boxes.sort(Comparator.comparingDouble(Box::getBoxesHeight).reversed());
 
             List<Container> containers = new ArrayList<>();
             List<Box> current = new ArrayList<>();
             int capacity;
 
             for (Box box : boxes) {
-                capacity = box.isOversized() ? 3 : 4;
+                capacity = box.isOversized() ? PackingRules.BoxSpecs.LARGE.palletCapacity() :
+                        PackingRules.BoxSpecs.STANDARD.palletCapacity();
 
                 if (current.size() >= capacity) {
-                    containers.add(new Container(acceptsCrates ? Container.Type.CRATE : Container.Type.PALLET, current, HEIGHT_BUFFER));
+                    containers.add(new Container(containerType, current, HEIGHT_BUFFER));
                     current = new ArrayList<>();
                 }
                 current.add(box);
             }
 
             if (!current.isEmpty()) {
-                containers.add(new Container(acceptsCrates ? Container.Type.CRATE : Container.Type.PALLET, current, HEIGHT_BUFFER));
+                containers.add(new Container(containerType, current, HEIGHT_BUFFER));
             }
 
             containerMap.put(type, containers);
@@ -111,13 +129,16 @@ public class PackingAndShipping {
         return containerMap;
     }
 
+    /** Convert containers and boxes into Response object */
     private Response generateResponse(Map<String, List<Container>> containerMap) {
         Response response = new Response();
 
-        for (String type : containerMap.keySet()) {
-            for (Container c : containerMap.get(type)) {
+        for (List<Container> containers : containerMap.values()) {
+            for (Container c : containers) {
                 for (Box b : c.getBoxes()) {
-                    response.addBoxDetail(type, b.getWeight(), b.getItems().size(), b.getItems());
+                    response.addBoxDetail(
+                            c.getType().name(), b.getWeight(), b.getItems().size(), b.getItems()
+                    );
                 }
             }
         }
