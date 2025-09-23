@@ -18,11 +18,11 @@ public class PackingAndShipping {
     // === Public Methods ===
 
     /**
-     * Main orchestration method.
+     * Orchestrates the full packing and shipping process.
      *
-     * @param items List of LineItems with weights/dimensions computed
-     * @param clientName Name of client (for client-specific rules)
-     * @return Response object with packing plan and totals
+     * @param items List<LineItem> → product items with weight and dimensions already computed
+     * @param clientName String → name of client (e.g., "Sunrise Senior Living") to apply client-specific rules
+     * @return Response → fully built packing plan including pallets, boxes, weights, and summary
      */
     public Response processPacking(List<LineItem> items, String clientName) {
 
@@ -45,10 +45,13 @@ public class PackingAndShipping {
     // === Step Methods ===
 
     /**
-     * Apply size, weight, and glass rules:
-     * - Detect oversized and custom items
-     * - Flag fragile glass for special handling
-     * - Round weights and dimensions
+     * Applies dimensional and material rules to each LineItem.
+     * - Rounds weights/dimensions upward
+     * - Flags oversized vs. custom packaging based on thresholds
+     * - Flags glass items that cannot ship via UPS
+     *
+     * @param items List<LineItem> → product items with raw dimensions/weight
+     * @return List<LineItem> → same items with flags (oversized/custom/UPS restrictions) applied
      */
     private List<LineItem> applySizeAndGlassRules(List<LineItem> items) {
         for (LineItem item : items) {
@@ -76,7 +79,10 @@ public class PackingAndShipping {
     }
 
     /**
-     * Group items by product type first, then by similar size.
+     * Groups items by product type.
+     *
+     * @param items List<LineItem> → collection of items with productType already set
+     * @return Map<String, List<LineItem>> → key = product type, value = list of items of that type
      */
     private Map<String, List<LineItem>> groupItems(List<LineItem> items) {
         Map<String, List<LineItem>> grouped = new HashMap<>();
@@ -88,8 +94,13 @@ public class PackingAndShipping {
     }
 
     /**
-     * Assign items to boxes according to capacity rules,
-     * grouping items with similar heights together to reduce wasted space.
+     * Assigns items to boxes based on capacity rules.
+     * Groups items of similar height to reduce wasted space.
+     *
+     * @param grouped Map<String, List<LineItem>> → grouped items by product type
+     * @param clientName String → client name for applying overrides (e.g., Sunrise glass rule)
+     * @return Map<String, List<List<LineItem>>> → key = product type,
+     *         value = list of boxes, each box containing a list of items
      */
     private Map<String, List<List<LineItem>>> assignItemsToBoxes(Map<String, List<LineItem>> grouped, String clientName) {
         Map<String, List<List<LineItem>>> boxAssignments = new HashMap<>();
@@ -114,7 +125,15 @@ public class PackingAndShipping {
     }
 
     /**
-     * Determine box capacity based on product type, item sizes, and client-specific rules.
+     * Determines how many items can fit into a box, based on:
+     * - Product type
+     * - Oversized/custom flags
+     * - Client-specific overrides
+     *
+     * @param productType String → type of product ("canvas", "framed", "acoustic", etc.)
+     * @param items List<LineItem> → items being evaluated
+     * @param clientName String → client name for applying overrides
+     * @return int → number of pieces allowed per box
      */
     private int determineBoxCapacity(String productType, List<LineItem> items, String clientName) {
         if (items.stream().anyMatch(LineItem::isCustomPackaging)) return 1;
@@ -135,8 +154,13 @@ public class PackingAndShipping {
     }
 
     /**
-     * Assign boxes to pallets or crates.
-     * Uses Brianna’s pallet capacity rules.
+     * Assigns boxes to pallets or crates based on capacity rules.
+     * Uses Brianna’s pallet specifications for standard vs. oversized.
+     *
+     * @param boxes Map<String, List<List<LineItem>>> → key = product type, value = boxes (list of items per box)
+     * @param clientName String → client name (reserved for overrides if needed)
+     * @return Map<String, List<List<List<LineItem>>>> → key = product type,
+     *         value = list of pallets, each pallet containing a list of boxes
      */
     private Map<String, List<List<List<LineItem>>>> assignBoxesToPallets(
             Map<String, List<List<LineItem>>> boxes, String clientName) {
@@ -182,7 +206,14 @@ public class PackingAndShipping {
     }
 
     /**
-     * Generate a Response object with totals, weights, heights, and packing details.
+     * Builds a Response object containing:
+     * - Total weight
+     * - Pallet count
+     * - Box-level details
+     * - Do-not-double-stack flag
+     *
+     * @param pallets Map<String, List<List<List<LineItem>>>> → palletized items grouped by product type
+     * @return Response → structured result with shipment summary and metadata
      */
     private Response generateResponse(Map<String, List<List<List<LineItem>>>> pallets) {
         Response response = new Response();
@@ -216,7 +247,10 @@ public class PackingAndShipping {
     }
 
     /**
-     * Nicely formatted shipment summary from Response.
+     * Formats the Response object into a structured human-readable summary.
+     *
+     * @param response Response → fully built packing/shipping response
+     * @return String → formatted shipment summary (weights, boxes, pallets, hardware)
      */
     public String toString(Response response) {
         StringBuilder sb = new StringBuilder();
