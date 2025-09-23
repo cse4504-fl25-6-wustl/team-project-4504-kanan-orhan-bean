@@ -24,7 +24,7 @@ public class Container {
 
     private double calculateWeight() {
         double boxWeight = boxes.stream().mapToDouble(Box::getWeight).sum();
-        double tare = (type == Type.PALLET) ? 60 : 75; // default, can customize
+        double tare = (type == Type.PALLET) ? 60 : 125; // default 60 for pallet, 125 for crate
         return boxWeight + tare;
     }
 
