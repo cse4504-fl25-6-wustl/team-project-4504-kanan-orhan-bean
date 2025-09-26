@@ -6,21 +6,23 @@ import entities.Container;
 import interactors.Packing;
 import entities.Client;
 import parser.CSVParser;
+import parser.ClientParser;
 import requests.Request;
 import responses.Response;
 
 public class Main {
     public static void main(String[] args) {
 
-        String inputFileName = ""; //read in from args
+        String inputFileName = args[0]; //read in from args
+        String inputClientFileName = args[1]; //read in from args
 
-        // read ClientParser
+        CSVParser CSVparser = new CSVParser();
 
-        Client client = new Client(); 
+        ClientParser ClientParser = new ClientParser();
 
-        CSVParser parser = new CSVParser();
+        List<Art> arts = CSVparser.parseCSV(inputFileName);
 
-        List<Art> arts = parser.parseCSV(inputFileName);
+        Client client = ClientParser.parseClient(inputClientFileName);
 
         Request request = new Request(arts, client);
 
