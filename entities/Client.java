@@ -20,6 +20,12 @@ public class Client {
         // UNfinished
     }
 
+    public Client() {
+        super();
+        // Dummy Client cuz we aint got time
+        // UNfinished
+    }
+
     //Getter Setters
 
 
