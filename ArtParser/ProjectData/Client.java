@@ -1,6 +1,16 @@
+/**
+ * Client.java
+ *
+ * holds inputted project requirement data for a specific client
+ */
+
+package ProjectData;
+
+// Client object cannot be instantiated outside of ProjectData package!
+
 public class Client {
     private String location;
-    private String name;
+    private final String name;
     private DeliveryCapabilities deliveryCapabilities;
     private ServiceType serviceType;
 
@@ -46,7 +56,7 @@ public class Client {
     }
     
     // client constructor
-    public Client(String jobSiteLocation, String clientName,
+    protected Client(String jobSiteLocation, String clientName,
                   boolean acceptsPallets, boolean acceptsCrates,
                   boolean loadingDockAccess, boolean liftgateRequired,
                   boolean insideDeliveryNeeded, ServiceType serviceType) {

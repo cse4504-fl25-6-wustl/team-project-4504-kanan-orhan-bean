@@ -1,5 +1,14 @@
+/**
+ * ArtPiece.java
+ *
+ * an indivdual art piece from a project work order, with all relevant input data
+ */
+
+package ProjectData;
+
+// similar to client, should we make instantiation protected?
 public class ArtPiece {
-    private int lineNumber;
+    private final int lineNumber; // object key
     private int quantity;
     private int tagNumber;
     private String finalMedium;
