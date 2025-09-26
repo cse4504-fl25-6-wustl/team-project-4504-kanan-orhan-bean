@@ -1,0 +1,11 @@
+{
+    "java.project.sourcePaths": [
+        "ArtParser",
+        "BusinessRules",
+        "Interface",
+        "Models"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ]
+}
