@@ -2,11 +2,11 @@ package entities;
 
 import java.util.List;
 
-public class Crate {
+public class Container {
 
     // Create a Pallet Class
 
-    private enum Type { Pallet, Crate , Custom}
+    public enum Type { Pallet, Crate , Custom}
     private Type type;
     private double length;
     private double width;
@@ -15,7 +15,7 @@ public class Crate {
     private final int overheadPalletWeight = 60;
     private final int overheadCrateWeight = 125;
 
-    public Crate(Type type) {
+    public Container(Type type, boolean canAcceptCrate) {
         super();
         // UNfinished
     }
@@ -24,32 +24,16 @@ public class Crate {
         return null;
     }
 
-    public boolean setType(){
-        return false;
-    }
-
     public double getLength(){
         return -1;
     };
 
-    public boolean setLength(){
-        return false;
-    }
-
     public double getWidth(){
         return -1;
     };
-    
-    public boolean setWdith(){
-        return false;
-    }
 
     public double getHeight(){
         return -1;
-    }
-
-    public boolean setHeight(){
-        return false;
     }
 
     public List<Box> getBoxes(){
@@ -67,13 +51,4 @@ public class Crate {
     public boolean canBoxFit(Box box){
         return false;
     }
-
-    public boolean canAcceptPallets(Client client){
-        return false;
-    }
-
-    public boolean canAcceptCrates(Client client){
-        return false;
-    }
-
 }

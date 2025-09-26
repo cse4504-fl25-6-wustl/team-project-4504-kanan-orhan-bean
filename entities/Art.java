@@ -4,9 +4,9 @@ import java.util.List;
 
 public class Art {
     
-    private enum Type { PaperPrint } //Add all
-    private enum Glazing { Glass } //Add all
-    private int Hardware;
+    public enum Type { PaperPrint } //Add all
+    public enum Glazing { Glass } //Add all
+    private int hardware;
     private final int lineNumber; 
     private Type type;
     private Glazing glazing;
@@ -17,7 +17,7 @@ public class Art {
     private boolean specialHandling;
     private boolean isCustom;
 
-    public Art(Type type, Glazing glazing, int lineNumber, int width, int height) {
+    public Art(Type type, Glazing glazing, int lineNumber, int width, int height, int hardware) {
         super();
         this.lineNumber = lineNumber;
         // UNfinished
@@ -27,16 +27,8 @@ public class Art {
         return null;
     }
 
-    public boolean setType(){
-        return false;
-    }
-
     public Glazing getGlazing(){
         return null;
-    }
-
-    public boolean setGlazing(){
-        return false;
     }
 
     public int getLineNumber(){
@@ -47,23 +39,15 @@ public class Art {
         return -1;
     }
 
-    public boolean setWdith(){
-        return false;
-    }
-
     public double getHeight(){
         return -1;
-    }
-
-    public boolean setHeight(){
-        return false;
     }
 
     public double getDepth(){
         return -1;
     }
 
-    public boolean setDepth(){
+    private boolean setDepth(){
         return false;
     }
 
@@ -71,16 +55,8 @@ public class Art {
         return -1;
     };
 
-    public boolean setHardware(){
-        return false;
-    };
-
     public double getWeight(){
         return -1;
-    }
-
-    public boolean setWeight(){
-        return false;
     }
 
     public boolean needSpecialHandling(){
@@ -88,16 +64,8 @@ public class Art {
         return false;
     }
 
-    public boolean setSpecialHandling(){
-        return false;
-    }
-
     public boolean isCustom(){
         //B. Any item with a dimension over 44 inches requires "Custom" packaging.
-        return false;
-    }
-
-    public boolean setCustom(){
         return false;
     }
 

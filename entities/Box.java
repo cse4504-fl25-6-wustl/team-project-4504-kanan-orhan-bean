@@ -13,60 +13,39 @@ public class Box {
     private List<Art> arts;
     private int capacity;
 
-    public Box(boolean isOversized) {
+    public Box() {
         super();
-        this.isOversized = isOversized;
         // UNfinished
         this.isFull = false;
     }
 
-    public void setBoxFull(){
-        this.isFull = true;
+    public boolean isFull(){
+        return isFull;
     }
 
-    public void setBoxEmpty(){
-        this.isFull = false;
-    }
-
-    public void setBoxNormal(){
+    private void setBoxNormal(){
         this.length = 37;
         this.width = 11;
         this.height = 31;
     }
 
-    public void setBoxOversize(){
+    private void setBoxOversize(){
         this.length = 44;
         this.width = 13;
         this.height = 48;
-    }
-
-    public boolean isBoxFull(){
-        return this.isFull;
     }
 
     public double getLength(){
         return -1;
     };
 
-    public boolean setLength(){
-        return false;
-    }
-
     public double getWidth(){
         return -1;
     };
 
-    public boolean setWdith(){
-        return false;
-    }
-
     public double getHeight(){
         return -1;
     };
-
-    public boolean setHeight(){
-        return false;
-    }
 
     public boolean isOversized(){
         return false;
@@ -92,7 +71,7 @@ public class Box {
         return -1;
     }
 
-    public boolean setWeight(){
+    private boolean setWeight(){
         return false;
     }
 
@@ -100,7 +79,7 @@ public class Box {
         return -1;
     }
 
-    public boolean setCapacity(){
+    private boolean setCapacity(){
         //A. Apply Strict Box Capacity Limits based on Product Type.
             //i. Framed Prints: Max 6 pieces per standard box.
             //ii. Canvases & Acoustic Panels: Max 4 pieces per standard box (due to their greater depth).
