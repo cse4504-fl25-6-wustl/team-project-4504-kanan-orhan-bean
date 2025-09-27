@@ -12,6 +12,8 @@ public class Request {
 
     public Request(List<Art> arts, Client client) {
         super();
+        // a. Art objects to be packaged up
+        // b. Client site information: does the client accept crates or not
         //TODO
     }
 }
