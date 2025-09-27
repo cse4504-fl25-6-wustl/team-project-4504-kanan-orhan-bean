@@ -8,9 +8,11 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 2. `public` functions. Any public functions parameters or return values will not be changed, but the internal implementation in the function is up to the designated Coder.
 3. `private` functions. Can be changed anyway. Will not be accessed by other other modules outside its scope.
 
-Coder #1: 
-Coder #2: 
-Coder #3: 
+## Coders:
+
+1. Coder #1: 
+2. Coder #2: 
+3. Coder #3: 
 
 ## Entities
 
