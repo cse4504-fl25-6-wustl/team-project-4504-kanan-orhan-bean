@@ -7,6 +7,7 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 1. `Main.java` is implemented and will not change.
 2. `public` functions. Any public functions parameters or return values will not be changed, but the internal implementation in the function is up to the designated Coder.
 3. `private` functions. Can be changed anyway. Will not be accessed by other other modules outside its scope.
+4. If you need to have a public function implemented in another module (that is not yours), instead of implementing it, just code as if it exists and let the teammate responsible know.
 
 ## Coders:
 
