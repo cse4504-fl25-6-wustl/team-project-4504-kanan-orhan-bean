@@ -10,9 +10,9 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 
 ## Coders:
 
-1. Coder #1: 
-2. Coder #2: 
-3. Coder #3: 
+1. Coder #1: Orhan
+2. Coder #2: Bean
+3. Coder #3: Kanan
 
 ## Entities
 

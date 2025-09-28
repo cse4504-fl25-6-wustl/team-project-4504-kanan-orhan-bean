@@ -30,7 +30,7 @@ public class Main {
 
         Response response = packing.packEverything(request);
 
-        System.out.println(response);
+        System.out.println(response.toString());
 
     }
 }
