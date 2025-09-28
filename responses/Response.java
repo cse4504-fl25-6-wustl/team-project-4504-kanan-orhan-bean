@@ -15,7 +15,7 @@ public class Response {
 
     public Response(List<Art> arts, List<Box> boxes, List<Container> containers) {
         super();
-        //a. Weight of each individual item
+        // a. Weight of each individual item
         // b. How items are packed in boxes (which items are packed together
         // c. The weight of each box
         // d. How boxes are packed in crates or pallets (which boxes are packed together and are they on a pallet or a crate)

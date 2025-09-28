@@ -1,0 +1,20 @@
+Box Requirements:
+- Standard boxes (37"×11"×31"): 7 boxes
+- Large boxes (44"×13"×48"): 2 boxes
+- Total boxes: 9
+
+Pallet/Crate Requirements:
+- Standard pallets (48"×40"): 1 pallet
+- Oversize pallets (60"×40"): 1 pallet  
+- Crates: 0
+
+Final Dimensions:
+- Pallet 1: 48"×40"×64"H @ 450 lbs
+- Pallet 2: 60"×40"×52"H @ 463 lbs
+
+Hardware Calculation:
+- Line item hardware summary; EX qty 44 pieces with 3 pt Sec, qty 12 pieces with 4 pt Sec, etc.
+- Wall hardware needed: 165 pieces
+  * Drywall anchors: 55
+  * Screws: 110
+  * T-bolts: 0
