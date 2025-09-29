@@ -43,7 +43,18 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 
 1. This code does not need any external dependencies.
 
-2. To run the code input 2 command line arguments. First one being the LineItemFileName, and the second one being the ClientFileName. For more information about command line arguments in VSCode follow this [link](https://code.visualstudio.com/docs/debugtest/debugging-configuration).
+2. To run the code input 2 command line arguments. First one being the LineItemFileName, and the second one being the ClientFileName. 
+
+To build the file run `javac Main.java` in the terminal. After building the file to run the code run `java Main [inputFileName] [inputClientFileName]`, replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
+
+```
+(base) > team-project-4504-kanan-orhan-bean % javac Main.java      
+(base) > team-project-4504-kanan-orhan-bean % java Main hello world
+Input File Name: hello
+Client File Name: world
+```
+
+For more information about command line arguments in VSCode specifically follow this [link](https://code.visualstudio.com/docs/debugtest/debugging-configuration).
 
  For Example: You can add a command line arguments in VSCode by creating a folder called `.vscode` and creating a file in it called `launch.json`. Populate the `launch.json` file with the following code, replace the `inputFileName` arguments in `args` with your desired inputFileName, and replace the `inputClientFileName` with your desired inputClientFileName.
 

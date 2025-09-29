@@ -16,6 +16,9 @@ public class Main {
         String inputFileName = args[0]; //read in from args
         String inputClientFileName = args[1]; //read in from args
 
+        System.out.println("Input File Name: " + inputFileName);
+        System.out.println("Client File Name: " + inputClientFileName);
+
         CSVParser CSVparser = new CSVParser();
 
         ClientParser ClientParser = new ClientParser();
