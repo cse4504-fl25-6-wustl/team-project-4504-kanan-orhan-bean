@@ -4,8 +4,33 @@ import java.util.List;
 
 public class Art {
     
-    public enum Type { PaperPrint } //Add all
-    public enum Glazing { Glass } //Add all
+    public enum Type { 
+        PaperPrintFramed, 
+        PaperPrintFramedWithTitlePlate, 
+        CanvasFloatFrame, 
+        WallDecor, 
+        AcousticPanel, 
+        AcousticPanelFramed, 
+        MetalPrint, 
+        Mirror 
+    } //Add all
+    public enum Material {
+        Glass(0.0098), 
+        Acyrlic(0.0094), 
+        CanvasFramed(0.0085), 
+        CanvasGallery(0.0061), 
+        Mirror(0.0191), 
+        AcousticPanel(0.0038), 
+        AcousticPanelFramed(0.0037), 
+        PatientBoard(0.0347);
+
+        public final double LBpSQIN;
+
+        private Material(double LBpSQIN) {
+            this.LBpSQIN = LBpSQIN;
+        }
+    } //Add All
+    public enum Glazing { Glass, Acrylic, NoGlaze } //Add all
     private int hardware;
     private final int lineNumber; 
     private Type type;
@@ -16,57 +41,79 @@ public class Art {
     private double weight;
     private boolean specialHandling;
     private boolean isCustom;
+    private Material material;
+    private double CUSTOM_THRESHOLD = 43.5;
 
-    public Art(Type type, Glazing glazing, int lineNumber, int width, int height, int hardware) {
+    public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
         super();
         this.lineNumber = lineNumber;
-        // UNfinished
+        this.type = type;
+        this.glazing = glazing;
+        this.width = width;
+        this.height = height;
+        this.hardware = hardware;
+        this.material = getMaterial(type, glazing);
+        this.specialHandling = setSpecialHandling(type);
+        setDepth(4.0);
+    }
+
+    private Material getMaterial(Type type, Glazing glazing){
+        // How to implement this waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
+        return null;
+    }
+
+    private boolean setSpecialHandling(Type type){
+        this.specialHandling = type.toString().contains("Acoustic") || type.toString().contains("Float");
+        return this.specialHandling;
     }
 
     public Type getType(){
-        return null;
+        return this.type;
     }
 
     public Glazing getGlazing(){
-        return null;
+        return this.glazing;
     }
 
     public int getLineNumber(){
-        return -1;
+        return this.lineNumber;
     }
 
     public double getwidth(){
-        return -1;
+        return this.width;
     }
 
     public double getHeight(){
-        return -1;
+        return this.height;
     }
 
     public double getDepth(){
-        return -1;
+        return this.depth;
     }
 
-    private boolean setDepth(){
-        return false;
+    private boolean setDepth(double depth){
+        this.depth = depth;
+        return true;
     }
 
     public double getHardware(){
-        return -1;
+        return this.hardware;
     };
 
     public double getWeight(){
-        return -1;
+        this.weight = this.width * this.height * this.material.LBpSQIN;
+        return this.weight;
     }
 
     public boolean needSpecialHandling(){
         //C. Flag Tactile Panels and Raised Float Mounts for Special Handling.
-        return false;
+        return this.specialHandling;
     }
 
     public boolean isCustom(){
         //B. Any item with a dimension over 44 inches requires "Custom" packaging.
-        return false;
+        this.isCustom = (this.width > CUSTOM_THRESHOLD || this.height > CUSTOM_THRESHOLD);
+        return this.isCustom;
     }
 
 }
