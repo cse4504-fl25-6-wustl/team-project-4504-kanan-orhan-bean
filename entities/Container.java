@@ -4,8 +4,6 @@ import java.util.List;
 
 public class Container {
 
-    // Create a Pallet Class
-
     public enum Type { Pallet, Crate, Glass, Oversize, Custom} 
     private Type type;
     private double length;
@@ -13,9 +11,13 @@ public class Container {
     private double height;
     private double weight;
     private List<Box> boxes;
+    private List<Art> arts;
     private int capacity;
     private boolean isFull;
+    private boolean isEmpty;
     private boolean isCarryingOversizeBox;
+    private boolean isMirrorCrate;
+    private boolean canAcceptCrate;
 
     private final double STANDARD_PALLET_LENGTH = 48;
     private final double STANDARD_PALLET_WIDTH = 40;
@@ -29,7 +31,12 @@ public class Container {
     private final double OVERHEAD_PALLET_WEIGHT = 60;
     private final double OVERHEAD_OVERSIZE_PALLET_WEIGHT = 75;
     private final double OVERHEAD_CRATE_WEIGHT = 125;
-    private final boolean canAcceptCrate;
+    private final int MIRROR_CRATE_LIMIT = 24;
+    private final int NORMAL_GLASS_ACRYLIC_CRATE_LIMIT = 25;
+    private final int OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT = 18;
+    private final int NORMAL_CANVAS_CRATE_LIMIT = 18;
+    private final int OVERSIZE_CANVAS_CRATE_LIMIT = 12;
+    private final int CUSTOM_BOX_DIMENSION_LIMIT = 33;
 
     // TODO: Figure out where to use these
     private final double OVERSIZE_CRATE_LIMIT = 46;
@@ -47,10 +54,40 @@ public class Container {
     }
 
     public boolean isEmpty(){
-        return this.boxes.isEmpty();
+        return this.isEmpty;
+    }
+
+    private void updateFullness(){
+        if (!setCapacity()){
+            this.isEmpty = true;
+        }
+        else if (isMirrorCrate()){
+            if (this.arts.size() >= getCapacity()){
+                this.isFull = true;
+            }
+            else {
+                this.isFull = false;
+            }
+        }
+        else {
+            if (this.boxes.size() >= getCapacity()){
+                this.isFull  = true;
+            }
+            else {
+                this.isFull = false;
+            }
+        }
+        this.isEmpty = false;
+    }
+
+    public boolean isMirrorCrate(){
+        return this.isMirrorCrate;
     }
 
     private boolean isCarryingOversizeBox(){
+        if (isMirrorCrate()){
+            throw new IllegalStateException("There are no Boxes in a Mirror Crate.");
+        }
         return this.isCarryingOversizeBox;
     }
 
@@ -99,10 +136,16 @@ public class Container {
     }
 
     public List<Box> getBoxes(){
+        if (isMirrorCrate()){
+            throw new IllegalStateException("Can not access Boxes in a Mirror Crate.");
+        }
         return this.boxes;
     };
 
     public List<Box> addBox(Box box){
+        if (isMirrorCrate()){
+            throw new IllegalStateException("Can not add a Box to a Mirror Crate.");
+        }
         this.boxes.add(box);
         if (canAcceptCrate()){
             this.setCrateNormal();
@@ -114,16 +157,50 @@ public class Container {
             this.setPalletNormal();
         }
         // TODO: When do we use Glass Pallets?
+        updateFullness();
         return this.boxes;
     };
 
     public List<Box> removeBox(Box box){
+        if (isMirrorCrate()){
+            throw new IllegalStateException("Can not remove a Box from a Mirror Crate.");
+        }
         this.boxes.remove(box);
+        updateFullness();
         return this.boxes;
+    };
+
+    public List<Art> getArts(){
+        if (!isMirrorCrate()){
+            throw new IllegalStateException("Can not access Arts in a Non-Mirror Crate.");
+        }
+        return this.arts;
+    };
+
+    public List<Art> addArt(Art art){
+        if (!isMirrorCrate()){
+            throw new IllegalStateException("Can not add Arts in a Non-Mirror Crate.");
+        }
+        this.arts.add(art);
+        updateFullness();
+        return this.arts;
+    };
+
+    public List<Art> removeArt(Art art){
+        if (!isMirrorCrate()){
+            throw new IllegalStateException("Can not remove Arts from a Non-Mirror Crate.");
+        }
+        this.arts.remove(art);
+        updateFullness();
+        return this.arts;
     };
 
     public boolean canBoxFit(Box box){
         // TODO: Figure out how to Handle Art directly into Containers
+
+        if (isMirrorCrate()){
+            throw new IllegalStateException("Can not check Boxes in a Mirror Crate.");
+        }
 
         boolean isBoxOversized = box.isOversized();
 
@@ -152,10 +229,31 @@ public class Container {
         return true;
     }
 
+    public boolean canArtFit(Box box){
+        if (!isMirrorCrate()){
+            throw new IllegalStateException("Can not check Arts in a Non-Mirror Crate.");
+        }
+        // Crate is Full, can't fit Box
+        if (this.isFull()){
+            return false;
+        }
+        else {
+            // Can put Mirrors into the box
+            return true;
+        }
+    }
+
     public double getWeight(){
         double weight = 0.0;
-        for (Box box : boxes) {
-            weight += box.getWeight();
+        if (isMirrorCrate()){
+            for (Art art : arts){
+                weight +=art.getWeight();
+            }
+        }
+        else {
+            for (Box box : boxes) {
+                weight += box.getWeight();
+            }
         }
         this.setWeight(weight + getTareWeight());
         return this.weight;
@@ -177,8 +275,11 @@ public class Container {
     }
 
     public int getCapacity(){
-        // return its capacity if it can be calculated, else return -1
-        return setCapacity() ? this.capacity : -1;
+        // return its capacity if it can be calculated, else return an IllegalStateException 
+        if (!setCapacity()) {
+            throw new IllegalStateException("Capacity cannot be determined for this Container.");
+        }
+        return this.capacity;
     }
 
     private boolean setCapacity(){
@@ -192,9 +293,10 @@ public class Container {
         Box containerFirstBox = boxes.getFirst();
         Type containerType = this.getType();
         boolean boxOversized = containerFirstBox.isOversized();
+
         // Assuming the Container only has Box that is of same or smaller type than first
         
-        if (containerType != Type.Custom){
+        if (containerType != Type.Custom && !isMirrorCrate()){
             int containerInitialCapacity = 0;
             if (containerType == Type.Pallet || containerType == Type.Crate){
                 containerInitialCapacity = 4;
@@ -209,9 +311,36 @@ public class Container {
             this.capacity = containerInitialCapacity;
             return true;
         }
+        else if (isMirrorCrate()){
+            this.capacity = MIRROR_CRATE_LIMIT;
+            return true;
+        }
         else {
-            //TODO Figure out how to pack Arts directly into Containers
-            return false;
+            // TODO: Is this considered a Custom Box? Does it need human evaluation?
+            boolean isDimensionsOversize = false;
+            for (Box box : boxes){
+                if (box.isCustom() && (box.getHeight() > CUSTOM_BOX_DIMENSION_LIMIT || box.getWidth() > CUSTOM_BOX_DIMENSION_LIMIT)){
+                    isDimensionsOversize = true;
+                }
+            }
+            if (containerFirstBox.getArts().getFirst().materialContains("Glass") 
+            || containerFirstBox.getArts().getFirst().materialContains("Acrylic")){
+                if (isDimensionsOversize){
+                    this.capacity = OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT;
+                }
+                else {
+                    this.capacity = NORMAL_GLASS_ACRYLIC_CRATE_LIMIT;
+                }
+            }
+            else if (containerFirstBox.getArts().getFirst().materialContains("Canvas")){
+                if (isDimensionsOversize){
+                    this.capacity = OVERSIZE_CANVAS_CRATE_LIMIT;
+                }
+                else {
+                    this.capacity = NORMAL_CANVAS_CRATE_LIMIT;
+                }
+            }
+            return true;
         }
 
     }

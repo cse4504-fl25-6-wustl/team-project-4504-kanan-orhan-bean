@@ -12,6 +12,7 @@ public class Box {
     private double weight;
     private List<Art> arts;
     private int capacity;
+    private boolean isCustom;
 
     private final double STANDARD_LENGTH = 37;
     private final double STANDARD_WIDTH = 11;
@@ -34,6 +35,10 @@ public class Box {
         return this.arts.isEmpty();
     }
 
+    public boolean isCustom(){
+        return this.isCustom;
+    }
+
     private void setBoxNormal(){
         this.length = STANDARD_LENGTH;
         this.width = STANDARD_WIDTH;
@@ -44,6 +49,12 @@ public class Box {
         this.length = OVERSIZE_LENGTH;
         this.width = OVERSIZE_WIDTH;
         this.height = OVERSIZE_HEIGHT;
+    }
+
+    public void setBoxCustom(double length, double width, double height){
+        this.length = length;
+        this.width = width;
+        this.height = height;
     }
 
     public double getLength(){
@@ -84,13 +95,16 @@ public class Box {
     };
 
     public boolean canArtFit(Art art){
-        // TODO
-        // Might have to rework depending on https://piazza.com/class/mf6woqytzb81zq/post/13
+        // TODO: Might have to rework depending on https://piazza.com/class/mf6woqytzb81zq/post/13
 
         boolean isArtOversized = art.getHeight() > OVERSIZE_BOX_LIMIT || art.getWidth() > OVERSIZE_BOX_LIMIT;
 
         // Art is Custom, needs Custom Box
         if (art.isCustom()){
+            if (this.isEmpty()){
+                this.isCustom = true;
+                return true;
+            }
             return false;
         }
         // Box is Full, can't fit Art
@@ -131,9 +145,12 @@ public class Box {
     }
 
     public int getCapacity(){
-        // return its capacity if it can be calculated, else return -1 if the box is empty or if we have a mirror (?)
-        // or something else went wrong
-        return setCapacity() ? this.capacity : -1;
+        // return its capacity if it can be calculated, else return an IllegalStateException 
+        // if we can't determine the capacity due to it being empty. Or we have mirrors in it
+        if (!setCapacity()) {
+            throw new IllegalStateException("Capacity cannot be determined for this box.");
+        }
+        return this.capacity;
     }
 
     // Adding this as a way for Packing to override Capacity in case of a Client 
@@ -155,14 +172,12 @@ public class Box {
 
         Art boxFirstArt = arts.getFirst();
         // Assuming the Box only has Art that is of same Material
-        if (boxFirstArt.materialContains("Glass")|| boxFirstArt.materialContains("Acrylic")){
+        if (boxFirstArt.materialContains("Glass") || boxFirstArt.materialContains("Acrylic")){
             this.capacity = 6;
             return true;
         }
         else if (boxFirstArt.materialContains("Canvas")){
-            // TODO
-            // this is subject to change depending on "Canvas Rule Discrepency"
-            // on this post https://piazza.com/class/mf6woqytzb81zq/post/7
+            // TODO: Might rework under "Canvas Rule Discrepency" on this post https://piazza.com/class/mf6woqytzb81zq/post/7
             this.capacity = 6;
             return true;
         }

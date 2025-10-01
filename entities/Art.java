@@ -58,9 +58,42 @@ public class Art {
     }
 
     private Material setMaterial(Type type, Glazing glazing){
-        // TODO
-        // How to implement this waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
-        return null;
+        // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
+        switch (type) {
+            case PaperPrintFramed:
+            case PaperPrintFramedWithTitlePlate:
+                switch (glazing) {
+                    case Glass:
+                        return Material.Glass;
+                    case Acrylic:
+                        return Material.Acyrlic;
+                    case NoGlaze:
+                        return Material.CanvasFramed;
+                }
+                break;
+    
+            case CanvasFloatFrame:
+                return Material.CanvasFramed;
+    
+            case WallDecor:
+                return Material.CanvasGallery;
+    
+            case AcousticPanel:
+                return Material.AcousticPanel;
+    
+            case AcousticPanelFramed:
+                return Material.AcousticPanelFramed;
+    
+            case MetalPrint:
+                return Material.PatientBoard;
+    
+            case Mirror:
+                return Material.Mirror;
+    
+            default:
+                throw new IllegalArgumentException("Unknown type: " + type);
+        }
+        throw new IllegalArgumentException("Unsupported glazing for type: " + type);
     }
 
     public Material getMaterial(){
