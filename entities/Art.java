@@ -1,9 +1,8 @@
 package entities;
 
-import java.util.List;
-
 public class Art {
     
+    // TODO: Figure out how to handle the Type, Material, and Glazing Enums depending on https://piazza.com/class/mf6woqytzb81zq/post/14
     public enum Type { 
         PaperPrintFramed, 
         PaperPrintFramedWithTitlePlate, 
@@ -13,7 +12,7 @@ public class Art {
         AcousticPanelFramed, 
         MetalPrint, 
         Mirror 
-    } //Add all
+    }
     public enum Material {
         Glass(0.0098), 
         Acyrlic(0.0094), 
@@ -29,8 +28,8 @@ public class Art {
         private Material(double LBpSQIN) {
             this.LBpSQIN = LBpSQIN;
         }
-    } //Add All
-    public enum Glazing { Glass, Acrylic, NoGlaze } //Add all
+    }
+    public enum Glazing { Glass, Acrylic, NoGlaze }
     private int hardware;
     private final int lineNumber; 
     private Type type;
@@ -42,7 +41,8 @@ public class Art {
     private boolean specialHandling;
     private boolean isCustom;
     private Material material;
-    private double CUSTOM_THRESHOLD = 43.5;
+
+    private final double CUSTOM_THRESHOLD = 43.5;
 
     public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
         super();
@@ -52,19 +52,28 @@ public class Art {
         this.width = width;
         this.height = height;
         this.hardware = hardware;
-        this.material = getMaterial(type, glazing);
+        this.material = setMaterial(type, glazing);
         this.specialHandling = setSpecialHandling(type);
         setDepth(4.0);
     }
 
-    private Material getMaterial(Type type, Glazing glazing){
+    private Material setMaterial(Type type, Glazing glazing){
+        // TODO
         // How to implement this waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
         return null;
     }
 
+    public Material getMaterial(){
+        return this.material;
+    }
+
     private boolean setSpecialHandling(Type type){
-        this.specialHandling = type.toString().contains("Acoustic") || type.toString().contains("Float");
+        this.specialHandling = typeContains("Acoustic") || typeContains("Float");
         return this.specialHandling;
+    }
+
+    private boolean typeContains(String string){
+        return this.type.toString().contains(string);
     }
 
     public Type getType(){
@@ -79,7 +88,7 @@ public class Art {
         return this.lineNumber;
     }
 
-    public double getwidth(){
+    public double getWidth(){
         return this.width;
     }
 
@@ -114,6 +123,10 @@ public class Art {
         //B. Any item with a dimension over 44 inches requires "Custom" packaging.
         this.isCustom = (this.width > CUSTOM_THRESHOLD || this.height > CUSTOM_THRESHOLD);
         return this.isCustom;
+    }
+
+    public boolean materialContains(String string){
+        return this.material.toString().contains(string);
     }
 
 }
