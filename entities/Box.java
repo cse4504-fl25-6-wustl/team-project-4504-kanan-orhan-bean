@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Box {
@@ -25,6 +26,7 @@ public class Box {
     public Box() {
         super();
         this.isFull = false;
+        this.arts = new ArrayList<>();
     }
 
     public boolean isFull(){

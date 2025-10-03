@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Container {
@@ -47,6 +48,8 @@ public class Container {
         super();
         this.type = type;
         this.canAcceptCrate = canAcceptCrate;
+        this.arts = new ArrayList<>();
+        this.boxes = new ArrayList<>();
     }
 
     public boolean isFull(){
