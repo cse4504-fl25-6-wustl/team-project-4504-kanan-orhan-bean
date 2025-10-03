@@ -1,11 +1,35 @@
 package entities;
 
-import java.util.List;
-
 public class Art {
     
-    public enum Type { PaperPrint } //Add all
-    public enum Glazing { Glass } //Add all
+    // TODO: Figure out how to handle the Type, Material, and Glazing Enums depending on https://piazza.com/class/mf6woqytzb81zq/post/14
+    public enum Type { 
+        PaperPrintFramed, 
+        PaperPrintFramedWithTitlePlate, 
+        CanvasFloatFrame, 
+        WallDecor, 
+        AcousticPanel, 
+        AcousticPanelFramed, 
+        MetalPrint, 
+        Mirror 
+    }
+    public enum Material {
+        Glass(0.0098), 
+        Acyrlic(0.0094), 
+        CanvasFramed(0.0085), 
+        CanvasGallery(0.0061), 
+        Mirror(0.0191), 
+        AcousticPanel(0.0038), 
+        AcousticPanelFramed(0.0037), 
+        PatientBoard(0.0347);
+
+        public final double LBpSQIN;
+
+        private Material(double LBpSQIN) {
+            this.LBpSQIN = LBpSQIN;
+        }
+    }
+    public enum Glazing { Glass, Acrylic, NoGlaze }
     private int hardware;
     private final int lineNumber; 
     private Type type;
@@ -16,57 +40,126 @@ public class Art {
     private double weight;
     private boolean specialHandling;
     private boolean isCustom;
+    private Material material;
 
-    public Art(Type type, Glazing glazing, int lineNumber, int width, int height, int hardware) {
+    private final double CUSTOM_THRESHOLD = 43.5;
+
+    public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
         super();
         this.lineNumber = lineNumber;
-        // UNfinished
+        this.type = type;
+        this.glazing = glazing;
+        this.width = width;
+        this.height = height;
+        this.hardware = hardware;
+        this.material = setMaterial(type, glazing);
+        this.specialHandling = setSpecialHandling(type);
+        setDepth(4.0);
+    }
+
+    private Material setMaterial(Type type, Glazing glazing){
+        // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
+        switch (type) {
+            case PaperPrintFramed:
+            case PaperPrintFramedWithTitlePlate:
+                switch (glazing) {
+                    case Glass:
+                        return Material.Glass;
+                    case Acrylic:
+                        return Material.Acyrlic;
+                    case NoGlaze:
+                        return Material.CanvasFramed;
+                }
+                break;
+    
+            case CanvasFloatFrame:
+                return Material.CanvasFramed;
+    
+            case WallDecor:
+                return Material.CanvasGallery;
+    
+            case AcousticPanel:
+                return Material.AcousticPanel;
+    
+            case AcousticPanelFramed:
+                return Material.AcousticPanelFramed;
+    
+            case MetalPrint:
+                return Material.PatientBoard;
+    
+            case Mirror:
+                return Material.Mirror;
+    
+            default:
+                throw new IllegalArgumentException("Unknown type: " + type);
+        }
+        throw new IllegalArgumentException("Unsupported glazing for type: " + type);
+    }
+
+    public Material getMaterial(){
+        return this.material;
+    }
+
+    private boolean setSpecialHandling(Type type){
+        this.specialHandling = typeContains("Acoustic") || typeContains("Float");
+        return this.specialHandling;
+    }
+
+    private boolean typeContains(String string){
+        return this.type.toString().contains(string);
     }
 
     public Type getType(){
-        return null;
+        return this.type;
     }
 
     public Glazing getGlazing(){
-        return null;
+        return this.glazing;
     }
 
     public int getLineNumber(){
-        return -1;
+        return this.lineNumber;
     }
 
-    public double getwidth(){
-        return -1;
+    public double getWidth(){
+        return this.width;
     }
 
     public double getHeight(){
-        return -1;
+        return this.height;
     }
 
     public double getDepth(){
-        return -1;
+        return this.depth;
     }
 
-    private boolean setDepth(){
-        return false;
+    private boolean setDepth(double depth){
+        this.depth = depth;
+        return true;
     }
 
     public double getHardware(){
-        return -1;
+        return this.hardware;
     };
 
     public double getWeight(){
-        return -1;
+        this.weight = this.width * this.height * this.material.LBpSQIN;
+        return this.weight;
     }
 
     public boolean needSpecialHandling(){
         //C. Flag Tactile Panels and Raised Float Mounts for Special Handling.
-        return false;
+        return this.specialHandling;
     }
 
     public boolean isCustom(){
         //B. Any item with a dimension over 44 inches requires "Custom" packaging.
-        return false;
+        this.isCustom = (this.width > CUSTOM_THRESHOLD || this.height > CUSTOM_THRESHOLD);
+        return this.isCustom;
+    }
+
+    public boolean materialContains(String string){
+        return this.material.toString().contains(string);
     }
 
 }
