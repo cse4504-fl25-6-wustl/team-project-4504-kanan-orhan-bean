@@ -5,8 +5,8 @@ import entities.Box;
 import entities.Container;
 import interactors.Packing;
 import entities.Client;
-import parser.CSVParser;
-import parser.ClientParser;
+import parser.ClientFileParser;
+import parser.Parser;
 import requests.Request;
 import responses.Response;
 
@@ -19,13 +19,9 @@ public class Main {
         System.out.println("Input File Name: " + inputFileName);
         System.out.println("Client File Name: " + inputClientFileName);
 
-        CSVParser CSVparser = new CSVParser();
+        List<Art> arts = Parser.parseArt(inputFileName);
 
-        ClientParser ClientParser = new ClientParser();
-
-        List<Art> arts = CSVparser.parseCSV(inputFileName);
-
-        Client client = ClientParser.parseClient(inputClientFileName);
+        Client client = Parser.parseClient(inputClientFileName);
 
         Request request = new Request(arts, client);
 
