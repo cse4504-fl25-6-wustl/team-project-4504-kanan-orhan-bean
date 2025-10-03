@@ -8,8 +8,8 @@
 
 package parser;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+// import org.apache.poi.ss.usermodel.*;
+// import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -38,7 +38,9 @@ public class ArtFileParser extends FileParser {
         String extension = Path.of(filePath).getFileName().toString().toLowerCase();
 
         if (extension.endsWith(".xlsx")) {
-            return parseExcel(filePath);
+            // return parseExcel(filePath);
+            System.err.println("csv type not yet supported for parsing");
+            return null;
         } else if (extension.endsWith(".csv")) {
             System.err.println("csv type not yet supported for parsing");
             return null;
@@ -50,62 +52,63 @@ public class ArtFileParser extends FileParser {
         }
     }
 
-    private ParseReturnVals parseExcel(String filePath) {
-        try (FileInputStream fis = new FileInputStream(filePath);
-            Workbook workbook = new XSSFWorkbook(fis)) {
+    // private ParseReturnVals parseExcel(String filePath) {
+    //     try (FileInputStream fis = new FileInputStream(filePath);
+    //         Workbook workbook = new XSSFWorkbook(fis)) {
 
-            Sheet sheet = workbook.getSheetAt(0); // assume first sheet
-            // formatter returns a string in the same format (display style) as shown in the excel sheet
-            DataFormatter formatter = new DataFormatter();
+    //         Sheet sheet = workbook.getSheetAt(0); // assume first sheet
+    //         // formatter returns a string in the same format (display style) as shown in the excel sheet
+    //         DataFormatter formatter = new DataFormatter();
 
-            // Skip header row (row 0), start at row 1
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-                Row row = sheet.getRow(i);
-                if (row == null) continue; // skip empty rows
+    //         // Skip header row (row 0), start at row 1
+    //         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+    //             Row row = sheet.getRow(i);
+    //             if (row == null) continue; // skip empty rows
 
-                try {
-                    int lineNumber   = Integer.parseInt(formatter.formatCellValue(row.getCell(0)));
-                    int quantity     = Integer.parseInt(formatter.formatCellValue(row.getCell(1)));
-                    int tagNumber    = Integer.parseInt(formatter.formatCellValue(row.getCell(2)));
+    //             try {
+    //                 int lineNumber   = Integer.parseInt(formatter.formatCellValue(row.getCell(0)));
+    //                 int quantity     = Integer.parseInt(formatter.formatCellValue(row.getCell(1)));
+    //                 int tagNumber    = Integer.parseInt(formatter.formatCellValue(row.getCell(2)));
                     
-                    // Type enum mapping
-                    String typeStr    = formatter.formatCellValue(row.getCell(3));
-                    Type type = setType(typeStr);
+    //                 // Type enum mapping
+    //                 String typeStr    = formatter.formatCellValue(row.getCell(3));
+    //                 Type type = setType(typeStr);
                     
-                    double width     = Double.parseDouble(formatter.formatCellValue(row.getCell(4)));
-                    double height    = Double.parseDouble(formatter.formatCellValue(row.getCell(5)));
+    //                 double width     = Double.parseDouble(formatter.formatCellValue(row.getCell(4)));
+    //                 double height    = Double.parseDouble(formatter.formatCellValue(row.getCell(5)));
 
-                    // Glazing enum mapping
-                    String glazingStr = formatter.formatCellValue(row.getCell(6)).trim().toLowerCase();
-                    GlazingType glazing = setGlazingType(glazingStr);
+    //                 // Glazing enum mapping
+    //                 String glazingStr = formatter.formatCellValue(row.getCell(6)).trim().toLowerCase();
+    //                 GlazingType glazing = setGlazingType(glazingStr);
 
-                    String frameMoulding = formatter.formatCellValue(row.getCell(7));
+    //                 String frameMoulding = formatter.formatCellValue(row.getCell(7));
 
-                    // hardware int extracting
-                    String hardwareStr      = formatter.formatCellValue(row.getCell(8));
-                    int hardware = setHardware(hardwareStr);
+    //                 // hardware int extracting
+    //                 String hardwareStr      = formatter.formatCellValue(row.getCell(8));
+    //                 int hardware = setHardware(hardwareStr);
 
-                    // Build ArtPiece and add to collection
-                    Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
-                    this.artCollection.add(artPiece);
+    //                 // Build ArtPiece and add to collection
+    //                 // FIX LATER
+    //                 Art artPiece = new Art(Art.Type.PaperPrint, Art.Glazing.Glass, lineNumber, -1, -1, hardware);
+    //                 this.artCollection.add(artPiece);
 
-                } catch (Exception e) {
-                    System.err.println("Skipping row " + i + " due to parse error: " + e.getMessage());
-                }
-            }
+    //             } catch (Exception e) {
+    //                 System.err.println("Skipping row " + i + " due to parse error: " + e.getMessage());
+    //             }
+    //         }
 
-            return ParseReturnVals.SUCCESS;
+    //         return ParseReturnVals.SUCCESS;
 
-        } catch (IOException e) {
-            System.err.println("ERROR: file not found");
-            e.printStackTrace();
-            return ParseReturnVals.FILE_NOT_FOUND;
-        } catch (Exception e) {
-            System.err.println("ERROR: could not parse excel sheet");
-            e.printStackTrace();
-            return ParseReturnVals.PARSE_ERROR;
-        }
-    }
+    //     } catch (IOException e) {
+    //         System.err.println("ERROR: file not found");
+    //         e.printStackTrace();
+    //         return ParseReturnVals.FILE_NOT_FOUND;
+    //     } catch (Exception e) {
+    //         System.err.println("ERROR: could not parse excel sheet");
+    //         e.printStackTrace();
+    //         return ParseReturnVals.PARSE_ERROR;
+    //     }
+    // }
     // private ParseReturnVals parseCSV(String filePath);
     // private ParseReturnVals parseTXT(String filePath);
 
