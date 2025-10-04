@@ -7,8 +7,6 @@
 
 package entities;
 
-import java.util.List;
-
 public class Client {
     private String location;
     private final String name;
@@ -23,7 +21,7 @@ public class Client {
     }
 
     // Non-static inner class for delivery-related booleans
-    private class DeliveryCapabilities {
+    public class DeliveryCapabilities {
         private boolean acceptsPallets;
         private boolean acceptsCrates;
         private boolean loadingDockAccess;
@@ -75,5 +73,11 @@ public class Client {
     // Setters
     public void setLocation(String location) { this.location = location; }
     public void setServiceType(ServiceType serviceType) { this.serviceType = serviceType; }
+
+/*     // for debugging
+    @Override
+    public String toString() {
+        return "Client{"+ location + ", " + name + ", " + deliveryCapabilities.doesAcceptCrates() + ", " + serviceType.toString() + "}";
+    } */
 
 }

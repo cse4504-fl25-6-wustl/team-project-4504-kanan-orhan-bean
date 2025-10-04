@@ -20,7 +20,7 @@ public class Main {
         System.out.println("Client File Name: " + inputClientFileName);
 
         List<Art> arts = Parser.parseArt(inputFileName);
-
+        
         Client client = Parser.parseClient(inputClientFileName);
 
         Request request = new Request(arts, client);
