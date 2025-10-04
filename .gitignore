@@ -1,4 +1,6 @@
 .vscode
+.args
+javac.*.args
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,macos,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,macos,windows
