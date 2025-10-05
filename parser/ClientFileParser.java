@@ -8,12 +8,12 @@
 package parser;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+// import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
+// import java.io.FileWriter;
 import java.io.IOException;
 
-import java.io.FileInputStream;
+// import java.io.FileInputStream;
 import java.nio.file.Path;
 
 import entities.Client;
@@ -138,6 +138,7 @@ public class ClientFileParser extends FileParser {
             System.err.println("ERROR: file not found");
             return ParseReturnVals.FILE_NOT_FOUND;
         } catch (Exception e) {
+            System.out.println("client checker");
             System.err.println("ERROR: could not parse excel sheet");
             e.printStackTrace();
             return ParseReturnVals.PARSE_ERROR;

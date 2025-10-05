@@ -172,7 +172,7 @@ public class Box {
             return false;
         }
 
-        Art boxFirstArt = arts.getFirst();
+        Art boxFirstArt = arts.get(0);
         // Assuming the Box only has Art that is of same Material
         if (boxFirstArt.materialContains("Glass") || boxFirstArt.materialContains("Acrylic")){
             this.capacity = 6;

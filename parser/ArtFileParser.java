@@ -9,12 +9,12 @@
 package parser;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+// import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
+// import java.io.FileWriter;
 import java.io.IOException;
 
-import java.io.FileInputStream;
+// import java.io.FileInputStream;
 import java.nio.file.Path;
 
 import java.util.List;
@@ -112,6 +112,7 @@ public class ArtFileParser extends FileParser {
         }
     } */
 
+    // *why is quantity, tagNumber, and frameMoulding NOT used?
     private ParseReturnVals parseCSV(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             // skip header row
@@ -129,14 +130,14 @@ public class ArtFileParser extends FileParser {
                 
                 // Type enum mapping
                 String typeStr = values[3].trim();
-                Type type = setType(typeStr);
+                Art.Type type = setType(typeStr);
                 
                 double width = Double.parseDouble(values[4].trim());
                 double height = Double.parseDouble(values[5].trim());
 
                 // Glazing enum mapping
                 String glazingStr = values[6].trim();
-                GlazingType glazing = setGlazingType(glazingStr);
+                Art.Glazing glazing = setGlazingType(glazingStr);
 
                 String frameMoulding = values[7].trim();
 
@@ -145,8 +146,7 @@ public class ArtFileParser extends FileParser {
                 int hardware = setHardware(hardwareStr);
 
                 // Build ArtPiece and add to collection
-                // FIX LATER
-                Art artPiece = new Art(Art.Type.PaperPrint, Art.Glazing.Glass, lineNumber, -1, -1, hardware);
+                Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
                 this.artCollection.add(artPiece);
             }
             return ParseReturnVals.SUCCESS;
@@ -156,6 +156,7 @@ public class ArtFileParser extends FileParser {
             e.printStackTrace();
             return ParseReturnVals.FILE_NOT_FOUND;
         } catch (Exception e) {
+            System.out.println(this.artCollection.isEmpty());
             System.err.println("ERROR: could not parse excel sheet");
             e.printStackTrace();
             return ParseReturnVals.PARSE_ERROR;
@@ -165,43 +166,47 @@ public class ArtFileParser extends FileParser {
     // private ParseReturnVals parseTXT(String filePath);
 
     // helper method for setting type
-    // *UPDATE WITH ORHANS ART ENTITY LATER*
-    private Type setType(String typeStr) {
-        if (typeStr.contains("paper")) {
-            if (typeStr.contains("title")) {
-                return Type.PaperPrintFramedWithTitlePlate;
+    // *TODO: fix art enums so we don't have to return null ever
+    private Art.Type setType(String typeStr) {
+        typeStr = typeStr.toLowerCase();
+        if (typeStr.contains("print")) {
+            if (typeStr.contains("metal")) {
+                return Art.Type.MetalPrint;
             }
-            else { return Type.PaperPrintFramed; }
+            else if (typeStr.contains("title")) {
+                return Art.Type.PaperPrintFramedWithTitlePlate;
+            }
+            else { return Art.Type.PaperPrintFramed; }
         }
-        if (typeStr.contains("canvas")) {
-            return Type.CanvasFloatFrame;
+        else if (typeStr.contains("canvas")) {
+            return Art.Type.CanvasFloatFrame;
         }
-        if (typeStr.contains("wall")) {
-            return Type.WallDecor;
+        else if (typeStr.contains("wall")) {
+            return Art.Type.WallDecor;
         }
-        if (typeStr.contains("acoustic")) {
+        else if (typeStr.contains("acoustic")) {
             if (typeStr.contains("framed")) {
-                return Type.AcousticPanelFramed;
+                return Art.Type.AcousticPanelFramed;
             }
-            else { return Type.AcousticPanel; }
+            else { return Art.Type.AcousticPanel; }
         }
-        if (typeStr.contains("metal")) {
-            return Type.MetalPrint;
+        else if (typeStr.contains("metal")) {
+            return Art.Type.MetalPrint;
         }
-        if (typeStr.contains("mirror")) {
-            return Type.Mirror;
+        else if (typeStr.contains("mirror")) {
+            return Art.Type.Mirror;
         }
         return null;
     }
     // helper method for setting glaze
-    // *UPDATE WITH ORHANS ART ENTITY LATER*
-    private GlazingType setGlazingType(String glazingStr) {
+    private Art.Glazing setGlazingType(String glazingStr) {
+        glazingStr = glazingStr.toLowerCase();
         if (glazingStr.contains("glass")) {
-            return GlazingType.Glass;
+            return Art.Glazing.Glass;
         } else if (glazingStr.contains("acrylic")) {
-            return GlazingType.Acrylic;
+            return Art.Glazing.Acrylic;
         } else {
-            return GlazingType.NoGlaze;
+            return Art.Glazing.NoGlaze;
         }
     }
     // helper method for setting hardware number
