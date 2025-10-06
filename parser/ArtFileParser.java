@@ -146,8 +146,10 @@ public class ArtFileParser extends FileParser {
                 int hardware = setHardware(hardwareStr);
 
                 // Build ArtPiece and add to collection
-                Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
+                for (int i=1; i<=quantity; ++i) {
+                    Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
                 this.artCollection.add(artPiece);
+                }
             }
             return ParseReturnVals.SUCCESS;
 
