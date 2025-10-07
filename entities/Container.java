@@ -140,10 +140,11 @@ public class Container {
         return true;
     }
 
-    public boolean canArtFit(Art Art){
+    public boolean canArtFit(Art art){
         if (!isMirrorCrate()){
             throw new IllegalStateException("Can not check Arts in a Non-Mirror Crate.");
         }
+        if (art.getType() == Type.Mirror)
         // Crate is Full, can't fit Box
         if (this.isFull()){
             return false;
