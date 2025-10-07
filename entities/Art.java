@@ -57,6 +57,76 @@ public class Art {
         setDepth(4.0);
     }
 
+    public boolean materialContains(Material material){
+        return this.getMaterial() == material;
+    }
+
+    // -------- getters and setters --------
+
+    public Material getMaterial(){
+        return this.material;
+    }
+
+    public Type getType(){
+        return this.type;
+    }
+
+    public Glazing getGlazing(){
+        return this.glazing;
+    }
+
+    public int getLineNumber(){
+        return this.lineNumber;
+    }
+
+    public double getWidth(){
+        return this.width;
+    }
+
+    public double getHeight(){
+        return this.height;
+    }
+
+    public double getDepth(){
+        return this.depth;
+    }
+
+    public int getHardware(){
+        return this.hardware;
+    };
+
+    public double getWeight(){
+        this.weight = this.width * this.height * this.material.LBpSQIN;
+        return this.weight;
+    }
+
+    public boolean needSpecialHandling(){
+        //C. Flag Tactile Panels and Raised Float Mounts for Special Handling.
+        return this.specialHandling;
+    }
+
+    public boolean isCustom(){
+        //B. Any item with a dimension over 44 inches requires "Custom" packaging.
+        this.isCustom = (this.width > CUSTOM_THRESHOLD || this.height > CUSTOM_THRESHOLD);
+        return this.isCustom;
+    }
+
+    // ---------------- helpers ----------------
+
+    private boolean setSpecialHandling(Type type){
+        this.specialHandling = false;
+        if (this.getType() == Type.AcousticPanel || this.getType() == Type.AcousticPanelFramed 
+        || this.getType() == Type.CanvasFloatFrame){
+            this.specialHandling = true;
+        }
+        return this.specialHandling;
+    }
+
+    private boolean setDepth(double depth){
+        this.depth = depth;
+        return true;
+    }
+
     private Material setMaterial(Type type, Glazing glazing){
         // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
         switch (type) {
@@ -95,71 +165,4 @@ public class Art {
         }
         throw new IllegalArgumentException("Unsupported glazing for type: " + type);
     }
-
-    public Material getMaterial(){
-        return this.material;
-    }
-
-    private boolean setSpecialHandling(Type type){
-        this.specialHandling = typeContains("Acoustic") || typeContains("Float");
-        return this.specialHandling;
-    }
-
-    private boolean typeContains(String string){
-        return this.type.toString().contains(string);
-    }
-
-    public Type getType(){
-        return this.type;
-    }
-
-    public Glazing getGlazing(){
-        return this.glazing;
-    }
-
-    public int getLineNumber(){
-        return this.lineNumber;
-    }
-
-    public double getWidth(){
-        return this.width;
-    }
-
-    public double getHeight(){
-        return this.height;
-    }
-
-    public double getDepth(){
-        return this.depth;
-    }
-
-    private boolean setDepth(double depth){
-        this.depth = depth;
-        return true;
-    }
-
-    public double getHardware(){
-        return this.hardware;
-    };
-
-    public double getWeight(){
-        this.weight = this.width * this.height * this.material.LBpSQIN;
-        return this.weight;
-    }
-
-    public boolean needSpecialHandling(){
-        //C. Flag Tactile Panels and Raised Float Mounts for Special Handling.
-        return this.specialHandling;
-    }
-
-    public boolean isCustom(){
-        //B. Any item with a dimension over 44 inches requires "Custom" packaging.
-        this.isCustom = (this.width > CUSTOM_THRESHOLD || this.height > CUSTOM_THRESHOLD);
-        return this.isCustom;
-    }
-
-    public boolean materialContains(String string){
-        return this.material.toString().contains(string);
-    }
-
 }

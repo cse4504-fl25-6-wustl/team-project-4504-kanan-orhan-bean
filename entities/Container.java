@@ -2,6 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import entities.Art;
 
 public class Container {
 
@@ -52,12 +53,37 @@ public class Container {
         this.boxes = new ArrayList<>();
     }
 
-    public Container constructContainerForBox(Box box) {
-        return null;
+    public List<Container> constructContainersForBoxes(List<Box> boxes, boolean canAcceptCrates) {
+        List<Container> result = new ArrayList<>();
+        for (Box box : boxes){
+            boolean added = false;
+            for (Container container : result){
+                if (container.canBoxFit(box) && !added){
+                    container.addBox(box);
+                    added = true;
+                }
+            }
+            if (!added){
+                result.add(constructContainerForBox(box));
+            }
+        }
+        return result;
     }
 
-    public Container constructContainerForArt(Art art) {
-        return null;
+    public List<Container> constructContainersForMirrors(List<Art> arts, boolean canAcceptCrates) {
+        List<Container> result = new ArrayList<>();
+        for (Art art : arts) {
+            if (!art.materialContains(Art.Material.Mirror)){
+                throw new IllegalArgumentException("One or more Items in arts is NOT a Mirror. All Arts must be Mirror to put directly into a Crate");
+            }
+            if (result.isEmpty() || result.getLast().isFull()){
+                result.add(constructContainerForArt(art));
+            }
+            else {
+                result.getLast().addArt(art);
+            }
+        }
+        return result;
     }
 
     public List<Box> addBox(Box box){
@@ -144,7 +170,9 @@ public class Container {
         if (!isMirrorCrate()){
             throw new IllegalStateException("Can not check Arts in a Non-Mirror Crate.");
         }
-        if (art.getType() == ArtType.Mirror)
+        if (art.getType() != Art.Type.Mirror){
+            throw new IllegalStateException("Can not put any Art other than Mirror in a Mirror Crate.");
+        }
         // Crate is Full, can't fit Box
         if (this.isFull()){
             return false;
@@ -232,6 +260,11 @@ public class Container {
     }
 
     // ---------------- helpers ----------------
+
+    private boolean setMirrorCrate(boolean bool){
+        this.isMirrorCrate = bool;
+        return this.isMirrorCrate;
+    }
 
     private void updateFullness(){
         if (!setCapacity()){
@@ -343,8 +376,8 @@ public class Container {
                     isDimensionsOversize = true;
                 }
             }
-            if (containerFirstBox.getArts().get(0).materialContains("Glass") 
-            || containerFirstBox.getArts().get(0).materialContains("Acrylic")){
+            if (containerFirstBox.getArts().get(0).materialContains(Art.Material.Glass)
+            || containerFirstBox.getArts().get(0).materialContains(Art.Material.Acyrlic)){
                 if (isDimensionsOversize){
                     this.capacity = OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT;
                 }
@@ -352,7 +385,8 @@ public class Container {
                     this.capacity = NORMAL_GLASS_ACRYLIC_CRATE_LIMIT;
                 }
             }
-            else if (containerFirstBox.getArts().get(0).materialContains("Canvas")){
+            else if (containerFirstBox.getArts().get(0).materialContains(Art.Material.CanvasFramed) 
+            || containerFirstBox.getArts().get(0).materialContains(Art.Material.CanvasGallery)){
                 if (isDimensionsOversize){
                     this.capacity = OVERSIZE_CANVAS_CRATE_LIMIT;
                 }
@@ -362,6 +396,46 @@ public class Container {
             }
             return true;
         }
+    }
 
+    private Container constructContainerForArt(Art art) {
+        if (art.getType() == Art.Type.Mirror){
+            Container myContainer = new Container(Type.Crate, canAcceptCrate);
+            myContainer.setMirrorCrate(true);
+            myContainer.addArt(art);
+            return myContainer;
+        }
+        else {
+            throw new IllegalArgumentException("You can only construct a direct Container for Mirrors, for all other art use Boxes");
+        }
+    }
+
+    private Container constructContainerForBox(Box box) {
+        if (box.isCustom()){
+            Container myContainer = new Container(Type.Custom, canAcceptCrate);
+            myContainer.addBox(box);
+            myContainer.setMirrorCrate(false);
+            return myContainer;
+        }
+        else if (box.isOversized()){
+            Container myContainer = new Container(Type.Oversize, canAcceptCrate);
+            myContainer.addBox(box);
+            myContainer.setMirrorCrate(false);
+            return myContainer;
+        }
+        else if (box.isSmallEnoughForGlassPallet()) {
+            // TODO: Implement isSmallEnoughForGlassPallet() for Box.java
+            Container myContainer = new Container(Type.Glass, canAcceptCrate);
+            myContainer.addBox(box);
+            myContainer.setMirrorCrate(false);
+            return myContainer;
+        }
+        else {
+            Container myContainer = new Container(Type.Oversize, canAcceptCrate);
+            myContainer.addBox(box);
+            myContainer.setMirrorCrate(false);
+            return myContainer;
+        }
+        return null;
     }
 }
