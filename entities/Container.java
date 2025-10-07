@@ -144,7 +144,7 @@ public class Container {
         if (!isMirrorCrate()){
             throw new IllegalStateException("Can not check Arts in a Non-Mirror Crate.");
         }
-        if (art.getType() == Type.Mirror)
+        if (art.getType() == ArtType.Mirror)
         // Crate is Full, can't fit Box
         if (this.isFull()){
             return false;

@@ -3,7 +3,7 @@ package entities;
 public class Art {
     
     // TODO: Figure out how to handle the Type, Material, and Glazing Enums depending on https://piazza.com/class/mf6woqytzb81zq/post/14
-    public enum ArtType { 
+    public enum Type { 
         PaperPrintFramed, 
         PaperPrintFramedWithTitlePlate, 
         CanvasFloatFrame, 
@@ -32,7 +32,7 @@ public class Art {
     public enum Glazing { Glass, Acrylic, NoGlaze }
     private int hardware;
     private final int lineNumber; 
-    private ArtType type;
+    private Type type;
     private Glazing glazing;
     private double depth;
     private double width;
@@ -44,7 +44,7 @@ public class Art {
 
     private final double CUSTOM_THRESHOLD = 43.5;
 
-    public Art(ArtType type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
+    public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
         super();
         this.lineNumber = lineNumber;
         this.type = type;
@@ -57,7 +57,7 @@ public class Art {
         setDepth(4.0);
     }
 
-    private Material setMaterial(ArtType type, Glazing glazing){
+    private Material setMaterial(Type type, Glazing glazing){
         // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
         switch (type) {
             case PaperPrintFramed:
@@ -100,7 +100,7 @@ public class Art {
         return this.material;
     }
 
-    private boolean setSpecialHandling(ArtType type){
+    private boolean setSpecialHandling(Type type){
         this.specialHandling = typeContains("Acoustic") || typeContains("Float");
         return this.specialHandling;
     }
@@ -109,7 +109,7 @@ public class Art {
         return this.type.toString().contains(string);
     }
 
-    public ArtType getType(){
+    public Type getType(){
         return this.type;
     }
 
