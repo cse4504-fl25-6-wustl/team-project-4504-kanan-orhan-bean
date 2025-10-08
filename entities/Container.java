@@ -90,6 +90,60 @@ public class Container {
 
     // ^--- This is how packing could implement packBoxIntoContainers ---^
 
+    public Container constructContainerForArt(Art art) {
+        if (art.getType() == Art.Type.Mirror){
+            Container myContainer = new Container(Type.Crate, canAcceptCrate);
+            myContainer.setMirrorCrate(true);
+            myContainer.addArt(art);
+            return myContainer;
+        }
+        else {
+            throw new IllegalArgumentException("You can only construct a direct Container for Mirrors, for all other art use Boxes");
+        }
+    }
+
+    public Container constructContainerForBox(Box box) {
+        if (box.isCustom() || box.getWidth() > OVERSIZE_CRATE_LIMIT || box.getLength() > OVERSIZE_CRATE_LIMIT 
+        || box.getHeight() > OVERSIZE_CRATE_LIMIT){
+            Container myContainer = new Container(Type.Custom, canAcceptCrate);
+            myContainer.setMirrorCrate(false);
+            myContainer.addBox(box);
+            return myContainer;
+        }
+        else if (this.canAcceptCrate() && !this.isSmallEnoughForGlassPallet(box)){
+            Container myContainer = new Container(Type.Crate, canAcceptCrate);
+            myContainer.setMirrorCrate(false);
+            myContainer.addBox(box);
+            myContainer.setCrateNormal();
+            this.setContainerHeight(box.getHeight() + CRATE_HEIGHT_OVERHEAD);
+            return myContainer;
+        }
+        else if (this.isSmallEnoughForGlassPallet(box)) {
+            Container myContainer = new Container(Type.Glass, canAcceptCrate);
+            myContainer.setMirrorCrate(false);
+            myContainer.addBox(box);
+            myContainer.setPalletGlass();
+            this.setContainerHeight(box.getHeight());
+            return myContainer;
+        }
+        else if (box.isOversized()){
+            Container myContainer = new Container(Type.Oversize, canAcceptCrate);
+            myContainer.setMirrorCrate(false);
+            myContainer.addBox(box);
+            myContainer.setPalletOversize();
+            this.setContainerHeight(box.getHeight());
+            return myContainer;
+        }
+        else {
+            Container myContainer = new Container(Type.Pallet, canAcceptCrate);
+            myContainer.addBox(box);
+            myContainer.setMirrorCrate(false);
+            myContainer.setPalletNormal();
+            this.setContainerHeight(box.getHeight());
+            return myContainer;
+        }
+    }
+
     public List<Box> addBox(Box box){
         if (this.isMirrorCrate()){
             throw new IllegalStateException("Can not add a Box to a Mirror Crate.");
@@ -393,60 +447,6 @@ public class Container {
                 }
             }
             return true;
-        }
-    }
-
-    private Container constructContainerForArt(Art art) {
-        if (art.getType() == Art.Type.Mirror){
-            Container myContainer = new Container(Type.Crate, canAcceptCrate);
-            myContainer.setMirrorCrate(true);
-            myContainer.addArt(art);
-            return myContainer;
-        }
-        else {
-            throw new IllegalArgumentException("You can only construct a direct Container for Mirrors, for all other art use Boxes");
-        }
-    }
-
-    private Container constructContainerForBox(Box box) {
-        if (box.isCustom() || box.getWidth() > OVERSIZE_CRATE_LIMIT || box.getLength() > OVERSIZE_CRATE_LIMIT 
-        || box.getHeight() > OVERSIZE_CRATE_LIMIT){
-            Container myContainer = new Container(Type.Custom, canAcceptCrate);
-            myContainer.setMirrorCrate(false);
-            myContainer.addBox(box);
-            return myContainer;
-        }
-        else if (this.canAcceptCrate() && !this.isSmallEnoughForGlassPallet(box)){
-            Container myContainer = new Container(Type.Crate, canAcceptCrate);
-            myContainer.setMirrorCrate(false);
-            myContainer.addBox(box);
-            myContainer.setCrateNormal();
-            this.setContainerHeight(box.getHeight() + CRATE_HEIGHT_OVERHEAD);
-            return myContainer;
-        }
-        else if (this.isSmallEnoughForGlassPallet(box)) {
-            Container myContainer = new Container(Type.Glass, canAcceptCrate);
-            myContainer.setMirrorCrate(false);
-            myContainer.addBox(box);
-            myContainer.setPalletGlass();
-            this.setContainerHeight(box.getHeight());
-            return myContainer;
-        }
-        else if (box.isOversized()){
-            Container myContainer = new Container(Type.Oversize, canAcceptCrate);
-            myContainer.setMirrorCrate(false);
-            myContainer.addBox(box);
-            myContainer.setPalletOversize();
-            this.setContainerHeight(box.getHeight());
-            return myContainer;
-        }
-        else {
-            Container myContainer = new Container(Type.Pallet, canAcceptCrate);
-            myContainer.addBox(box);
-            myContainer.setMirrorCrate(false);
-            myContainer.setPalletNormal();
-            this.setContainerHeight(box.getHeight());
-            return myContainer;
         }
     }
 
