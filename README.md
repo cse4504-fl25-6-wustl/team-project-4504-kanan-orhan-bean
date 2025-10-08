@@ -45,7 +45,7 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 
 2. To run the code input 2 command line arguments. First one being the LineItemFileName, and the second one being the ClientFileName. 
 
-To build the file run `javac entities/*.java Main.java` in the terminal. After building the file to run the code run `java Main [inputFileName] [inputClientFileName]`, replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
+To build the file run `javac entities/*.java Main.java` (or `javac -d bin entities/*.java Main.java` if you need to compile binaries) in the terminal. After building the file to run the code run `java Main [inputFileName] [inputClientFileName]` (or `java -cp bin entities/*.java Main.java` if you need to compile binaries), replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
 
 ```
 (base) > team-project-4504-kanan-orhan-bean % javac entities/*.java Main.java     
