@@ -61,6 +61,10 @@ public class Art {
         return this.getMaterial() == material;
     }
 
+    public boolean materialContains(String string){
+        return this.material.toString().contains(string);
+    }
+
     // -------- getters and setters --------
 
     public Material getMaterial(){
