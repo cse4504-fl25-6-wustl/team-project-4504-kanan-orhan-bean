@@ -1,6 +1,7 @@
 package interactors;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,229 +15,224 @@ import responses.Response;
 public class Packing {
 
     private Client currentClient;
-    private int mirrorCount;
 
     public Response packEverything(Request request) {
         Objects.requireNonNull(request, "request must not be null");
         this.currentClient = Objects.requireNonNull(request.getClient(), "client must not be null");
 
-        List<Art> arts = Objects.requireNonNull(request.getArts(), "arts must not be null");
+        final List<Art> arts = Objects.requireNonNull(request.getArts(), "arts must not be null");
 
-        List<Box> boxes = packArtIntoBoxes(arts); // Pack arts into boxes
-        List<Container> containers = packBoxIntoContainers(boxes); // Pack boxes into containers
-        // Response prints items/boxes/containers summary and totals
-        return new Response(arts, boxes, containers);
-    }
-
-    /**
-     * placeholder Box objects to represent how many boxes we'd need.
-     * We do NOT call Box.addArt(...) because Box's internal list isn't initialized
-     * yet.
-     * Instead, we compute counts and set dimensions via setBoxCustom so the summary
-     * looks meaningful.
-     */
-    private List<Box> packArtIntoBoxes(List<Art> arts) {
-        List<Box> result = new ArrayList<>();
-        if (arts.isEmpty())
-            return result;
-
-        // Partition
         List<Art> mirrors = new ArrayList<>();
-        List<Art> customs = new ArrayList<>();
-        List<Art> normals = new ArrayList<>();
+        List<Art> nonMirrors = new ArrayList<>();
         for (Art a : arts) {
-            if (a.getType() == Art.Type.Mirror) {
+            if (a.getType() == Art.Type.Mirror)
                 mirrors.add(a);
-            } else if (a.isCustom()) {
-                customs.add(a);
-            } else {
-                normals.add(a);
-            }
-        }
-        this.mirrorCount = mirrors.size();
-
-        // --- Custom items: create 1 custom box per custom item (simple baseline) ---
-        for (Art a : customs) {
-            Box customBox = new Box();
-            // plausible custom size (a bit larger than the art)
-            double L = roundUp(a.getWidth() + 2); // add ~2" margin
-            double W = 13; // similar to oversize width
-            double H = roundUp(a.getHeight() + 2); // add ~2" margin
-            customBox.setBoxCustom(L, W, H); // public setter available
-            result.add(customBox);
-        }
-
-        // --- Normals: group by material "family" to get capacity, and split oversize
-        // vs standard ---
-        int stdCount = 0;
-        int overCount = 0;
-
-        for (Art a : normals) {
-            if (isOversizeForBox(a))
-                overCount++;
             else
-                stdCount++;
+                nonMirrors.add(a);
         }
 
-        int capStdFamily = 0;
-        int capOverFamily = 0;
+        List<Box> boxes = constructBoxesForArtsLocal(nonMirrors);
+        boolean acceptsCrates = currentClient.getDeliveryCapabilities().doesAcceptCrates();
+        List<Container> containers = new ArrayList<>();
+        containers.addAll(constructContainersForBoxesLocal(boxes, acceptsCrates));
+        containers.addAll(constructContainersForMirrorsLocal(mirrors, acceptsCrates));
 
-        // We'll approximate capacity by the dominant family among normals.
-        // (Glass/Acrylic=6; Canvas=6 (per current code/TODO); Acoustic=4; default=4)
-        String dominantFamily = dominantFamily(normals);
-        if ("GLASS_OR_ACRYLIC".equals(dominantFamily)) {
-            capStdFamily = 6;
-            capOverFamily = 6; // same cap; tweak later if needed
-        } else if ("CANVAS".equals(dominantFamily)) {
-            capStdFamily = 6; // TODO: possible change; keep 6 for now
-            capOverFamily = 6;
-        } else if ("ACOUSTIC".equals(dominantFamily)) {
-            capStdFamily = 4;
-            capOverFamily = 4;
-        } else {
-            capStdFamily = 4;
-            capOverFamily = 4;
-        }
+        double totalWeight = computeTotalWeight(arts, boxes, containers);
+        String summary = buildSummary(arts, boxes, containers, totalWeight);
 
-        int numStdBoxes = ceilDiv(stdCount, capStdFamily);
-        int numOverBoxes = ceilDiv(overCount, capOverFamily);
-
-        // --- Materialized placeholder boxes
-        // Standard box dims: 37 x 11 x 31
-        for (int i = 0; i < numStdBoxes; i++) {
-            Box b = new Box();
-            b.setBoxCustom(37, 11, 31);
-            result.add(b);
-        }
-        // Oversize box dims: 44 x 13 x 48
-        for (int i = 0; i < numOverBoxes; i++) {
-            Box b = new Box();
-            b.setBoxCustom(44, 13, 48);
-            result.add(b);
-        }
-
-        return result;
+        return new Response(arts, boxes, containers, totalWeight, summary);
     }
 
-    /**
-     * placeholder Container objects to represent how many pallets/crates
-     * we’d need.
-     * We do NOT call Container.addBox(...) because Container's internal lists
-     * aren’t initialized yet.
+    /*
+     * --------------------------- totals and summary ----------------------------
      */
-    private List<Container> packBoxIntoContainers(List<Box> boxes) {
-        List<Container> result = new ArrayList<>();
-        if (currentClient == null)
-            return result;
 
-        // Client delivery capabilities
-        var caps = currentClient.getDeliveryCapabilities();
-        boolean acceptsPallets = caps.doesAcceptPallets();
-        boolean acceptsCrates = caps.doesAcceptCrates();
-
-        // Mirror crates: 24 mirrors per crate (baseline)
-        if (mirrorCount > 0) {
-            int mirrorCrates = ceilDiv(mirrorCount, 24);
-            for (int i = 0; i < mirrorCrates; i++) {
-                result.add(new Container(Container.Type.Crate, /* canAcceptCrate= */acceptsCrates));
+    private double computeTotalWeight(List<Art> arts, List<Box> boxes, List<Container> containers) {
+        try {
+            if (!containers.isEmpty()) {
+                double sum = 0.0;
+                for (Container c : containers)
+                    sum += safeContainerWeight(c);
+                if (sum > 0)
+                    return sum;
             }
-        }
-
-        if (boxes.isEmpty())
-            return result;
-
-        // Count oversize vs standard boxes (infer from our custom-set dimensions)
-        int std = 0, over = 0;
-        for (Box b : boxes) {
-            if (isOversizeBoxDim(b))
-                over++;
-            else
-                std++;
-        }
-
-        // Pallet baseline capacity: 4 boxes; treat oversize as more “expensive” (3 per
-        // pallet)
-        int pallets = 0, crates = 0;
-        if (acceptsPallets) {
-            pallets += ceilDiv(std, 4);
-            pallets += ceilDiv(over, 3); // heuristic: oversize reduces pallet capacity by ~1
-            for (int i = 0; i < pallets; i++) {
-                result.add(new Container(Container.Type.Pallet, /* canAcceptCrate= */acceptsCrates));
+            if (!boxes.isEmpty()) {
+                double sum = 0.0;
+                for (Box b : boxes)
+                    sum += safeBoxWeight(b);
+                if (sum > 0)
+                    return sum;
             }
-        } else if (acceptsCrates) {
-            crates = ceilDiv(std + over, 4);
-            for (int i = 0; i < crates; i++) {
-                result.add(new Container(Container.Type.Crate, /* canAcceptCrate= */true));
-            }
-        } else {
-            // Neither pallets nor crates accepted means boxes only (no containers)
+        } catch (Exception ignored) {
+        }
+        double sumArts = 0.0;
+        for (Art a : arts)
+            if (a != null)
+                sumArts += a.getWeight();
+        return sumArts;
+    }
+
+    private String buildSummary(List<Art> arts, List<Box> boxes, List<Container> containers, double totalWeight) {
+        String nl = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== PACKING SUMMARY ===").append(nl);
+
+        // Items
+        sb.append(String.format("Items: %d total", arts.size())).append(nl);
+        int maxItemsToShow = Math.min(arts.size(), 10);
+        for (int i = 0; i < maxItemsToShow; i++) {
+            Art a = arts.get(i);
+            sb.append(String.format(
+                    "  - Art #%d (line %d): %.2f\" x %.2f\" %s | weight=%.2f lb%s",
+                    i + 1, a.getLineNumber(), a.getWidth(), a.getHeight(),
+                    a.getType(), a.getWeight(), a.isCustom() ? " | CUSTOM" : "")).append(nl);
+        }
+        if (arts.size() > maxItemsToShow) {
+            sb.append(String.format("  ... and %d more items", arts.size() - maxItemsToShow)).append(nl);
         }
 
-        return result;
+        // Boxes
+        sb.append(String.format("Boxes: %d", boxes.size())).append(nl);
+        for (int i = 0; i < boxes.size(); i++) {
+            Box b = boxes.get(i);
+            double bw = safeBoxWeight(b);
+            String sizeTag = b.isOversized() ? "OVERSIZE" : (b.isCustom() ? "CUSTOM" : "STANDARD");
+            sb.append(String.format(
+                    "  - Box #%d: %s | %.0f\" L x %.0f\" W x %.0f\" H | weight=%.2f lb",
+                    i + 1, sizeTag, b.getLength(), b.getWidth(), b.getHeight(), bw)).append(nl);
+        }
+
+        // Containers
+        sb.append(String.format("Containers: %d", containers.size())).append(nl);
+        for (int i = 0; i < containers.size(); i++) {
+            Container c = containers.get(i);
+            double cw = safeContainerWeight(c);
+            sb.append(String.format(
+                    "  - Container #%d: %s | %.0f\" L x %.0f\" W x %.0f\" H | weight=%.2f lb",
+                    i + 1, c.getType(), c.getLength(), c.getWidth(), c.getHeight(), cw)).append(nl);
+        }
+
+        sb.append(String.format("TOTAL SHIPMENT WEIGHT: %.2f lb", totalWeight)).append(nl);
+        sb.append("========================");
+        return sb.toString();
     }
 
-    // ---------------- helpers ----------------
+    /* -------------------------------- helpers -------------------------------- */
 
-    private int ceilDiv(int a, int b) {
-        if (b <= 0)
-            return 0;
-        return (a + b - 1) / b;
+    private static double safeBoxWeight(Box b) {
+        try {
+            return (b != null) ? b.getWeight() : 0.0;
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 
-    private double roundUp(double x) {
-        return Math.ceil(x);
+    private static double safeContainerWeight(Container c) {
+        try {
+            return (c != null) ? c.getWeight() : 0.0;
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 
-    /**
-     * Oversize threshold in Box()
-     */
-    private boolean isOversizeForBox(Art a) {
-        return a.getWidth() > 36.0 || a.getHeight() > 36.0;
-    }
+    /* ------------- LOCAL FACTORY HELPERS ------------ */
 
-    /**
-     * Infer whether a placeholder Box should be considered “oversize” by its
-     * dimensions
-     * (we set oversize placeholders to 44 x 13 x 48).
-     */
-    private boolean isOversizeBoxDim(Box b) {
-        return b.getLength() >= 44 || b.getWidth() >= 13 || b.getHeight() >= 48;
-    }
+    /** Local version of constructBoxesForArts (greedy, largest-first). */
+    private static List<Box> constructBoxesForArtsLocal(List<Art> items) {
+        List<Box> boxes = new ArrayList<>();
+        if (items == null || items.isEmpty())
+            return boxes;
 
-    /**
-     * Determine dominant family among a list for picking a capacity rule.
-     */
-    private String dominantFamily(List<Art> items) {
-        int glassAcr = 0, canvas = 0, acoustic = 0, other = 0;
+        items.sort(Comparator.comparingDouble(a -> -Math.max(a.getWidth(), a.getHeight())));
+
         for (Art a : items) {
-            String fam = familyOf(a);
-            switch (fam) {
-                case "GLASS_OR_ACRYLIC" -> glassAcr++;
-                case "CANVAS" -> canvas++;
-                case "ACOUSTIC" -> acoustic++;
-                default -> other++;
+            Box placed = null;
+            for (Box b : boxes) {
+                try {
+                    if (b.canArtFit(a)) {
+                        b.addArt(a);
+                        placed = b;
+                        break;
+                    }
+                } catch (Exception ignored) {
+                    /* try next box */ }
+            }
+            if (placed == null) {
+                Box b = new Box();
+                b.addArt(a);
+                boxes.add(b);
             }
         }
-        if (glassAcr >= canvas && glassAcr >= acoustic && glassAcr >= other)
-            return "GLASS_OR_ACRYLIC";
-        if (canvas >= glassAcr && canvas >= acoustic && canvas >= other)
-            return "CANVAS";
-        if (acoustic >= glassAcr && acoustic >= canvas && acoustic >= other)
-            return "ACOUSTIC";
-        return "OTHER";
+        return boxes;
     }
 
-    /**
-     * Map Art to a capacity family based on its material string.
-     */
-    private String familyOf(Art a) {
-        String mat = a.getMaterial().toString();
-        if (mat.contains("Glass") || mat.contains("Acyrlic") || mat.contains("Acrylic"))
-            return "GLASS_OR_ACRYLIC";
-        if (mat.contains("Canvas"))
-            return "CANVAS";
-        if (mat.contains("Acoustic"))
-            return "ACOUSTIC";
-        return "OTHER";
+    /** Local version of constructContainersForBoxes */
+    private static List<Container> constructContainersForBoxesLocal(List<Box> myBoxes, boolean canAcceptCrates) {
+        List<Container> result = new ArrayList<>();
+        if (myBoxes == null || myBoxes.isEmpty())
+            return result;
+
+        Container.Type defaultType = Container.Type.Pallet;
+
+        for (Box box : myBoxes) {
+            boolean added = false;
+            for (Container cont : result) {
+                try {
+                    if (cont.canBoxFit(box)) {
+                        cont.addBox(box);
+                        added = true;
+                        break;
+                    }
+                } catch (Exception ignored) {
+                    /* try next container */ }
+            }
+            if (!added) {
+                Container fresh = new Container(defaultType, canAcceptCrates);
+                try {
+                    fresh.addBox(box);
+                } catch (Exception ignored) {
+                    /* container refused; leave empty */ }
+                result.add(fresh);
+            }
+        }
+        return result;
+    }
+
+    /** Local version of constructContainersForMirrors */
+    private static List<Container> constructContainersForMirrorsLocal(List<Art> mirrors, boolean canAcceptCrates) {
+        List<Container> result = new ArrayList<>();
+        if (mirrors == null || mirrors.isEmpty())
+            return result;
+
+        if (!canAcceptCrates) {
+            return result;
+        }
+
+        Container currentCrate = null;
+        for (Art art : mirrors) {
+            if (art.getType() != Art.Type.Mirror)
+                continue;
+
+            if (currentCrate == null) {
+                currentCrate = new Container(Container.Type.Crate, /* canAcceptCrate */ true);
+                result.add(currentCrate);
+            }
+
+            try {
+                if (!currentCrate.canArtFit(art)) {
+                    currentCrate = new Container(Container.Type.Crate, true);
+                    result.add(currentCrate);
+                }
+                currentCrate.addArt(art);
+            } catch (Exception e) {
+                currentCrate = new Container(Container.Type.Crate, true);
+                result.add(currentCrate);
+                try {
+                    currentCrate.addArt(art);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return result;
     }
 }
