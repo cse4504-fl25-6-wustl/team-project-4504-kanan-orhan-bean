@@ -22,20 +22,12 @@ public class Packing {
 
         final List<Art> arts = Objects.requireNonNull(request.getArts(), "arts must not be null");
 
-        List<Art> mirrors = new ArrayList<>();
-        List<Art> nonMirrors = new ArrayList<>();
-        for (Art a : arts) {
-            if (a.getType() == Art.Type.Mirror)
-                mirrors.add(a);
-            else
-                nonMirrors.add(a);
-        }
+        List<Box> boxes = constructBoxesForArtsHypo(arts);
 
-        List<Box> boxes = constructBoxesForArtsLocal(nonMirrors);
-        boolean acceptsCrates = currentClient.getDeliveryCapabilities().doesAcceptCrates();
-        List<Container> containers = new ArrayList<>();
-        containers.addAll(constructContainersForBoxesLocal(boxes, acceptsCrates));
-        containers.addAll(constructContainersForMirrorsLocal(mirrors, acceptsCrates));
+        var caps = currentClient.getDeliveryCapabilities();
+        boolean acceptsPallets = caps.doesAcceptPallets();
+        boolean acceptsCrates = caps.doesAcceptCrates();
+        List<Container> containers = constructContainersForBoxesLocal(boxes, acceptsPallets, acceptsCrates);
 
         double totalWeight = computeTotalWeight(arts, boxes, containers);
         String summary = buildSummary(arts, boxes, containers, totalWeight);
@@ -43,9 +35,7 @@ public class Packing {
         return new Response(arts, boxes, containers, totalWeight, summary);
     }
 
-    /*
-     * --------------------------- totals and summary ----------------------------
-     */
+    /* ======================== totals and summary ======================== */
 
     private double computeTotalWeight(List<Art> arts, List<Box> boxes, List<Container> containers) {
         try {
@@ -117,35 +107,31 @@ public class Packing {
         return sb.toString();
     }
 
-    /* -------------------------------- helpers -------------------------------- */
+    /* ===================== local factory helpers ===================== */
 
-    private static double safeBoxWeight(Box b) {
-        try {
-            return (b != null) ? b.getWeight() : 0.0;
-        } catch (Exception e) {
-            return 0.0;
-        }
-    }
-
-    private static double safeContainerWeight(Container c) {
-        try {
-            return (c != null) ? c.getWeight() : 0.0;
-        } catch (Exception e) {
-            return 0.0;
-        }
-    }
-
-    /* ------------- LOCAL FACTORY HELPERS ------------ */
-
-    /** Local version of constructBoxesForArts (greedy, largest-first). */
-    private static List<Box> constructBoxesForArtsLocal(List<Art> items) {
+    /**
+     * Build boxes for all arts. Mirrors are modeled as hypothetical boxes:
+     * one mirror per box; no mixing mirrors with other art inside a box.
+     * Non-mirrors are packed greedily (largest side first) using Box.canArtFit().
+     */
+    private static List<Box> constructBoxesForArtsHypo(List<Art> items) {
         List<Box> boxes = new ArrayList<>();
         if (items == null || items.isEmpty())
             return boxes;
 
-        items.sort(Comparator.comparingDouble(a -> -Math.max(a.getWidth(), a.getHeight())));
-
+        // Partition
+        List<Art> mirrors = new ArrayList<>();
+        List<Art> others = new ArrayList<>();
         for (Art a : items) {
+            if (a.getType() == Art.Type.Mirror)
+                mirrors.add(a);
+            else
+                others.add(a);
+        }
+
+        // 1) Non-mirrors: greedy largest-first
+        others.sort(Comparator.comparingDouble(a -> -Math.max(a.getWidth(), a.getHeight())));
+        for (Art a : others) {
             Box placed = null;
             for (Box b : boxes) {
                 try {
@@ -163,19 +149,35 @@ public class Packing {
                 boxes.add(b);
             }
         }
+
+        // 2) Mirrors: one per box
+        for (Art m : mirrors) {
+            Box b = new Box();
+            b.addArt(m);
+            boxes.add(b);
+        }
+
         return boxes;
     }
 
-    /** Local version of constructContainersForBoxes */
-    private static List<Container> constructContainersForBoxesLocal(List<Box> myBoxes, boolean canAcceptCrates) {
+    /**
+     * Containerize boxes. If a box is mirror-only and site allows crates,
+     * start a Crate for it; otherwise prefer Pallet (if site allows).
+     * All subsequent placement uses Container.canBoxFit(...) + addBox(...).
+     */
+    private static List<Container> constructContainersForBoxesLocal(
+            List<Box> myBoxes, boolean acceptsPallets, boolean canAcceptCrates) {
+
         List<Container> result = new ArrayList<>();
         if (myBoxes == null || myBoxes.isEmpty())
             return result;
 
-        Container.Type defaultType = Container.Type.Pallet;
+        if (!acceptsPallets && !canAcceptCrates)
+            return result;
 
         for (Box box : myBoxes) {
             boolean added = false;
+
             for (Container cont : result) {
                 try {
                     if (cont.canBoxFit(box)) {
@@ -186,53 +188,55 @@ public class Packing {
                 } catch (Exception ignored) {
                     /* try next container */ }
             }
+
             if (!added) {
-                Container fresh = new Container(defaultType, canAcceptCrates);
+                Container.Type freshType;
+                if (isMirrorOnly(box) && canAcceptCrates) {
+                    freshType = Container.Type.Crate;
+                } else if (acceptsPallets) {
+                    freshType = Container.Type.Pallet;
+                } else if (canAcceptCrates) {
+                    freshType = Container.Type.Crate;
+                } else {
+                    continue;
+                }
+
+                Container fresh = new Container(freshType, canAcceptCrates);
                 try {
                     fresh.addBox(box);
                 } catch (Exception ignored) {
-                    /* container refused; leave empty */ }
+                }
                 result.add(fresh);
             }
         }
         return result;
     }
 
-    /** Local version of constructContainersForMirrors */
-    private static List<Container> constructContainersForMirrorsLocal(List<Art> mirrors, boolean canAcceptCrates) {
-        List<Container> result = new ArrayList<>();
-        if (mirrors == null || mirrors.isEmpty())
-            return result;
+    private static boolean isMirrorOnly(Box b) {
+        List<Art> arts = b.getArts();
+        if (arts == null || arts.isEmpty())
+            return false;
+        for (Art a : arts)
+            if (a.getType() != Art.Type.Mirror)
+                return false;
+        return true;
+    }
 
-        if (!canAcceptCrates) {
-            return result;
+    /* ============================== helpers ============================== */
+
+    private static double safeBoxWeight(Box b) {
+        try {
+            return (b != null) ? b.getWeight() : 0.0;
+        } catch (Exception e) {
+            return 0.0;
         }
+    }
 
-        Container currentCrate = null;
-        for (Art art : mirrors) {
-            if (art.getType() != Art.Type.Mirror)
-                continue;
-
-            if (currentCrate == null) {
-                currentCrate = new Container(Container.Type.Crate, /* canAcceptCrate */ true);
-                result.add(currentCrate);
-            }
-
-            try {
-                if (!currentCrate.canArtFit(art)) {
-                    currentCrate = new Container(Container.Type.Crate, true);
-                    result.add(currentCrate);
-                }
-                currentCrate.addArt(art);
-            } catch (Exception e) {
-                currentCrate = new Container(Container.Type.Crate, true);
-                result.add(currentCrate);
-                try {
-                    currentCrate.addArt(art);
-                } catch (Exception ignored) {
-                }
-            }
+    private static double safeContainerWeight(Container c) {
+        try {
+            return (c != null) ? c.getWeight() : 0.0;
+        } catch (Exception e) {
+            return 0.0;
         }
-        return result;
     }
 }

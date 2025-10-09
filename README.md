@@ -48,7 +48,7 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 To build the file run `javac -d bin Main.java` in the terminal. After building the file to run the code run `java -cp bin Main [inputFileName] [inputClientFileName]`, replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
 
 ```
-(base) > team-project-4504-kanan-orhan-bean % javac entities/*.java Main.java     
+(base) > team-project-4504-kanan-orhan-bean % javac -d bin entities/*.java parser/*.java interactors/*.java requests/*.java Main.java     
 (base) > team-project-4504-kanan-orhan-bean % java Main hello world
 Input File Name: hello
 Client File Name: world
