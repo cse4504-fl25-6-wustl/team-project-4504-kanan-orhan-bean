@@ -45,11 +45,11 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 
 2. To run the code input 2 command line arguments. First one being the LineItemFileName, and the second one being the ClientFileName. 
 
-To build the file run `javac entities/*.java parser/*.java interactors/*.java requests/*.java Main.java` (or `javac -d bin entities/*.java parser/*.java interactors/*.java requests/*.java Main.java` if you need to compile binaries) in the terminal. After building the file to run the code run `java Main [inputFileName] [inputClientFileName]` (or `java -cp bin Main.java [inputFileName] [inputClientFileName]` if you need to compile binaries), replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
+First run `cd src` to go into the src files. Then to build the file run `javac -d bin entities/*.java parser/*.java interactors/*.java requests/*.java Main.java` in the terminal. After building the file to run the code run `java -cp bin Main.java [inputFileName] [inputClientFileName]`, replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
 
 ```
-(base) > team-project-4504-kanan-orhan-bean % javac entities/*.java parser/*.java interactors/*.java requests/*.java Main.java     
-(base) > team-project-4504-kanan-orhan-bean % java Main input/LineItemInput.csv input/ClientInput.csv
+(base) > team-project-4504-kanan-orhan-bean % javac -d bin entities/*.java parser/*.java interactors/*.java requests/*.java Main.java     
+(base) > team-project-4504-kanan-orhan-bean % java -cp bin Main input/LineItemInput.csv input/ClientInput.csv
 Input File Name: input/LineItemInput.csv
 Client File Name: input/ClientInput.csv
 === PACKING SUMMARY ===
