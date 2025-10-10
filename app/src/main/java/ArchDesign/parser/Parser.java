@@ -11,8 +11,8 @@ package ArchDesign.parser;
 
 import java.util.List;
 import java.util.ArrayList;
-import entities.Art;
-import entities.Client;
+import ArchDesign.entities.Art;
+import ArchDesign.entities.Client;
 
 public class Parser {
     public static List<Art> parseArt(String artFileName) {

@@ -1,11 +1,12 @@
+package ArchDesign;
 import java.util.List;
 
-import entities.Art;
-import interactors.Packing;
-import entities.Client;
-import parser.Parser;
-import requests.Request;
-import responses.Response;
+import ArchDesign.entities.Art;
+import ArchDesign.interactors.Packing;
+import ArchDesign.entities.Client;
+import ArchDesign.parser.Parser;
+import ArchDesign.requests.Request;
+import ArchDesign.responses.Response;
 
 public class Main {
     public static void main(String[] args) {

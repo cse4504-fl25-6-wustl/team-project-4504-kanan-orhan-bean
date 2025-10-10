@@ -5,12 +5,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import entities.Art;
-import entities.Box;
-import entities.Container;
-import entities.Client;
-import requests.Request;
-import responses.Response;
+import ArchDesign.entities.Art;
+import ArchDesign.entities.Box;
+import ArchDesign.entities.Container;
+import ArchDesign.entities.Client;
+import ArchDesign.requests.Request;
+import ArchDesign.responses.Response;
 
 public class Packing {
 

@@ -16,7 +16,7 @@ import java.io.IOException;
 // import java.io.FileInputStream;
 import java.nio.file.Path;
 
-import entities.Client;
+import ArchDesign.entities.Client;
 
 // *TODO: add lots of checks for input
 // *TODO: add methods for other input file types

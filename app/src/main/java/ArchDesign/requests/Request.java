@@ -5,8 +5,8 @@ import java.util.Objects;
 import java.util.Collections;
 import java.util.ArrayList;
 
-import entities.Art;
-import entities.Client;
+import ArchDesign.entities.Art;
+import ArchDesign.entities.Client;
 
 public class Request {
 

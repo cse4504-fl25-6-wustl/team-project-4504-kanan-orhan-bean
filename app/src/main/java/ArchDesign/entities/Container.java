@@ -2,7 +2,7 @@ package ArchDesign.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import entities.Art;
+import ArchDesign.entities.Art;
 
 public class Container {
 

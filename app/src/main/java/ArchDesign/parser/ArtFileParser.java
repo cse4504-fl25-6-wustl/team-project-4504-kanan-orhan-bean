@@ -19,7 +19,7 @@ import java.nio.file.Path;
 
 import java.util.List;
 
-import entities.Art;
+import ArchDesign.entities.Art;
 
 // *TODO: add lots of checks for input
 // *TODO: add methods for other input file types

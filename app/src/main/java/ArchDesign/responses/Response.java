@@ -5,9 +5,9 @@ import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import entities.Art;
-import entities.Box;
-import entities.Container;
+import ArchDesign.entities.Art;
+import ArchDesign.entities.Box;
+import ArchDesign.entities.Container;
 
 public class Response {
 
