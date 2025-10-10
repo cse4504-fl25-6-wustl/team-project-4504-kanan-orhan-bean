@@ -41,17 +41,14 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 
 # Developer Guide
 
-1. This code does not need any external dependencies.
+1. This code uses gradle to build and run both the source and the test codes. Make sure you have gradle installed 
 
 2. To run the code input 2 command line arguments. First one being the LineItemFileName, and the second one being the ClientFileName. 
 
-Run `gradle run --args="input/Input1.csv input/Site_requirements.csv"`
-
-First run `cd src` to go into the src files. Then to build the file run `javac -d bin entities/*.java parser/*.java interactors/*.java requests/*.java Main.java` in the terminal. After building the file to run the code run `java -cp bin Main.java [inputFileName] [inputClientFileName]`, replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
+To build and run the program you can run `gradle run --args="[inputFileName] [inputClientFileName]"`, replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like:
 
 ```
-(base) > team-project-4504-kanan-orhan-bean % javac -d bin entities/*.java parser/*.java interactors/*.java requests/*.java Main.java     
-(base) > team-project-4504-kanan-orhan-bean % java -cp bin Main input/LineItemInput.csv input/ClientInput.csv
+(base) > team-project-4504-kanan-orhan-bean % gradle run --args="input/Input1.csv input/Site_requirements.csv"
 Input File Name: input/LineItemInput.csv
 Client File Name: input/ClientInput.csv
 === PACKING SUMMARY ===
@@ -75,33 +72,15 @@ Containers: 3
 TOTAL SHIPMENT WEIGHT: 245.00 lb
 ```
 
-For example output with premade inputs use `java -cp bin Main input/LineItemInput.csv input/ClientInput.csv`.
-Use `rm -r bin/*` to start a clean build, and then recompile and run the code as described above.
-For more information about command line arguments in VSCode specifically follow this [link](https://code.visualstudio.com/docs/debugtest/debugging-configuration).
-
- For Example: You can add a command line arguments in VSCode by creating a folder called `.vscode` and creating a file in it called `launch.json`. Populate the `launch.json` file with the following code, replace the `inputFileName` arguments in `args` with your desired inputFileName, and replace the `inputClientFileName` with your desired inputClientFileName.
+To build and run the test cases  you can run `gradle test`, and this will run all test cases under the test folder. The following is how it would look like:
 
 ```
-{
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "java",
-            "name": "Current File",
-            "request": "launch",
-            "mainClass": "${file}"
-        },
-        {
-            "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "Main",
-            "args": ["inputFileName", "inputClientFileName"],
-            "projectName": "team-project-4504-kanan-orhan-bean_f1b55c66"
-        }
-    ]
-}
+(base) orhanerdogan@mac team-project-4504-kanan-orhan-bean % gradle test
+Calculating task graph as no cached configuration is available for tasks: test
+
+BUILD SUCCESSFUL in 532ms
+3 actionable tasks: 3 up-to-date
+Configuration cache entry stored.
 ```
+
+Then once it is built successfully you can go to the following directory `app/build/reports/index.html` and open it with default application (option+command+O `⌥+⌘+O` on macOS) in VSCode. This `index.html` file will show you a report of your Test Cases
