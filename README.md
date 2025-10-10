@@ -54,6 +54,7 @@ Input File Name: hello
 Client File Name: world
 ```
 
+For example output with premade inputs use `java -cp bin Main input/LineItemInput.csv input/ClientInput.csv`.
 Use `rm -r bin/*` to start a clean build, and then recompile and run the code as described above.
 For more information about command line arguments in VSCode specifically follow this [link](https://code.visualstudio.com/docs/debugtest/debugging-configuration).
 

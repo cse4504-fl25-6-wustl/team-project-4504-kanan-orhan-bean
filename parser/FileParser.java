@@ -20,23 +20,6 @@ public abstract class FileParser {
         INVALID_FILE_TYPE
     }
 
-    //temp enums
-    public static enum GlazingType {
-        Glass,
-        Acrylic,
-        NoGlaze
-    }
-    public static enum Type { 
-        PaperPrintFramed, 
-        PaperPrintFramedWithTitlePlate, 
-        CanvasFloatFrame, 
-        WallDecor, 
-        AcousticPanel, 
-        AcousticPanelFramed, 
-        MetalPrint, 
-        Mirror 
-    }
-
     // Abstract parse method to be implemented by subclasses
     protected abstract ParseReturnVals parse(String filePath);
 }

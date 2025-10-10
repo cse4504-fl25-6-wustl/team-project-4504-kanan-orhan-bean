@@ -293,7 +293,7 @@ public class Container {
             return false;
         }
 
-        Box containerFirstBox = boxes.getFirst();
+        Box containerFirstBox = boxes.get(0);;
         Type containerType = this.getType();
         boolean boxOversized = containerFirstBox.isOversized();
 
@@ -326,8 +326,8 @@ public class Container {
                     isDimensionsOversize = true;
                 }
             }
-            if (containerFirstBox.getArts().getFirst().materialContains("Glass") 
-            || containerFirstBox.getArts().getFirst().materialContains("Acrylic")){
+            if (containerFirstBox.getArts().get(0).materialContains("Glass") 
+            || containerFirstBox.getArts().get(0).materialContains("Acrylic")){
                 if (isDimensionsOversize){
                     this.capacity = OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT;
                 }
@@ -335,7 +335,7 @@ public class Container {
                     this.capacity = NORMAL_GLASS_ACRYLIC_CRATE_LIMIT;
                 }
             }
-            else if (containerFirstBox.getArts().getFirst().materialContains("Canvas")){
+            else if (containerFirstBox.getArts().get(0).materialContains("Canvas")){
                 if (isDimensionsOversize){
                     this.capacity = OVERSIZE_CANVAS_CRATE_LIMIT;
                 }

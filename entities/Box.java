@@ -15,13 +15,13 @@ public class Box {
     private int capacity;
     private boolean isCustom;
 
-    private final double STANDARD_LENGTH = 37;
-    private final double STANDARD_WIDTH = 11;
-    private final double STANDARD_HEIGHT = 31;
-    private final double OVERSIZE_LENGTH = 44;
-    private final double OVERSIZE_WIDTH = 13;
-    private final double OVERSIZE_HEIGHT = 48;
-    private final double OVERSIZE_BOX_LIMIT = 36;
+    private static final double STANDARD_LENGTH = 37;
+    private static final double STANDARD_WIDTH = 11;
+    private static final double STANDARD_HEIGHT = 31;
+    private static final double OVERSIZE_LENGTH = 44;
+    private static final double OVERSIZE_WIDTH = 13;
+    private static final double OVERSIZE_HEIGHT = 48;
+    private static final double OVERSIZE_BOX_LIMIT = 36;
 
     public Box() {
         super();
@@ -41,23 +41,76 @@ public class Box {
         return this.isCustom;
     }
 
+    private static boolean isArtOversizedForBoxes(Art art) {
+        if (art.getHeight() > OVERSIZE_BOX_LIMIT || art.getWidth() > OVERSIZE_BOX_LIMIT) {
+            return true;
+        }
+        return false;
+    }
+
     private void setBoxNormal(){
         this.length = STANDARD_LENGTH;
         this.width = STANDARD_WIDTH;
         this.height = STANDARD_HEIGHT;
+
+        this.isOversized = false;
+        this.isCustom = false;
     }
 
     private void setBoxOversize(){
         this.length = OVERSIZE_LENGTH;
         this.width = OVERSIZE_WIDTH;
         this.height = OVERSIZE_HEIGHT;
+
+        this.isOversized = true;
+        this.isCustom = false;
     }
 
-    public void setBoxCustom(double length, double width, double height){
+    // BEAN - delete later, after packArtIntoBoxes in packing.java is fixed
+    public void tempFix(double length, double width, double height){
         this.length = length;
         this.width = width;
         this.height = height;
+
+        this.isCustom = true;
+        // BEAN - can a box be custom and oversized?? assume no!
+        this.isOversized = false;
     }
+
+    private void setBoxCustom(double length, double width, double height){
+        this.length = length;
+        this.width = width;
+        this.height = height;
+
+        this.isCustom = true;
+        // BEAN - can a box be custom and oversized?? assume no!
+        this.isOversized = false;
+/*         if (height > OVERSIZE_BOX_LIMIT || width > OVERSIZE_BOX_LIMIT) {
+            this.isOversized = true;
+        }
+        else {
+            this.isOversized = true;
+        } */
+    }
+    
+    // BEAN - factory function that creates standard, oversized, or custom boxes based on an art piece
+    // BEAN - which means we could make the Box constructor private right??
+    // BEAN - TODO: add capacities ??
+    public static Box createBoxForArt(Art art) {
+        Box box = new Box();
+        if (art.isCustom()) {
+            // BEAN - measurements as defined in packing.java
+            box.setBoxCustom(art.getWidth() +2, 13, art.getHeight() +2);
+        }
+        else if (isArtOversizedForBoxes(art)) {
+            box.setBoxOversize();
+        }
+        else {
+            box.setBoxNormal();
+        }
+        return box;
+    }
+
 
     public double getLength(){
         return this.length;
@@ -79,8 +132,12 @@ public class Box {
         return this.arts;
     };
 
+    // BEAN - TODO: this should simply add an art to a box, if possible.
+/*     BEAN - this should return true false. no need to return the list of art, since that is accessible via the box instance
+    then in packing you could just use while (box.addArt(art)) variation */
+    // BEAN - WHY IS THIS NOT USED IN ANY OTHER FILES??
     public List<Art> addArt(Art art){
-        this.arts.add(art);
+/*         this.arts.add(art);
         boolean isArtOversized = art.getHeight() > OVERSIZE_BOX_LIMIT || art.getWidth() > OVERSIZE_BOX_LIMIT;
         if (isArtOversized){
             this.setBoxOversize();
@@ -88,18 +145,54 @@ public class Box {
         else {
             this.setBoxNormal();
         }
+        return this.arts; */
+
+        if (canArtFit(art)) {
+            if (isArtSameType(art)) {
+                this.arts.add(art);
+                if (this.arts.size() == capacity) {
+                    this.isFull = true;
+                }
+            }
+        }
         return this.arts;
     };
+
+    private boolean isArtSameType(Art art) {
+        if (art.isCustom() && this.isCustom) {
+            return true;
+        }
+        else if (isArtOversizedForBoxes(art) && this.isOversized()) {
+            return true;
+        }
+        else if (!art.isCustom() && !isArtOversizedForBoxes(art) && !this.isCustom && !this.isOversized) {
+            return true;
+        }
+        return false;
+    }
 
     public List<Art> removeArt(Art art){
         this.arts.remove(art);
         return this.arts;
     };
 
+    // BEAN - TODO: this should be a function that purely checks for whether or not an art can be added to this box instance, right?
+    // BEAN - could possibly be private, if add addArt becomes boolean function
+    // BEAN - WHY IS THIS NOT USED OUTSIDE OF BOX??
     public boolean canArtFit(Art art){
         // TODO: Might have to rework depending on https://piazza.com/class/mf6woqytzb81zq/post/13
 
-        boolean isArtOversized = art.getHeight() > OVERSIZE_BOX_LIMIT || art.getWidth() > OVERSIZE_BOX_LIMIT;
+        if (this.isFull) {
+            return false;
+        }
+        else if (isArtSameType(art)) {
+            if (this.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+        
+/*         boolean isArtOversized = art.getHeight() > OVERSIZE_BOX_LIMIT || art.getWidth() > OVERSIZE_BOX_LIMIT;
 
         // Art is Custom, needs Custom Box
         if (art.isCustom()){
@@ -130,7 +223,7 @@ public class Box {
         }
         // Assuming we sorted the art by size before checking, all other cases are Box is Oversized, Art isn't 
         // or that they are both the same size. So in all other cases Art can fit
-        return true;
+        return true; */
     }
 
     public double getWeight(){
@@ -172,7 +265,7 @@ public class Box {
             return false;
         }
 
-        Art boxFirstArt = arts.getFirst();
+        Art boxFirstArt = arts.get(0);
         // Assuming the Box only has Art that is of same Material
         if (boxFirstArt.materialContains("Glass") || boxFirstArt.materialContains("Acrylic")){
             this.capacity = 6;

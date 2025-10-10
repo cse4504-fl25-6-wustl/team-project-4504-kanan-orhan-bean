@@ -57,12 +57,12 @@ public class Packing {
 
         // --- Custom items: create 1 custom box per custom item (simple baseline) ---
         for (Art a : customs) {
-            Box customBox = new Box();
+            Box customBox = Box.createBoxForArt(a);
             // plausible custom size (a bit larger than the art)
             double L = roundUp(a.getWidth() + 2); // add ~2" margin
             double W = 13; // similar to oversize width
             double H = roundUp(a.getHeight() + 2); // add ~2" margin
-            customBox.setBoxCustom(L, W, H); // public setter available
+            // customBox.setBoxCustom(L, W, H);
             result.add(customBox);
         }
 
@@ -101,17 +101,18 @@ public class Packing {
         int numStdBoxes = ceilDiv(stdCount, capStdFamily);
         int numOverBoxes = ceilDiv(overCount, capOverFamily);
 
+        // BEAN - TODO: this has to fixed and updated later.
         // --- Materialized placeholder boxes
         // Standard box dims: 37 x 11 x 31
         for (int i = 0; i < numStdBoxes; i++) {
             Box b = new Box();
-            b.setBoxCustom(37, 11, 31);
+            b.tempFix(37, 11, 31);
             result.add(b);
         }
         // Oversize box dims: 44 x 13 x 48
         for (int i = 0; i < numOverBoxes; i++) {
             Box b = new Box();
-            b.setBoxCustom(44, 13, 48);
+            b.tempFix(44, 13, 48);
             result.add(b);
         }
 
