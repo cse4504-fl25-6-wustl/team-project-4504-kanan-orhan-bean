@@ -7,7 +7,7 @@
  */
 
 // TODO: add parseThenUpdate method later
-package parser;
+package ArchDesign.parser;
 
 import java.util.List;
 import java.util.ArrayList;

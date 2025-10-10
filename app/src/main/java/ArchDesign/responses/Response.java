@@ -1,4 +1,4 @@
-package responses;
+package ArchDesign.responses;
 
 import java.util.List;
 import java.util.Objects;

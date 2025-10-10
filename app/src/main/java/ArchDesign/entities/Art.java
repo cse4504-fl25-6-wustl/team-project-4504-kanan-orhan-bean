@@ -1,4 +1,4 @@
-package entities;
+package ArchDesign.entities;
 
 public class Art {
     

@@ -5,7 +5,7 @@
  * Responsible for reading the file based on type and producing a Client object.
  */
 
-package parser;
+package ArchDesign.parser;
 
 import java.io.BufferedReader;
 // import java.io.BufferedWriter;

@@ -5,7 +5,7 @@
  * holds inputted project requirement data for a specific client
  */
 
-package entities;
+package ArchDesign.entities;
 
 public class Client {
     private String location;

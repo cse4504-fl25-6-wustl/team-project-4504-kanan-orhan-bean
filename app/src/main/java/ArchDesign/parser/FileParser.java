@@ -7,7 +7,7 @@
  * Concrete subclasses will implement the actual parsing logic for their respective file types.
  */
 
-package parser;
+package ArchDesign.parser;
 
 public abstract class FileParser {
     

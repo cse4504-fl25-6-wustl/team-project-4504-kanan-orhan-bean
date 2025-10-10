@@ -1,4 +1,4 @@
-package interactors;
+package ArchDesign.interactors;
 
 import java.util.ArrayList;
 import java.util.Comparator;

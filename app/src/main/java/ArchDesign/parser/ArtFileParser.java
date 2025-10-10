@@ -6,7 +6,7 @@
  * Responsible for reading the art file based on its type, and producing a list of art objects.
  */
 
-package parser;
+package ArchDesign.parser;
 
 import java.io.BufferedReader;
 // import java.io.BufferedWriter;

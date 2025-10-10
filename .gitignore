@@ -94,3 +94,8 @@ $RECYCLE.BIN/
 
 # don't add any bin/ folders
 **/bin/
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
