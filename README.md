@@ -45,6 +45,8 @@ team-project-4504-kanan-orhan-bean created by GitHub Classroom
 
 2. To run the code input 2 command line arguments. First one being the LineItemFileName, and the second one being the ClientFileName. 
 
+Run `gradle run --args="input/Input1.csv input/Site_requirements.csv"`
+
 First run `cd src` to go into the src files. Then to build the file run `javac -d bin entities/*.java parser/*.java interactors/*.java requests/*.java Main.java` in the terminal. After building the file to run the code run `java -cp bin Main.java [inputFileName] [inputClientFileName]`, replacing `[inputFileName]` and `[inputClientFileName]` with the actual names of the input files. The following is how it would look like
 
 ```
