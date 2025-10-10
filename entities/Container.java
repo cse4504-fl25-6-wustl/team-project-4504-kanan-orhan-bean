@@ -6,7 +6,10 @@ import entities.Art;
 
 public class Container {
 
-    public enum Type { Pallet, Crate, Glass, Oversize, Custom} 
+    public enum Type {
+        Pallet, Crate, Glass, Oversize, Custom
+    }
+
     private Type type;
     private double length;
     private double width;
@@ -177,11 +180,11 @@ public class Container {
         boolean isBoxOversized = box.isOversized();
 
         // Crate is Full, can't fit Box
-        if (this.isFull()){
+        if (this.isFull()) {
             return false;
         }
         // Crate is empty
-        else if (this.isEmpty()){
+        else if (this.isEmpty()) {
             // Box is oversize, Crate needs to be Oversize
             if (isBoxOversized) {
                 this.isCarryingOversizeBox = true;
@@ -217,10 +220,9 @@ public class Container {
             throw new IllegalStateException("Can not put any Art other than Mirror in a Mirror Crate.");
         }
         // Crate is Full, can't fit Box
-        if (this.isFull()){
+        if (this.isFull()) {
             return false;
-        }
-        else {
+        } else {
             // Can put Mirrors into the box
             return true;
         }
@@ -284,8 +286,7 @@ public class Container {
             for (Art art : arts){
                 weight +=art.getWeight();
             }
-        }
-        else {
+        } else {
             for (Box box : boxes) {
                 weight += box.getWeight();
             }
@@ -387,10 +388,11 @@ public class Container {
         return (box.getLength() > GLASS_PALLET_LENGTH || box.getWidth() > GLASS_PALLET_WIDTH) ? false : true;
     }
 
-    private boolean setCapacity(){
-        
-        if (this.isEmpty()){
-            // Return a void value if the box is empty. Because if the box is empty we don't know the items in it 
+    private boolean setCapacity() {
+
+        if (this.isEmpty()) {
+            // Return a void value if the box is empty. Because if the box is empty we don't
+            // know the items in it
             // which means we don't know its capacity
             return false;
         }
@@ -403,13 +405,12 @@ public class Container {
         
         if (containerType != Type.Custom && !this.isMirrorCrate()){
             int containerInitialCapacity = 0;
-            if (containerType == Type.Pallet || containerType == Type.Crate){
+            if (containerType == Type.Pallet || containerType == Type.Crate) {
                 containerInitialCapacity = 4;
-            }
-            else if (containerType == Type.Oversize){
+            } else if (containerType == Type.Oversize) {
                 containerInitialCapacity = 5;
             }
-            if (boxOversized){
+            if (boxOversized) {
                 containerInitialCapacity--;
             }
 
@@ -419,8 +420,7 @@ public class Container {
         else if (this.isMirrorCrate()){
             this.capacity = MIRROR_CRATE_LIMIT;
             return true;
-        }
-        else {
+        } else {
             // TODO: Is this considered a Custom Box? Does it need human evaluation?
             boolean isDimensionsOversize = false;
             for (Box box : this.getBoxes()){
@@ -432,8 +432,7 @@ public class Container {
             || containerFirstBox.getArts().get(0).materialContains(Art.Material.Acyrlic)){
                 if (isDimensionsOversize){
                     this.capacity = OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT;
-                }
-                else {
+                } else {
                     this.capacity = NORMAL_GLASS_ACRYLIC_CRATE_LIMIT;
                 }
             }
@@ -441,8 +440,7 @@ public class Container {
             || containerFirstBox.getArts().get(0).materialContains(Art.Material.CanvasGallery)){
                 if (isDimensionsOversize){
                     this.capacity = OVERSIZE_CANVAS_CRATE_LIMIT;
-                }
-                else {
+                } else {
                     this.capacity = NORMAL_CANVAS_CRATE_LIMIT;
                 }
             }
