@@ -171,10 +171,10 @@ public class Box {
         return false;
     }
 
-    public List<Art> removeArt(Art art){
-        this.arts.remove(art);
-        return this.arts;
-    };
+    // public List<Art> removeArt(Art art){
+    //     this.arts.remove(art);
+    //     return this.arts;
+    // };
 
     // BEAN - TODO: this should be a function that purely checks for whether or not an art can be added to this box instance, right?
     // BEAN - could possibly be private, if add addArt becomes boolean function

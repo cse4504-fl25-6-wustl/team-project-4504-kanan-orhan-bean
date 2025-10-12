@@ -84,3 +84,61 @@ Configuration cache entry stored.
 ```
 
 Then once it is built successfully you can go to the following directory `app/build/reports/index.html` and open it with default application (option+command+O `⌥+⌘+O` on macOS) in VSCode. This `index.html` file will show you a report of your Test Cases
+
+# Feature 1 Testing Assignment
+
+## Coders:
+
+1. Coder #1: Orhan
+2. Coder #2: Bean
+3. Coder #3: Kanan
+
+## Entities
+
+1. `Art.java`: Coder #3
+  - Art()
+  - getWeight()
+  - isCustom()
+2. `Box.java`: Coder #2
+  - createBoxForArt()
+  - addArt()
+  - canArtFit()
+  - getWeight()
+  - getCapacity()
+3. `Client.java`: Coder #2
+  - Client()
+4. `Container.java`: Coder #1
+  - constructContainerForArt()
+  - constructContainerForBox()
+  - addBox()
+  - addArt()
+  - canBoxFit()
+  - canArtFit()
+  - getWeight()
+  - getCapacity()
+
+## Interactors
+
+1. `Packing.java`: Coder #3
+  - packEverything()
+
+## Parser
+
+1. `Parser.java`: Coder #2
+  - parseArt()
+  - parseClient()
+
+## Requests
+
+1. `Request.java`: Coder #3
+  - Request()
+
+## Responses
+
+1. `Responses.java`: Coder #3
+  - Response()
+
+## Main
+
+1. `Main.java`: Coder #3
+  - main()

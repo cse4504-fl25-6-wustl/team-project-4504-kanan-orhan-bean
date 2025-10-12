@@ -58,38 +58,38 @@ public class Container {
 
     // v--- This is how packing could implement packBoxIntoContainers ---v
 
-    public List<Container> constructContainersForBoxes(List<Box> myBoxes, boolean canAcceptCrates) {
-        List<Container> result = new ArrayList<>();
-        for (Box box : myBoxes){
-            boolean added = false;
-            for (Container myContainer : result){
-                if (myContainer.canBoxFit(box) && !added){
-                    myContainer.addBox(box);
-                    added = true;
-                }
-            }
-            if (!added){
-                result.add(constructContainerForBox(box));
-            }
-        }
-        return result;
-    }
+    // public List<Container> constructContainersForBoxes(List<Box> myBoxes, boolean canAcceptCrates) {
+    //     List<Container> result = new ArrayList<>();
+    //     for (Box box : myBoxes){
+    //         boolean added = false;
+    //         for (Container myContainer : result){
+    //             if (myContainer.canBoxFit(box) && !added){
+    //                 myContainer.addBox(box);
+    //                 added = true;
+    //             }
+    //         }
+    //         if (!added){
+    //             result.add(constructContainerForBox(box));
+    //         }
+    //     }
+    //     return result;
+    // }
 
-    public List<Container> constructContainersForMirrors(List<Art> myArts, boolean canAcceptCrates) {
-        List<Container> result = new ArrayList<>();
-        for (Art art : myArts) {
-            if (!art.materialContains(Art.Material.Mirror)){
-                throw new IllegalArgumentException("One or more Items in arts is NOT a Mirror. All Arts must be Mirror to put directly into a Crate");
-            }
-            if (result.isEmpty() || result.getLast().isFull()){
-                result.add(constructContainerForArt(art));
-            }
-            else {
-                result.getLast().addArt(art);
-            }
-        }
-        return result;
-    }
+    // public List<Container> constructContainersForMirrors(List<Art> myArts, boolean canAcceptCrates) {
+    //     List<Container> result = new ArrayList<>();
+    //     for (Art art : myArts) {
+    //         if (!art.materialContains(Art.Material.Mirror)){
+    //             throw new IllegalArgumentException("One or more Items in arts is NOT a Mirror. All Arts must be Mirror to put directly into a Crate");
+    //         }
+    //         if (result.isEmpty() || result.getLast().isFull()){
+    //             result.add(constructContainerForArt(art));
+    //         }
+    //         else {
+    //             result.getLast().addArt(art);
+    //         }
+    //     }
+    //     return result;
+    // }
 
     // ^--- This is how packing could implement packBoxIntoContainers ---^
 
