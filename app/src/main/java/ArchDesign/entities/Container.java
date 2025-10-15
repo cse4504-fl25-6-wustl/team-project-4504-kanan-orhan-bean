@@ -52,6 +52,9 @@ public class Container {
         super();
         this.type = type;
         this.canAcceptCrate = canAcceptCrate;
+        if (!canAcceptCrate() && getType() == Type.Crate){
+            throw new IllegalArgumentException("Can not set Container to Crate if Customer can't accept Crates");
+        }
         this.arts = new ArrayList<>();
         this.boxes = new ArrayList<>();
     }
@@ -98,6 +101,8 @@ public class Container {
             Container myContainer = new Container(Type.Crate, canAcceptCrate);
             myContainer.setMirrorCrate(true);
             myContainer.addArt(art);
+            myContainer.setContainerHeight(Math.max(this.getHeight(), art.getHeight() + CRATE_HEIGHT_OVERHEAD));
+            myContainer.setCrateNormal();
             return myContainer;
         }
         else {
@@ -397,9 +402,14 @@ public class Container {
             return false;
         }
 
-        Box containerFirstBox = this.getBoxes().get(0);
-        Type containerType = this.getType();
-        boolean boxOversized = containerFirstBox.isOversized();
+        Box containerFirstBox = null;
+        Type containerType = null;
+        boolean boxOversized = false;
+        if (!this.isMirrorCrate()){
+            containerFirstBox = this.getBoxes().get(0);
+            containerType = this.getType();
+            boxOversized = containerFirstBox.isOversized();
+        }
 
         // Assuming the Container only has Box that is of same or smaller type than first
         
