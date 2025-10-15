@@ -42,6 +42,8 @@ public class Container {
     private final int NORMAL_CANVAS_CRATE_LIMIT = 18;
     private final int OVERSIZE_CANVAS_CRATE_LIMIT = 12;
     private final int CUSTOM_BOX_DIMENSION_LIMIT = 33;
+    private final int GLASS_PALLET_WIDTH_THRESHOLD = 35;
+    private final int GLASS_PALLET_LENGTH_THRESHOLD = 35;
 
     // TODO: Figure out where to use these
     private final double OVERSIZE_CRATE_LIMIT = 46;
@@ -118,20 +120,20 @@ public class Container {
             myContainer.addBox(box);
             return myContainer;
         }
-        else if (this.canAcceptCrate() && !this.isSmallEnoughForGlassPallet(box)){
-            Container myContainer = new Container(Type.Crate, this.canAcceptCrate);
-            myContainer.setMirrorCrate(false);
-            myContainer.addBox(box);
-            myContainer.setCrateNormal();
-            this.setContainerHeight(box.getHeight() + CRATE_HEIGHT_OVERHEAD);
-            return myContainer;
-        }
         else if (this.isSmallEnoughForGlassPallet(box)) {
             Container myContainer = new Container(Type.Glass, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
             myContainer.setPalletGlass();
-            this.setContainerHeight(box.getHeight());
+            myContainer.setContainerHeight(box.getHeight());
+            return myContainer;
+        }
+        else if (this.canAcceptCrate() && !this.isSmallEnoughForGlassPallet(box)){
+            Container myContainer = new Container(Type.Crate, this.canAcceptCrate);
+            myContainer.setMirrorCrate(false);
+            myContainer.addBox(box);
+            myContainer.setCrateNormal();
+            myContainer.setContainerHeight(box.getHeight() + CRATE_HEIGHT_OVERHEAD);
             return myContainer;
         }
         else if (box.isOversized()){
@@ -139,7 +141,7 @@ public class Container {
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
             myContainer.setPalletOversize();
-            this.setContainerHeight(box.getHeight());
+            myContainer.setContainerHeight(box.getHeight());
             return myContainer;
         }
         else {
@@ -147,7 +149,7 @@ public class Container {
             myContainer.addBox(box);
             myContainer.setMirrorCrate(false);
             myContainer.setPalletNormal();
-            this.setContainerHeight(box.getHeight());
+            myContainer.setContainerHeight(box.getHeight());
             return myContainer;
         }
     }
@@ -390,7 +392,8 @@ public class Container {
     }
 
     private boolean isSmallEnoughForGlassPallet(Box box){
-        return (box.getLength() > GLASS_PALLET_LENGTH || box.getWidth() > GLASS_PALLET_WIDTH) ? false : true;
+        //TODO: Ask about the Threshold. It says for small shipments, but never specifies the dimensions so I made it up
+        return (box.getLength() > GLASS_PALLET_LENGTH_THRESHOLD || box.getWidth() > GLASS_PALLET_WIDTH_THRESHOLD) ? false : true;
     }
 
     private boolean setCapacity() {
@@ -415,7 +418,8 @@ public class Container {
         
         if (containerType != Type.Custom && !this.isMirrorCrate()){
             int containerInitialCapacity = 0;
-            if (containerType == Type.Pallet || containerType == Type.Crate) {
+            if (containerType == Type.Pallet || containerType == Type.Crate || containerType == Type.Glass) {
+                //TODO: What is the capacity for Glass? Since not given I made it up
                 containerInitialCapacity = 4;
             } else if (containerType == Type.Oversize) {
                 containerInitialCapacity = 5;
