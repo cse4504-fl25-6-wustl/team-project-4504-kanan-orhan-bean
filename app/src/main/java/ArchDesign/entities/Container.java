@@ -98,10 +98,10 @@ public class Container {
 
     public Container constructContainerForArt(Art art) {
         if (art.getType() == Art.Type.Mirror){
-            Container myContainer = new Container(Type.Crate, canAcceptCrate);
+            Container myContainer = new Container(Type.Crate, this.canAcceptCrate);
             myContainer.setMirrorCrate(true);
             myContainer.addArt(art);
-            myContainer.setContainerHeight(Math.max(this.getHeight(), art.getHeight() + CRATE_HEIGHT_OVERHEAD));
+            myContainer.setContainerHeight(Math.max(myContainer.getHeight(), art.getHeight() + CRATE_HEIGHT_OVERHEAD));
             myContainer.setCrateNormal();
             return myContainer;
         }
@@ -113,13 +113,13 @@ public class Container {
     public Container constructContainerForBox(Box box) {
         if (box.isCustom() || box.getWidth() > OVERSIZE_CRATE_LIMIT || box.getLength() > OVERSIZE_CRATE_LIMIT 
         || box.getHeight() > OVERSIZE_CRATE_LIMIT){
-            Container myContainer = new Container(Type.Custom, canAcceptCrate);
+            Container myContainer = new Container(Type.Custom, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
             return myContainer;
         }
         else if (this.canAcceptCrate() && !this.isSmallEnoughForGlassPallet(box)){
-            Container myContainer = new Container(Type.Crate, canAcceptCrate);
+            Container myContainer = new Container(Type.Crate, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
             myContainer.setCrateNormal();
@@ -127,7 +127,7 @@ public class Container {
             return myContainer;
         }
         else if (this.isSmallEnoughForGlassPallet(box)) {
-            Container myContainer = new Container(Type.Glass, canAcceptCrate);
+            Container myContainer = new Container(Type.Glass, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
             myContainer.setPalletGlass();
@@ -135,7 +135,7 @@ public class Container {
             return myContainer;
         }
         else if (box.isOversized()){
-            Container myContainer = new Container(Type.Oversize, canAcceptCrate);
+            Container myContainer = new Container(Type.Oversize, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
             myContainer.setPalletOversize();
@@ -143,7 +143,7 @@ public class Container {
             return myContainer;
         }
         else {
-            Container myContainer = new Container(Type.Pallet, canAcceptCrate);
+            Container myContainer = new Container(Type.Pallet, this.canAcceptCrate);
             myContainer.addBox(box);
             myContainer.setMirrorCrate(false);
             myContainer.setPalletNormal();
