@@ -113,14 +113,7 @@ public class Container {
     }
 
     public Container constructContainerForBox(Box box) {
-        if (box.isCustom() || box.getWidth() > OVERSIZE_CRATE_LIMIT || box.getLength() > OVERSIZE_CRATE_LIMIT 
-        || box.getHeight() > OVERSIZE_CRATE_LIMIT){
-            Container myContainer = new Container(Type.Custom, this.canAcceptCrate);
-            myContainer.setMirrorCrate(false);
-            myContainer.addBox(box);
-            return myContainer;
-        }
-        else if (this.isSmallEnoughForGlassPallet(box)) {
+        if (this.isSmallEnoughForGlassPallet(box)) {
             Container myContainer = new Container(Type.Glass, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
@@ -128,7 +121,14 @@ public class Container {
             myContainer.setContainerHeight(box.getHeight());
             return myContainer;
         }
-        else if (this.canAcceptCrate() && !this.isSmallEnoughForGlassPallet(box)){
+        else if (box.getWidth() > OVERSIZE_CRATE_LIMIT || box.getLength() > OVERSIZE_CRATE_LIMIT 
+        || box.getHeight() > OVERSIZE_CRATE_LIMIT){
+            Container myContainer = new Container(Type.Custom, this.canAcceptCrate);
+            myContainer.setMirrorCrate(false);
+            myContainer.addBox(box);
+            return myContainer;
+        }
+        else if (this.canAcceptCrate()){
             Container myContainer = new Container(Type.Crate, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
@@ -434,32 +434,37 @@ public class Container {
         else if (this.isMirrorCrate()){
             this.capacity = MIRROR_CRATE_LIMIT;
             return true;
-        } else {
-            // TODO: Is this considered a Custom Box? Does it need human evaluation?
-            boolean isDimensionsOversize = false;
-            for (Box box : this.getBoxes()){
-                if (box.isCustom() && (box.getHeight() > CUSTOM_BOX_DIMENSION_LIMIT || box.getWidth() > CUSTOM_BOX_DIMENSION_LIMIT)){
-                    isDimensionsOversize = true;
-                }
-            }
-            if (containerFirstBox.getArts().get(0).materialContains(Art.Material.Glass)
-            || containerFirstBox.getArts().get(0).materialContains(Art.Material.Acyrlic)){
-                if (isDimensionsOversize){
-                    this.capacity = OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT;
-                } else {
-                    this.capacity = NORMAL_GLASS_ACRYLIC_CRATE_LIMIT;
-                }
-            }
-            else if (containerFirstBox.getArts().get(0).materialContains(Art.Material.CanvasFramed) 
-            || containerFirstBox.getArts().get(0).materialContains(Art.Material.CanvasGallery)){
-                if (isDimensionsOversize){
-                    this.capacity = OVERSIZE_CANVAS_CRATE_LIMIT;
-                } else {
-                    this.capacity = NORMAL_CANVAS_CRATE_LIMIT;
-                }
-            }
-            return true;
         }
+        else {
+            this.capacity = 1;
+            return true;
+        } 
+        // else {
+        //     // TODO: Is this considered a Custom Box? Does it need human evaluation?
+        //     boolean isDimensionsOversize = false;
+        //     for (Box box : this.getBoxes()){
+        //         if (box.isCustom() && (box.getHeight() > CUSTOM_BOX_DIMENSION_LIMIT || box.getWidth() > CUSTOM_BOX_DIMENSION_LIMIT)){
+        //             isDimensionsOversize = true;
+        //         }
+        //     }
+        //     if (containerFirstBox.getArts().get(0).materialContains(Art.Material.Glass)
+        //     || containerFirstBox.getArts().get(0).materialContains(Art.Material.Acyrlic)){
+        //         if (isDimensionsOversize){
+        //             this.capacity = OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT;
+        //         } else {
+        //             this.capacity = NORMAL_GLASS_ACRYLIC_CRATE_LIMIT;
+        //         }
+        //     }
+        //     else if (containerFirstBox.getArts().get(0).materialContains(Art.Material.CanvasFramed) 
+        //     || containerFirstBox.getArts().get(0).materialContains(Art.Material.CanvasGallery)){
+        //         if (isDimensionsOversize){
+        //             this.capacity = OVERSIZE_CANVAS_CRATE_LIMIT;
+        //         } else {
+        //             this.capacity = NORMAL_CANVAS_CRATE_LIMIT;
+        //         }
+        //     }
+        //     return true;
+        // }
     }
 
     // private List<Box> removeBox(Box box){

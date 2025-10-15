@@ -345,71 +345,763 @@ public class ContainerTest {
     }
     
     // ---------------- testing constructContainerForBox ----------------
+    // Since the method returns a new Container rather than modifying a 
+    // current Container The different types of containers shouldn't matter, 
+    // but I wanted to test them just in case. And since it takes in Box, and 
+    // there are 4 different types of Boxes (Standard, Oversize, Custom, Small 
+    // Enough to fit into a Glass Pallet).
+    // Currently All tests (Except Glass) are failing, because Box.java has a 
+    // broken getWidth(), getLength(), getWeight() function that returns 0.0 
+    // so it creates everything as a Glass Pallet.
+    // Total Tests: 29; 6 Containers (2 canAcceptCrate Options on 5), 4 Boxes,
     @Test
     public void testconstructContainerForBoxWithStandardBoxOnNullContainer(){
-        Container container = nullContainer.constructContainerForBox(standardBox);
+        Box box = standardBox;
+        Container container = nullContainer.constructContainerForBox(box);
         // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
-        // assertTrue("Wrong expected Type. Expected Crate, was given " + container.getType().toString() + 
-        // " Box Length: " + standardBox.getWidth() + " Box Height: " + standardBox.getHeight(), 
-        // container.getType() == ArchDesign.entities.Container.Type.Crate);
+        assertTrue("Wrong expected Type. Expected Crate, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Crate);
         assertTrue("Wrong expected is Mirror Crate. Expected Crate to NOT be a Mirror Crate, but it was",
         !container.isMirrorCrate());
         assertFalse("Expected the Crate to not be empty", container.isEmpty());
         assertTrue("Expected the Crate to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
         container.getCapacity() == 4);
         assertTrue("Expected the first Box in Crate to be standardBox, it wasn't", 
-        container.getBoxes().get(0) == standardBox);
+        container.getBoxes().get(0) == box);
         assertTrue("Expected there to only be one Box, there wasn't", 
         container.getCurrentSize() == 1);
         // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
-        // assertTrue("Expected the height to be " + CRATE_HEIGHT_OVERHEAD + " more than the Box; Container Height: " + container.getHeight()
-        // + "Box height: " + standardBox.getHeight(), container.getHeight() == standardBox.getHeight() + CRATE_HEIGHT_OVERHEAD);
-        // assertTrue("Expected a standard crate to be " + CRATE_WIDTH + " wide, it wasn't", 
-        // container.getWidth() == CRATE_WIDTH);
-        // assertTrue("Expected a standard crate to be " + CRATE_LENGTH+ " in length, it wasn't", 
-        // container.getLength() == CRATE_LENGTH);
+        assertTrue("Expected the height to be " + CRATE_HEIGHT_OVERHEAD + " more than the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight() + CRATE_HEIGHT_OVERHEAD);
+        assertTrue("Expected a standard crate to be " + CRATE_WIDTH + " wide, it wasn't", 
+        container.getWidth() == CRATE_WIDTH);
+        assertTrue("Expected a standard crate to be " + CRATE_LENGTH+ " in length, it wasn't", 
+        container.getLength() == CRATE_LENGTH);
     }
 
     @Test
     public void testconstructContainerForBoxWithStandardBoxOnPalletContainer(){
-
+        Box box = standardBox;
+        Container container = palletContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Crate, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Crate);
+        assertTrue("Wrong expected is Mirror Crate. Expected Crate to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Crate to not be empty", container.isEmpty());
+        assertTrue("Expected the Crate to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Crate to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be " + CRATE_HEIGHT_OVERHEAD + " more than the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight() + CRATE_HEIGHT_OVERHEAD);
+        assertTrue("Expected a standard crate to be " + CRATE_WIDTH + " wide, it wasn't", 
+        container.getWidth() == CRATE_WIDTH);
+        assertTrue("Expected a standard crate to be " + CRATE_LENGTH+ " in length, it wasn't", 
+        container.getLength() == CRATE_LENGTH);
     }
 
     @Test
     public void testconstructContainerForBoxWithStandardBoxOnCrateContainer(){
-
+        Box box = standardBox;
+        Container container = crateContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Crate, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Crate);
+        assertTrue("Wrong expected is Mirror Crate. Expected Crate to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Crate to not be empty", container.isEmpty());
+        assertTrue("Expected the Crate to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Crate to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be " + CRATE_HEIGHT_OVERHEAD + " more than the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight() + CRATE_HEIGHT_OVERHEAD);
+        assertTrue("Expected a standard crate to be " + CRATE_WIDTH + " wide, it wasn't", 
+        container.getWidth() == CRATE_WIDTH);
+        assertTrue("Expected a standard crate to be " + CRATE_LENGTH+ " in length, it wasn't", 
+        container.getLength() == CRATE_LENGTH);
     }
 
     @Test
     public void testconstructContainerForBoxWithStandardBoxOnGlassContainer(){
-
+        Box box = standardBox;
+        Container container = glassContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Crate, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Crate);
+        assertTrue("Wrong expected is Mirror Crate. Expected Crate to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Crate to not be empty", container.isEmpty());
+        assertTrue("Expected the Crate to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Crate to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be " + CRATE_HEIGHT_OVERHEAD + " more than the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight() + CRATE_HEIGHT_OVERHEAD);
+        assertTrue("Expected a standard crate to be " + CRATE_WIDTH + " wide, it wasn't", 
+        container.getWidth() == CRATE_WIDTH);
+        assertTrue("Expected a standard crate to be " + CRATE_LENGTH+ " in length, it wasn't", 
+        container.getLength() == CRATE_LENGTH);
     }
 
     @Test
     public void testconstructContainerForBoxWithStandardBoxOnOversizedContainer(){
-
+        Box box = standardBox;
+        Container container = oversizeContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Crate, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Crate);
+        assertTrue("Wrong expected is Mirror Crate. Expected Crate to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Crate to not be empty", container.isEmpty());
+        assertTrue("Expected the Crate to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Crate to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be " + CRATE_HEIGHT_OVERHEAD + " more than the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight() + CRATE_HEIGHT_OVERHEAD);
+        assertTrue("Expected a standard crate to be " + CRATE_WIDTH + " wide, it wasn't", 
+        container.getWidth() == CRATE_WIDTH);
+        assertTrue("Expected a standard crate to be " + CRATE_LENGTH+ " in length, it wasn't", 
+        container.getLength() == CRATE_LENGTH);
     }
 
     @Test
     public void testconstructContainerForBoxWithStandardBoxOnCustomContainer(){
-
+        Box box = standardBox;
+        Container container = customContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Crate, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Crate);
+        assertTrue("Wrong expected is Mirror Crate. Expected Crate to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Crate to not be empty", container.isEmpty());
+        assertTrue("Expected the Crate to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Crate to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be " + CRATE_HEIGHT_OVERHEAD + " more than the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight() + CRATE_HEIGHT_OVERHEAD);
+        assertTrue("Expected a standard crate to be " + CRATE_WIDTH + " wide, it wasn't", 
+        container.getWidth() == CRATE_WIDTH);
+        assertTrue("Expected a standard crate to be " + CRATE_LENGTH+ " in length, it wasn't", 
+        container.getLength() == CRATE_LENGTH);
     }
 
     @Test
-    public void testconstructContainerForBoxWithOversizedBox(){
-
+    public void testconstructContainerForBoxWithOversizedBoxOnNullContainer(){
+        Box box = oversizeBox;
+        Container container = nullContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Overisze, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Oversize);
+        assertTrue("Wrong expected is Mirror Crate. Expected Oversize to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Oversize to not be empty", container.isEmpty());
+        assertTrue("Expected the Oversize to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Oversize to be oversizeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + OVERSIZE_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == OVERSIZE_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + OVERSIZE_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == OVERSIZE_PALLET_LENGTH);
     }
 
     @Test
-    public void testconstructContainerForBoxWithCustomSmallBox(){
-
+    public void testconstructContainerForBoxWithOversizedBoxOnPalletContainer(){
+        Box box = oversizeBox;
+        Container container = palletContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Overisze, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Oversize);
+        assertTrue("Wrong expected is Mirror Crate. Expected Oversize to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Oversize to not be empty", container.isEmpty());
+        assertTrue("Expected the Oversize to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Oversize to be oversizeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + OVERSIZE_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == OVERSIZE_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + OVERSIZE_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == OVERSIZE_PALLET_LENGTH);
     }
 
     @Test
-    public void testconstructContainerForBoxWithCustomLargeBox(){
+    public void testconstructContainerForBoxWithOversizedBoxOnCrateContainer(){
+        Box box = oversizeBox;
+        Container container = crateContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Overisze, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Oversize);
+        assertTrue("Wrong expected is Mirror Crate. Expected Oversize to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Oversize to not be empty", container.isEmpty());
+        assertTrue("Expected the Oversize to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Oversize to be oversizeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + OVERSIZE_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == OVERSIZE_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + OVERSIZE_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == OVERSIZE_PALLET_LENGTH);
+    }
 
+    @Test
+    public void testconstructContainerForBoxWithOversizedBoxOnGlassContainer(){
+        Box box = oversizeBox;
+        Container container = glassContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Overisze, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Oversize);
+        assertTrue("Wrong expected is Mirror Crate. Expected Oversize to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Oversize to not be empty", container.isEmpty());
+        assertTrue("Expected the Oversize to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Oversize to be oversizeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + OVERSIZE_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == OVERSIZE_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + OVERSIZE_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == OVERSIZE_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithOversizedBoxOnOversizeContainer(){
+        Box box = oversizeBox;
+        Container container = oversizeContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Overisze, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Oversize);
+        assertTrue("Wrong expected is Mirror Crate. Expected Oversize to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Oversize to not be empty", container.isEmpty());
+        assertTrue("Expected the Oversize to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Oversize to be oversizeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + OVERSIZE_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == OVERSIZE_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + OVERSIZE_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == OVERSIZE_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithOversizedBoxOnCustomContainer(){
+        Box box = oversizeBox;
+        Container container = customContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Overisze, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Oversize);
+        assertTrue("Wrong expected is Mirror Crate. Expected Oversize to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Oversize to not be empty", container.isEmpty());
+        assertTrue("Expected the Oversize to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Oversize to be oversizeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + OVERSIZE_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == OVERSIZE_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + OVERSIZE_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == OVERSIZE_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomSmallBoxOnNullContainer(){
+        Box box = customSmallBox;
+        Container container = nullContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Glass, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Glass);
+        assertTrue("Wrong expected is Mirror Crate. Expected Glass to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Glass to not be empty", container.isEmpty());
+        assertTrue("Expected the Glass to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Glass to be customSmallBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + GLASS_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == GLASS_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + GLASS_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == GLASS_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomSmallBoxOnPalletContainer(){
+        Box box = customSmallBox;
+        Container container = palletContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Glass, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Glass);
+        assertTrue("Wrong expected is Mirror Crate. Expected Glass to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Glass to not be empty", container.isEmpty());
+        assertTrue("Expected the Glass to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Glass to be customSmallBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + GLASS_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == GLASS_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + GLASS_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == GLASS_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomSmallBoxOnCrateContainer(){
+        Box box = customSmallBox;
+        Container container = crateContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Glass, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Glass);
+        assertTrue("Wrong expected is Mirror Crate. Expected Glass to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Glass to not be empty", container.isEmpty());
+        assertTrue("Expected the Glass to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Glass to be customSmallBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + GLASS_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == GLASS_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + GLASS_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == GLASS_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomSmallBoxOnGlassContainer(){
+        Box box = customSmallBox;
+        Container container = glassContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Glass, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Glass);
+        assertTrue("Wrong expected is Mirror Crate. Expected Glass to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Glass to not be empty", container.isEmpty());
+        assertTrue("Expected the Glass to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Glass to be customSmallBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + GLASS_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == GLASS_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + GLASS_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == GLASS_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomSmallBoxOnOversizeContainer(){
+        Box box = customSmallBox;
+        Container container = oversizeContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Glass, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Glass);
+        assertTrue("Wrong expected is Mirror Crate. Expected Glass to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Glass to not be empty", container.isEmpty());
+        assertTrue("Expected the Glass to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Glass to be customSmallBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + GLASS_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == GLASS_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + GLASS_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == GLASS_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomSmallBoxOnCustomContainer(){
+        Box box = customSmallBox;
+        Container container = customContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Glass, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Glass);
+        assertTrue("Wrong expected is Mirror Crate. Expected Glass to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Glass to not be empty", container.isEmpty());
+        assertTrue("Expected the Glass to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Glass to be customSmallBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Glass to be " + GLASS_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == GLASS_PALLET_WIDTH);
+        assertTrue("Expected a standard crate to be " + GLASS_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == GLASS_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomLargeBoxOnNullContainer(){
+        Box box = customLargeBox;
+        Container container = nullContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Custom, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Custom);
+        assertTrue("Wrong expected is Mirror Crate. Expected Custom to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Custom to not be empty", container.isEmpty());
+        assertTrue("Expected the Custom to have a capacity of " + 1 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 1);
+        assertTrue("Expected the first Box in Custom to be customLargeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Custom rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Custom to be at least " + CUSTOM_BOX_DIMENSION_LIMIT + " wide in one direction, it wasn't"
+         + " Width: " + container.getWidth() + " Length: " + container.getLength(), 
+         container.getWidth() >= CUSTOM_BOX_DIMENSION_LIMIT || container.getLength() >= CUSTOM_BOX_DIMENSION_LIMIT);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomLargeBoxOnPalletContainer(){
+        Box box = customLargeBox;
+        Container container = palletContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Custom, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Custom);
+        assertTrue("Wrong expected is Mirror Crate. Expected Custom to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Custom to not be empty", container.isEmpty());
+        assertTrue("Expected the Custom to have a capacity of " + 1 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 1);
+        assertTrue("Expected the first Box in Custom to be customLargeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Custom rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Custom to be at least " + CUSTOM_BOX_DIMENSION_LIMIT + " wide in one direction, it wasn't"
+         + " Width: " + container.getWidth() + " Length: " + container.getLength(), 
+         container.getWidth() >= CUSTOM_BOX_DIMENSION_LIMIT || container.getLength() >= CUSTOM_BOX_DIMENSION_LIMIT);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomLargeBoxOnCrateContainer(){
+        Box box = customLargeBox;
+        Container container = crateContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Custom, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Custom);
+        assertTrue("Wrong expected is Mirror Crate. Expected Custom to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Custom to not be empty", container.isEmpty());
+        assertTrue("Expected the Custom to have a capacity of " + 1 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 1);
+        assertTrue("Expected the first Box in Custom to be customLargeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Custom rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Custom to be at least " + CUSTOM_BOX_DIMENSION_LIMIT + " wide in one direction, it wasn't"
+         + " Width: " + container.getWidth() + " Length: " + container.getLength(), 
+         container.getWidth() >= CUSTOM_BOX_DIMENSION_LIMIT || container.getLength() >= CUSTOM_BOX_DIMENSION_LIMIT);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomLargeBoxOnGlassContainer(){
+        Box box = customLargeBox;
+        Container container = glassContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Custom, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Custom);
+        assertTrue("Wrong expected is Mirror Crate. Expected Custom to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Custom to not be empty", container.isEmpty());
+        assertTrue("Expected the Custom to have a capacity of " + 1 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 1);
+        assertTrue("Expected the first Box in Custom to be customLargeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Custom rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Custom to be at least " + CUSTOM_BOX_DIMENSION_LIMIT + " wide in one direction, it wasn't"
+         + " Width: " + container.getWidth() + " Length: " + container.getLength(), 
+         container.getWidth() >= CUSTOM_BOX_DIMENSION_LIMIT || container.getLength() >= CUSTOM_BOX_DIMENSION_LIMIT);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomLargeBoxOnOversizeContainer(){
+        Box box = customLargeBox;
+        Container container = oversizeContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Custom, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Custom);
+        assertTrue("Wrong expected is Mirror Crate. Expected Custom to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Custom to not be empty", container.isEmpty());
+        assertTrue("Expected the Custom to have a capacity of " + 1 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 1);
+        assertTrue("Expected the first Box in Custom to be customLargeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Custom rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Custom to be at least " + CUSTOM_BOX_DIMENSION_LIMIT + " wide in one direction, it wasn't"
+         + " Width: " + container.getWidth() + " Length: " + container.getLength(), 
+         container.getWidth() >= CUSTOM_BOX_DIMENSION_LIMIT || container.getLength() >= CUSTOM_BOX_DIMENSION_LIMIT);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithCustomLargeBoxOnCustomContainer(){
+        Box box = customLargeBox;
+        Container container = customContainer.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Custom, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Custom);
+        assertTrue("Wrong expected is Mirror Crate. Expected Custom to NOT be a Mirror Crate, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Custom to not be empty", container.isEmpty());
+        assertTrue("Expected the Custom to have a capacity of " + 1 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 1);
+        assertTrue("Expected the first Box in Custom to be customLargeBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the crate is being set to Custom rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a Custom to be at least " + CUSTOM_BOX_DIMENSION_LIMIT + " wide in one direction, it wasn't"
+         + " Width: " + container.getWidth() + " Length: " + container.getLength(), 
+         container.getWidth() >= CUSTOM_BOX_DIMENSION_LIMIT || container.getLength() >= CUSTOM_BOX_DIMENSION_LIMIT);
     }
     
+    @Test
+    public void testconstructContainerForBoxWithStandardBoxOnNullContainerWithNoCrate(){
+        Box box = standardBox;
+        Container container = nullContainerNoCrate.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Pallet, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Pallet);
+        assertTrue("Wrong expected is Mirror Pallet. Expected Pallet to NOT be a Mirror Pallet, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Pallet to not be empty", container.isEmpty());
+        assertTrue("Expected the Pallet to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Pallet to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the Pallet is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be the same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == STANDARD_PALLET_WIDTH);
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == STANDARD_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithStandardBoxOnPalletContainerWithNoCrate(){
+        Box box = standardBox;
+        Container container = palletContainerNoCrate.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Pallet, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Pallet);
+        assertTrue("Wrong expected is Mirror Pallet. Expected Pallet to NOT be a Mirror Pallet, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Pallet to not be empty", container.isEmpty());
+        assertTrue("Expected the Pallet to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Pallet to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the Pallet is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be the same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == STANDARD_PALLET_WIDTH);
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == STANDARD_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithStandardBoxOnGlassContainerWithNoCrate(){
+        Box box = standardBox;
+        Container container = glassContainerNoCrate.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Pallet, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Pallet);
+        assertTrue("Wrong expected is Mirror Pallet. Expected Pallet to NOT be a Mirror Pallet, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Pallet to not be empty", container.isEmpty());
+        assertTrue("Expected the Pallet to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Pallet to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the Pallet is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be the same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == STANDARD_PALLET_WIDTH);
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == STANDARD_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithStandardBoxOnOversizedContainerWithNoCrate(){
+        Box box = standardBox;
+        Container container = oversizeContainerNoCrate.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Pallet, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Pallet);
+        assertTrue("Wrong expected is Mirror Pallet. Expected Pallet to NOT be a Mirror Pallet, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Pallet to not be empty", container.isEmpty());
+        assertTrue("Expected the Pallet to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Pallet to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the Pallet is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be the same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == STANDARD_PALLET_WIDTH);
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == STANDARD_PALLET_LENGTH);
+    }
+
+    @Test
+    public void testconstructContainerForBoxWithStandardBoxOnCustomContainerWithNoCrate(){
+        Box box = standardBox;
+        Container container = customContainerNoCrate.constructContainerForBox(box);
+        // Mistake with the Box.java getWidth and getHeight functions. It returns 0.0
+        assertTrue("Wrong expected Type. Expected Pallet, was given " + container.getType().toString() + 
+        " Box Length: " + box.getWidth() + " Box Height: " + box.getHeight(), 
+        container.getType() == ArchDesign.entities.Container.Type.Pallet);
+        assertTrue("Wrong expected is Mirror Pallet. Expected Pallet to NOT be a Mirror Pallet, but it was",
+        !container.isMirrorCrate());
+        assertFalse("Expected the Pallet to not be empty", container.isEmpty());
+        assertTrue("Expected the Pallet to have a capacity of " + 4 + ", but it was " + container.getCapacity(),
+        container.getCapacity() == 4);
+        assertTrue("Expected the first Box in Pallet to be standardBox, it wasn't", 
+        container.getBoxes().get(0) == box);
+        assertTrue("Expected there to only be one Box, there wasn't", 
+        container.getCurrentSize() == 1);
+        // Because it is returning the wrong Height the Pallet is being set to Glass rather than Pallet so the following tests are failing
+        assertTrue("Expected the height to be the same as the Box; Container Height: " + container.getHeight()
+        + "Box height: " + box.getHeight(), container.getHeight() == box.getHeight());
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_WIDTH + " wide, it wasn't", 
+        container.getWidth() == STANDARD_PALLET_WIDTH);
+        assertTrue("Expected a standard Pallet to be " + STANDARD_PALLET_LENGTH+ " in length, it wasn't", 
+        container.getLength() == STANDARD_PALLET_LENGTH);
+    }
+
     // ---------------- testing addBox ----------------
     @Test
     public void testaddBox(){
