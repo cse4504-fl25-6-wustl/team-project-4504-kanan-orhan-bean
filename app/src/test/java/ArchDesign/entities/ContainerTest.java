@@ -22,6 +22,10 @@ public class ContainerTest {
     protected Container glassContainerNoCrate;
     protected Container oversizeContainerNoCrate;
     protected Container customContainerNoCrate;
+    protected Container fullPalletContainer;
+    protected Container fullCrateContainer;
+    protected Container fullGlassContainer;
+    protected Container fullOversizeContainer;
     protected Art mirrorArt;
     protected Art nonMirrorArt;
     protected Art standardArt;
@@ -79,6 +83,7 @@ public class ContainerTest {
 
     @Before
     public void setUp(){
+        // Currently Setup failing due to the fullContainers. addBox isn't working properly because canBoxFit isn't working
         nullContainer = new Container(null, true);
         palletContainer = new Container(ArchDesign.entities.Container.Type.Pallet, true);
         crateContainer = new Container(ArchDesign.entities.Container.Type.Crate, true);
@@ -104,6 +109,26 @@ public class ContainerTest {
         customSmallBox.addArt(smallCustomArt);
         customLargeBox = new Box();
         customLargeBox.addArt(largeCustomArt);
+        fullPalletContainer = new Container(ArchDesign.entities.Container.Type.Pallet, true);
+        fullPalletContainer.addBox(standardBox);
+        fullPalletContainer.addBox(standardBox);
+        fullPalletContainer.addBox(standardBox);
+        fullPalletContainer.addBox(standardBox);
+        fullCrateContainer = new Container(ArchDesign.entities.Container.Type.Crate, true);
+        fullCrateContainer.addBox(standardBox);
+        fullCrateContainer.addBox(standardBox);
+        fullCrateContainer.addBox(standardBox);
+        fullCrateContainer.addBox(standardBox);
+        fullGlassContainer = new Container(ArchDesign.entities.Container.Type.Glass, true);
+        fullGlassContainer.addBox(customSmallBox);
+        fullGlassContainer.addBox(customSmallBox);
+        fullGlassContainer.addBox(customSmallBox);
+        fullGlassContainer.addBox(customSmallBox);
+        fullOversizeContainer = new Container(ArchDesign.entities.Container.Type.Oversize, true);
+        fullOversizeContainer.addBox(oversizeBox);
+        fullOversizeContainer.addBox(oversizeBox);
+        fullOversizeContainer.addBox(oversizeBox);
+        fullOversizeContainer.addBox(oversizeBox);
     }
 
     // ---------------- testing constructContainerForArt ----------------
@@ -1103,15 +1128,637 @@ public class ContainerTest {
     }
 
     // ---------------- testing addBox ----------------
+    // Since the method returns a boolean and modifies the boxes instance variable
+    // We tested this with 4 different types of Boxes, once on Null Container, and
+    // Thrice (Empty, Full, NonEmptyNonFull) on the other 5 containers.
+    // Total Tests: 64; 6 Containers (3 Fullness Options on 5), 4 Boxes,
     @Test
-    public void testaddBox(){
+    public void testaddBoxWithStandardBoxOnNullContainer(){
+        Box box = standardBox;
+        boolean added = nullContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", nullContainer.getCurrentSize() == 1);
+    }
 
+    @Test
+    public void testaddBoxWithOversizeBoxOnNullContainer(){
+        Box box = oversizeBox;
+        boolean added = nullContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", nullContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnNullContainer(){
+        Box box = customSmallBox;
+        boolean added = nullContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", nullContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnNullContainer(){
+        Box box = customLargeBox;
+        boolean added = nullContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", nullContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnEmptyPalletContainer(){
+        Box box = standardBox;
+        boolean added = palletContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", palletContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnFullPalletContainer(){
+        Box box = standardBox;
+        boolean added = fullPalletContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullPalletContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnNonEmptyNonFullPalletContainer(){
+        Box box = standardBox;
+        palletContainer.addBox(box);
+        boolean added = palletContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", palletContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnEmptyPalletContainer(){
+        Box box = oversizeBox;
+        boolean added = palletContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", palletContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnFullPalletContainer(){
+        Box box = oversizeBox;
+        boolean added = fullPalletContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullPalletContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnNonEmptyNonFullPalletContainer(){
+        Box box = oversizeBox;
+        palletContainer.addBox(box);
+        boolean added = palletContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", palletContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnEmptyPalletContainer(){
+        Box box = customSmallBox;
+        boolean added = palletContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", palletContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnFullPalletContainer(){
+        Box box = customSmallBox;
+        boolean added = fullPalletContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullPalletContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnNonEmptyNonFullPalletContainer(){
+        Box box = customSmallBox;
+        palletContainer.addBox(box);
+        boolean added = palletContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", palletContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnEmptyPalletContainer(){
+        Box box = customLargeBox;
+        boolean added = palletContainer.addBox(box);
+        assertFalse("Added Custom Box to Container", added);
+        assertTrue("Expected 1 Box", palletContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnFullPalletContainer(){
+        Box box = customLargeBox;
+        boolean added = fullPalletContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullPalletContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnNonEmptyNonFullPalletContainer(){
+        Box box = customLargeBox;
+        palletContainer.addBox(box);
+        boolean added = palletContainer.addBox(box);
+        assertFalse("Added Custom Box to Container", added);
+        assertTrue("Expected 2 Boxes", palletContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnEmptyCrateContainer(){
+        Box box = standardBox;
+        boolean added = crateContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", crateContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnFullCrateContainer(){
+        Box box = standardBox;
+        boolean added = fullCrateContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullCrateContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnNonEmptyNonFullCrateContainer(){
+        Box box = standardBox;
+        crateContainer.addBox(box);
+        boolean added = crateContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", crateContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnEmptyCrateContainer(){
+        Box box = oversizeBox;
+        boolean added = crateContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", crateContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnFullCrateContainer(){
+        Box box = oversizeBox;
+        boolean added = fullCrateContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", crateContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnNonEmptyNonFullCrateContainer(){
+        Box box = oversizeBox;
+        crateContainer.addBox(box);
+        boolean added = crateContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", crateContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnEmptyCrateContainer(){
+        Box box = customSmallBox;
+        boolean added = crateContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", crateContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnFullCrateContainer(){
+        Box box = customSmallBox;
+        boolean added = fullCrateContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullCrateContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnNonEmptyNonFullCrateContainer(){
+        Box box = customSmallBox;
+        crateContainer.addBox(box);
+        boolean added = crateContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", crateContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnEmptyCrateContainer(){
+        Box box = customLargeBox;
+        boolean added = crateContainer.addBox(box);
+        assertFalse("Added Custom Box to Container", added);
+        assertTrue("Expected 1 Box", crateContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnFullCrateContainer(){
+        Box box = customLargeBox;
+        boolean added = fullCrateContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullCrateContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnNonEmptyNonFullCrateContainer(){
+        Box box = customLargeBox;
+        crateContainer.addBox(box);
+        boolean added = crateContainer.addBox(box);
+        assertFalse("Added Custom Box to Container", added);
+        assertTrue("Expected 2 Boxes", crateContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnEmptyGlassContainer(){
+        Box box = standardBox;
+        boolean added = glassContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", glassContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnFullGlassContainer(){
+        Box box = standardBox;
+        boolean added = fullGlassContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullGlassContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnNonEmptyNonFullGlassContainer(){
+        Box box = standardBox;
+        glassContainer.addBox(customSmallBox);
+        boolean added = glassContainer.addBox(box);
+        assertFalse("Added Oversize Box to Container", added);
+        assertTrue("Expected 2 Boxes", glassContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnEmptyGlassContainer(){
+        Box box = oversizeBox;
+        boolean added = glassContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", glassContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnFullGlassContainer(){
+        Box box = oversizeBox;
+        boolean added = fullGlassContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullGlassContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnNonEmptyNonFullGlassContainer(){
+        Box box = oversizeBox;
+        glassContainer.addBox(customSmallBox);
+        boolean added = glassContainer.addBox(box);
+        assertFalse("Added Oversize Box to Container", added);
+        assertTrue("Expected 2 Boxes", glassContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnEmptyGlassContainer(){
+        Box box = customSmallBox;
+        boolean added = glassContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", glassContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnFullGlassContainer(){
+        Box box = customSmallBox;
+        boolean added = fullGlassContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullGlassContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnNonEmptyNonFullGlassContainer(){
+        Box box = customSmallBox;
+        glassContainer.addBox(box);
+        boolean added = glassContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", glassContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnEmptyGlassContainer(){
+        Box box = customLargeBox;
+        boolean added = glassContainer.addBox(box);
+        assertFalse("Added Box to Container", added);
+        assertTrue("Expected No Box", glassContainer.getCurrentSize() == 0);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnFullGlassContainer(){
+        Box box = customLargeBox;
+        boolean added = fullGlassContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullGlassContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnNonEmptyNonFullGlassContainer(){
+        Box box = customLargeBox;
+        glassContainer.addBox(customSmallBox);
+        boolean added = glassContainer.addBox(box);
+        assertFalse("Added Box to Container", added);
+        assertTrue("Expected 1 Boxes", glassContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnEmptyOversizeContainer(){
+        Box box = standardBox;
+        boolean added = oversizeContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", oversizeContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnFullOversizeContainer(){
+        Box box = standardBox;
+        boolean added = fullOversizeContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullOversizeContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnNonEmptyNonFullOversizeContainer(){
+        Box box = standardBox;
+        oversizeContainer.addBox(oversizeBox);
+        boolean added = oversizeContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", oversizeContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnEmptyOversizeContainer(){
+        Box box = standardBox;
+        boolean added = oversizeContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", oversizeContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnFullOversizeContainer(){
+        Box box = oversizeBox;
+        boolean added = fullOversizeContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullOversizeContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnNonEmptyNonFullOversizeContainer(){
+        Box box = oversizeBox;
+        oversizeContainer.addBox(oversizeBox);
+        boolean added = oversizeContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", oversizeContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnEmptyOversizeContainer(){
+        Box box = customSmallBox;
+        boolean added = oversizeContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 1 Box", oversizeContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnFullOversizeContainer(){
+        Box box = customSmallBox;
+        boolean added = fullOversizeContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullOversizeContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnNonEmptyNonFullOversizeContainer(){
+        Box box = customSmallBox;
+        oversizeContainer.addBox(oversizeBox);
+        boolean added = oversizeContainer.addBox(box);
+        assertTrue("Couldn't add Box to Container", added);
+        assertTrue("Expected 2 Boxes", oversizeContainer.getCurrentSize() == 2);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnEmptyOversizeContainer(){
+        Box box = customLargeBox;
+        boolean added = oversizeContainer.addBox(box);
+        assertFalse("Couldn't add Box to Container", added);
+        assertTrue("Expected No Box", oversizeContainer.getCurrentSize() == 0);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnFullOversizeContainer(){
+        Box box = customLargeBox;
+        boolean added = fullOversizeContainer.addBox(box);
+        assertFalse("Added Box to a Full Container", added);
+        assertTrue("Expected 4 Box", fullOversizeContainer.getCurrentSize() == 4);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnNonEmptyNonFullOversizeContainer(){
+        Box box = customLargeBox;
+        oversizeContainer.addBox(oversizeBox);
+        boolean added = oversizeContainer.addBox(box);
+        assertFalse("Couldn't add Custom Box to Container", added);
+        assertTrue("Expected 1 Boxes", oversizeContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnEmptyCustomContainer(){
+        Box box = standardBox;
+        boolean added = customContainer.addBox(box);
+        assertFalse("Added Box to Custom Container", added);
+        assertTrue("Expected 1 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnFullCustomContainer(){
+        Box box = standardBox;
+        boolean added = customContainer.addBox(box);
+        assertFalse("Added Box to a Full Custom Container", added);
+        assertTrue("Expected 4 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithStandardBoxOnNonEmptyNonFullCustomContainer(){
+        // Doesn't Exist? Custom Container's are made for a Custom Box.
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnEmptyCustomContainer(){
+        Box box = oversizeBox;
+        boolean added = customContainer.addBox(box);
+        assertFalse("Added Box to Custom Container", added);
+        assertTrue("Expected 1 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnFullCustomContainer(){
+        Box box = oversizeBox;
+        boolean added = customContainer.addBox(box);
+        assertFalse("Added Box to a Full Custom Container", added);
+        assertTrue("Expected 4 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithOversizeBoxOnNonEmptyNonFullCustomContainer(){
+        // Doesn't Exist? Custom Container's are made for a Custom Box.
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnEmptyCustomContainer(){
+        Box box = customSmallBox;
+        boolean added = customContainer.addBox(box);
+        assertFalse("Added Box to Custom Container", added);
+        assertTrue("Expected 1 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnFullCustomContainer(){
+        Box box = customSmallBox;
+        boolean added = customContainer.addBox(box);
+        assertFalse("Added Box to a Full Custom Container", added);
+        assertTrue("Expected 4 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomSmallBoxOnNonEmptyNonFullCustomContainer(){
+        // Doesn't Exist? Custom Container's are made for a Custom Box.
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnEmptyCustomContainer(){
+        Box box = customLargeBox;
+        boolean added = customContainer.addBox(box);
+        assertTrue("Couldn't add Box to Custom Container", added);
+        assertTrue("Expected 1 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnFullCustomContainer(){
+        Box box = customLargeBox;
+        boolean added = customContainer.addBox(box);
+        assertFalse("Added Box to a Full Custom Container", added);
+        assertTrue("Expected 4 Box", customContainer.getCurrentSize() == 1);
+    }
+
+    @Test
+    public void testaddBoxWithCustomLargeBoxOnNonEmptyNonFullCustomContainer(){
+        // Doesn't Exist? Custom Container's are made for a Custom Box.
     }
     
     // ---------------- testing addArt ----------------
+    // Since the method returns whether it added or not we tested that boolean.
+    // Test adding Mirror Art and Non MirrorArt on 6 Containers. For Crates we 
+    // also checked to add Mirrors to Empty, Full, NonEmptyNonFull Crates.
+    // Total Tests: 16; 6 Containers (3 fullness Options on 1), 2 Arts,
     @Test
-    public void testaddArt(){
+    public void testaddArtWithMirrorArtOnNullContainer(){
+        boolean added = nullContainer.addArt(mirrorArt);
+        assertFalse("Can not add Mirror on anything but Crates",added);
+    }
 
+    @Test
+    public void testaddArtWithNonMirrorArtOnNullContainer(){
+        boolean added = nullContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithMirrorArtOnPalletContainer(){
+        boolean added = palletContainer.addArt(mirrorArt);
+        assertFalse("Can not add Mirror on anything but Crates",added);
+    }
+
+    @Test
+    public void testaddArtWithNonMirrorArtOnPalletContainer(){
+        boolean added = palletContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithMirrorArtOnEmptyCrateContainer(){
+        boolean added = crateContainer.addArt(mirrorArt);
+        assertTrue("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithMirrorArtOnFullCrateContainer(){
+        for (int i=0; i < MIRROR_CRATE_LIMIT; i++){
+            crateContainer.addArt(mirrorArt);
+        }
+        boolean added = crateContainer.addArt(mirrorArt);
+        assertFalse("Can not add Mirror on a full Container",added);
+    }
+
+    @Test
+    public void testaddArtWithMirrorArtOnNonEmptyNonFullCrateContainer(){
+        for (int i=0; i < MIRROR_CRATE_LIMIT - 5; i++){
+            crateContainer.addArt(mirrorArt);
+        }
+        boolean added = crateContainer.addArt(mirrorArt);
+        assertTrue("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithNonMirrorArtOnEmptyCrateContainer(){
+        boolean added = crateContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithNonMirrorArtOnFullCrateContainer(){
+        for (int i=0; i < MIRROR_CRATE_LIMIT; i++){
+            crateContainer.addArt(mirrorArt);
+        }
+        boolean added = crateContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithNonMirrorArtOnNonEmptyNonFullCrateContainer(){
+        for (int i=0; i < MIRROR_CRATE_LIMIT - 5; i++){
+            crateContainer.addArt(mirrorArt);
+        }
+        boolean added = crateContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithMirrorArtOnGlassContainer(){
+        boolean added = glassContainer.addArt(mirrorArt);
+        assertFalse("Can not add Mirror on anything but Crates",added);
+    }
+
+    @Test
+    public void testaddArtWithNonMirrorArtOnGlassContainer(){
+        boolean added = glassContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithMirrorArtOnOversizeContainer(){
+        boolean added = oversizeContainer.addArt(mirrorArt);
+        assertFalse("Can not add Mirror on anything but Crates",added);
+    }
+
+    @Test
+    public void testaddArtWithNonMirrorArtOnOversizeContainer(){
+        boolean added = oversizeContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
+    }
+
+    @Test
+    public void testaddArtWithMirrorArtOnCustomContainer(){
+        boolean added = customContainer.addArt(mirrorArt);
+        assertFalse("Can not add Mirror on anything but Crates",added);
+    }
+
+    @Test
+    public void testaddArtWithNonMirrorArtOnCustomContainer(){
+        boolean added = customContainer.addArt(nonMirrorArt);
+        assertFalse("Can not add anything Non Mirror on Containers",added);
     }
     
     // ---------------- testing canBoxFit ----------------

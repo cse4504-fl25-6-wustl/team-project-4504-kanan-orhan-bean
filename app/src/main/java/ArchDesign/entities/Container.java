@@ -154,11 +154,16 @@ public class Container {
         }
     }
 
-    public List<Box> addBox(Box box){
+    public boolean addBox(Box box){
         if (this.isMirrorCrate()){
             throw new IllegalStateException("Can not add a Box to a Mirror Crate.");
         }
-        this.boxes.add(box);
+        if (this.canBoxFit(box)){
+            this.boxes.add(box);
+        }
+        else {
+            throw new IllegalArgumentException("Box can't fit into this container");
+        }
         if (this.getType() == Type.Crate){
             this.setContainerHeight(Math.max(this.getHeight(), box.getHeight() + CRATE_HEIGHT_OVERHEAD));
         }
@@ -166,19 +171,22 @@ public class Container {
             this.setContainerHeight(Math.max(this.getHeight(), box.getHeight()));
         }
         this.updateFullness();
-        return this.boxes;
+        return true;
     };
 
-    public List<Art> addArt(Art art){
+    public boolean addArt(Art art){
         if (!this.isMirrorCrate()){
-            throw new IllegalStateException("Can not add Arts in a Non-Mirror Crate.");
+            return false;
+            // throw new IllegalStateException("Can not add Arts in a Non-Mirror Crate.");
         }
         this.arts.add(art);
         this.updateFullness();
-        return this.arts;
+        return true;
     };
 
     public boolean canBoxFit(Box box){
+
+        // TODO: fix this
 
         if (this.isMirrorCrate()){
             throw new IllegalStateException("Can not check Boxes in a Mirror Crate.");
@@ -211,7 +219,7 @@ public class Container {
             return false;
         }
         // If Container is Normal Pallet and box is oversized 
-        else if ((!this.isCarryingOversizeBox()) && isBoxOversized){
+        else if ((!this.isCarryingOversizeBox()) && isBoxOversized && (this.getCapacity() - this.getCurrentSize() < 2)){
             return false;
         }
         // Assuming we sorted the Box by size before checking, all other cases are Container is Oversized, Box isn't 
