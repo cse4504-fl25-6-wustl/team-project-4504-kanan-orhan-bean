@@ -1819,14 +1819,15 @@ public class ContainerTest {
     }
     
     // ---------------- testing canArtFit ----------------
-    @Test(expected = IllegalStateException.class)
+    // Total Tests: 4
+    @Test
     public void testThrowsExceptionIfNotMirrorCrate() {
         crateContainer.addBox(standardBox);
         assertThrows("Expected an Error", IllegalStateException.class, 
         ()->crateContainer.canArtFit(mirrorArt));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testThrowsExceptionIfArtIsNotMirror() {
         crateContainer.addArt(mirrorArt);
         assertThrows("Expected an Error", IllegalStateException.class, 
