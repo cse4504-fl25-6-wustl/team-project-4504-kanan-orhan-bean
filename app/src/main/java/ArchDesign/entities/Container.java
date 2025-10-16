@@ -214,6 +214,10 @@ public class Container {
             // It is a non-full Glass Crate, and the Box is small enough to fit in it
             return true;
         }
+        else if (this.getType() == Type.Glass && !this.isSmallEnoughForGlassPallet(box)){
+            // It is a non-full Glass Crate, and the Box is not small enough to fit in it
+            return false;
+        }
         else if (this.getType() == Type.Custom){
             // Custom Crate, It is for something that is custom, can't put stuff in it
             return false;
@@ -353,7 +357,7 @@ public class Container {
         this.weight = weight;
     }
     
-    private boolean isCarryingOversizeBox(){
+    public boolean isCarryingOversizeBox(){
         if (this.isMirrorCrate()){
             throw new IllegalStateException("There are no Boxes in a Mirror Crate.");
         }

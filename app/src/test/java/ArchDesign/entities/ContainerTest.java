@@ -1,5 +1,6 @@
 package ArchDesign.entities;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -1762,27 +1763,202 @@ public class ContainerTest {
     }
     
     // ---------------- testing canBoxFit ----------------
+    // Total Tests: 7;
     @Test
-    public void testcanBoxFit(){
+    public void testMirrorCrateThrowsException() {
+        Container mirrorCrate = new Container(ArchDesign.entities.Container.Type.Crate, true);
+        mirrorCrate.addArt(mirrorArt);
+        assertThrows("Expected an Throwable Error", IllegalStateException.class, () -> mirrorCrate.canBoxFit(standardBox));
+    }
 
+    @Test
+    public void testFullContainerCannotFit() {
+        assertFalse(fullPalletContainer.canBoxFit(standardBox));
+        assertFalse(fullCrateContainer.canBoxFit(standardBox));
+        assertFalse(fullGlassContainer.canBoxFit(customSmallBox));
+        assertFalse(fullOversizeContainer.canBoxFit(oversizeBox));
+    }
+
+    @Test
+    public void testCustomContainerRejectsAll() {
+        assertFalse(customContainer.canBoxFit(standardBox));
+        assertFalse(customContainer.canBoxFit(oversizeBox));
+    }
+
+    @Test
+    public void testEmptyContainerStandardAndOversize() {
+        // Empty container can take standard box
+        assertTrue(palletContainer.canBoxFit(standardBox));
+        // Empty container can take oversize box and mark it as such
+        assertTrue(oversizeContainer.canBoxFit(oversizeBox));
+        assertTrue(oversizeContainer.isCarryingOversizeBox());
+    }
+
+    @Test
+    public void testGlassContainerAcceptsSmallBox() {
+        // Should accept small box (glass type)
+        assertTrue(glassContainer.canBoxFit(customSmallBox));
+    }
+
+    @Test
+    public void testPalletRejectsOversizeIfAlmostFull() {
+        Container almostFullPallet = new Container(ArchDesign.entities.Container.Type.Pallet, true);
+        almostFullPallet.addBox(standardBox);
+        almostFullPallet.addBox(standardBox);
+        almostFullPallet.addBox(standardBox);
+        // now capacity is low — oversize shouldn't fit
+        assertFalse(almostFullPallet.canBoxFit(oversizeBox));
+    }
+
+    @Test
+    public void testStandardFitsInNormalConditions() {
+        Container midLoadCrate = new Container(ArchDesign.entities.Container.Type.Crate, true);
+        midLoadCrate.addBox(standardBox);
+        assertTrue(midLoadCrate.canBoxFit(standardBox));
+        assertTrue(midLoadCrate.canBoxFit(oversizeBox));
     }
     
     // ---------------- testing canArtFit ----------------
-    @Test
-    public void testcanArtFit(){
+    @Test(expected = IllegalStateException.class)
+    public void testThrowsExceptionIfNotMirrorCrate() {
+        crateContainer.addBox(standardBox);
+        assertThrows("Expected an Error", IllegalStateException.class, 
+        ()->crateContainer.canArtFit(mirrorArt));
+    }
 
+    @Test(expected = IllegalStateException.class)
+    public void testThrowsExceptionIfArtIsNotMirror() {
+        crateContainer.addArt(mirrorArt);
+        assertThrows("Expected an Error", IllegalStateException.class, 
+        ()->crateContainer.canArtFit(nonMirrorArt));
+    }
+
+    @Test
+    public void testFullMirrorCrateCannotFit() {
+        // Fill crate to capacity
+        for (int i=0; i< MIRROR_CRATE_LIMIT; i++){
+            crateContainer.addArt(mirrorArt);
+        }
+
+        assertTrue(crateContainer.isFull());
+        assertFalse(crateContainer.canArtFit(mirrorArt));
+    }
+
+    @Test
+    public void testMirrorCrateCanFitWhenNotFull() {
+        for (int i=0; i< MIRROR_CRATE_LIMIT - 5; i++){
+            crateContainer.addArt(mirrorArt);
+        }
+        assertTrue(crateContainer.canArtFit(mirrorArt));
     }
     
     // ---------------- testing getWeight() ----------------
+    // Total Tests: 6
     @Test
-    public void testgetWeight(){
+    public void testMirrorCrateWeightIncludesArtAndTare() {
+        crateContainer.addArt(mirrorArt);
+        crateContainer.addArt(mirrorArt);
 
+        double expected = mirrorArt.getWeight() + mirrorArt.getWeight() + OVERHEAD_CRATE_WEIGHT;
+        double actual = crateContainer.getWeight();
+
+        assertEquals(expected, actual, 0.001);
+    }
+
+    @Test
+    public void testNonMirrorCrateWeightIncludesBoxesAndTare() {
+        crateContainer.addBox(standardBox);
+        crateContainer.addBox(standardBox);
+
+        double expected = standardBox.getWeight() + standardBox.getWeight() + OVERHEAD_CRATE_WEIGHT;
+        double actual = crateContainer.getWeight();
+
+        assertEquals(expected, actual, 0.001);
+    }
+
+    @Test
+    public void testPalletContainerWeightIncludesBoxesAndTare() {
+        palletContainer.addBox(standardBox);
+        double expected = standardBox.getWeight() + OVERHEAD_PALLET_WEIGHT;
+        double actual = palletContainer.getWeight();
+
+        assertEquals(expected, actual, 0.001);
+    }
+
+    @Test
+    public void testOversizeContainerWeightIncludesBoxesAndOversizeTare() {
+        oversizeContainer.addBox(standardBox);
+        double expected = standardBox.getWeight() + OVERHEAD_OVERSIZE_PALLET_WEIGHT;
+        double actual = oversizeContainer.getWeight();
+
+        assertEquals(expected, actual, 0.001);
+    }
+
+    @Test
+    public void testEmptyCrateWeightIsJustTare() {
+        double expected = OVERHEAD_CRATE_WEIGHT;
+        double actual = crateContainer.getWeight();
+        assertEquals(expected, actual, 0.001);
+    }
+
+    @Test
+    public void testEmptyPalletWeightIsJustTare() {
+        double expected = OVERHEAD_PALLET_WEIGHT;
+        double actual = palletContainer.getWeight();
+        assertEquals(expected, actual, 0.001);
     }
     
     // ---------------- testing getCapacity ----------------
+    // Total Tests: 8
     @Test
-    public void testgetCapacity(){
+    public void testEmptyContainerThrowsException() {
+        assertThrows(IllegalStateException.class, ()->palletContainer.getCapacity());
+        assertThrows(IllegalStateException.class, ()->crateContainer.getCapacity());
+        assertThrows(IllegalStateException.class, ()->glassContainer.getCapacity());
+        assertThrows(IllegalStateException.class, ()->oversizeContainer.getCapacity());
 
     }
-    
+
+    @Test
+    public void testStandardPalletCapacity() {
+        palletContainer.addBox(standardBox);
+        assertEquals(4, palletContainer.getCapacity());
+    }
+
+    @Test
+    public void testStandardCrateCapacity() {
+        crateContainer.addBox(standardBox);
+        assertEquals(4, crateContainer.getCapacity());
+    }
+
+    @Test
+    public void testGlassContainerCapacity() {
+        glassContainer.addBox(standardBox);
+        assertEquals(4, glassContainer.getCapacity());
+    }
+
+    @Test
+    public void testOversizeContainerCapacity() {
+        oversizeContainer.addBox(standardBox);
+        assertEquals(5, oversizeContainer.getCapacity());
+    }
+
+    @Test
+    public void testOversizeBoxReducesCapacityByOne() {
+        oversizeContainer.addBox(oversizeBox);
+        assertEquals(4, oversizeContainer.getCapacity());
+    }
+
+    @Test
+    public void testMirrorCrateHasMirrorLimit() {
+        crateContainer.addArt(mirrorArt);
+        int capacity = crateContainer.getCapacity();
+        assertEquals(MIRROR_CRATE_LIMIT, capacity);
+    }
+
+    @Test
+    public void testCustomContainerCapacityIsOne() {
+        customContainer.addBox(standardBox);
+        assertEquals(1, customContainer.getCapacity());
+    }
 }
