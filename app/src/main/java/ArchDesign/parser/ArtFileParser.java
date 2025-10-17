@@ -42,14 +42,15 @@ public class ArtFileParser extends FileParser {
 
         if (extension.endsWith(".xlsx")) {
             // return parseExcel(filePath);
-            System.err.println("excel type not yet supported for parsing");
+            System.err.println("excel type not yet supported for line input parsing");
             return null;
         } else if (extension.endsWith(".csv")) {
             return parseCSV(filePath);
         } else if (extension.endsWith(".txt")) {
-            System.err.println("txt type not yet supported for parsing");
+            System.err.println("txt type not yet supported for line input parsing");
             return null;
         } else {
+            System.err.println("invalid file type for line item parsing");
             return ParseReturnVals.INVALID_FILE_TYPE;
         }
     }
@@ -130,20 +131,20 @@ public class ArtFileParser extends FileParser {
                 
                 // Type enum mapping
                 String typeStr = values[3].trim();
-                Art.Type type = setType(typeStr);
+                Art.Type type = Art.assignType(typeStr);
                 
                 double width = Double.parseDouble(values[4].trim());
                 double height = Double.parseDouble(values[5].trim());
 
                 // Glazing enum mapping
                 String glazingStr = values[6].trim();
-                Art.Glazing glazing = setGlazingType(glazingStr);
+                Art.Glazing glazing = Art.assignGlazingType(glazingStr);
 
                 String frameMoulding = values[7].trim();
 
                 // hardware int extracting
                 String hardwareStr = values[8].trim();
-                int hardware = setHardware(hardwareStr);
+                int hardware = Art.assignHardware(hardwareStr);
 
                 // Build ArtPiece and add to collection
                 for (int i=1; i<=quantity; ++i) {
@@ -154,77 +155,15 @@ public class ArtFileParser extends FileParser {
             return ParseReturnVals.SUCCESS;
 
         } catch (IOException e) {
-            System.err.println("ERROR: file not found");
-            e.printStackTrace();
+            System.err.println("ERROR: line input file not found");
+            // e.printStackTrace();
             return ParseReturnVals.FILE_NOT_FOUND;
         } catch (Exception e) {
-            System.out.println(this.artCollection.isEmpty());
-            System.err.println("ERROR: could not parse excel sheet");
-            e.printStackTrace();
+            System.err.println("ERROR: could not parse line input csv");
+            // e.printStackTrace();
             return ParseReturnVals.PARSE_ERROR;
         }
     }
     
     // private ParseReturnVals parseTXT(String filePath);
-
-    // helper method for setting type
-    // *TODO: fix art enums so we don't have to return null ever
-    private Art.Type setType(String typeStr) {
-        typeStr = typeStr.toLowerCase();
-        if (typeStr.contains("print")) {
-            if (typeStr.contains("metal")) {
-                return Art.Type.MetalPrint;
-            }
-            else if (typeStr.contains("title")) {
-                return Art.Type.PaperPrintFramedWithTitlePlate;
-            }
-            else { return Art.Type.PaperPrintFramed; }
-        }
-        else if (typeStr.contains("canvas")) {
-            return Art.Type.CanvasFloatFrame;
-        }
-        else if (typeStr.contains("wall")) {
-            return Art.Type.WallDecor;
-        }
-        else if (typeStr.contains("acoustic")) {
-            if (typeStr.contains("framed")) {
-                return Art.Type.AcousticPanelFramed;
-            }
-            else { return Art.Type.AcousticPanel; }
-        }
-        else if (typeStr.contains("metal")) {
-            return Art.Type.MetalPrint;
-        }
-        else if (typeStr.contains("mirror")) {
-            return Art.Type.Mirror;
-        }
-        return null;
-    }
-    // helper method for setting glaze
-    private Art.Glazing setGlazingType(String glazingStr) {
-        glazingStr = glazingStr.toLowerCase();
-        if (glazingStr.contains("glass")) {
-            return Art.Glazing.Glass;
-        } else if (glazingStr.contains("acrylic")) {
-            return Art.Glazing.Acrylic;
-        } else {
-            return Art.Glazing.NoGlaze;
-        }
-    }
-    // helper method for setting hardware number
-    private int setHardware(String hardwareStr) {
-        if (hardwareStr == null || hardwareStr.isEmpty()) {
-            return -1;
-        }
-
-        // Split on whitespace to isolate the first word
-        String firstWord = hardwareStr.split("\\s+")[0];
-        // Keep only digits from the first word
-        String digits = firstWord.replaceAll("\\D+", ""); // \D = non-digit
-        if (digits.isEmpty()) {
-            return -1;
-        }
-
-        return Integer.parseInt(digits);
-    }
 }

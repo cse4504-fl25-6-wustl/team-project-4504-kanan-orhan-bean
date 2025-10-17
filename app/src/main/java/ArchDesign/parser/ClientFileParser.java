@@ -39,14 +39,15 @@ public class ClientFileParser extends FileParser {
 
         if (extension.endsWith(".xlsx")) {
             // return parseExcel(filePath);
-            System.err.println("excel type not yet supported for parsing");
+            System.err.println("excel type not yet supported for client parsing");
             return null;
         } else if (extension.endsWith(".csv")) {
             return parseCSV(filePath);
         } else if (extension.endsWith(".txt")) {
-            System.err.println("txt type not yet supported for parsing");
+            System.err.println("txt type not yet supported for client parsing");
             return null;
         } else {
+            System.err.println("invlaid file type for client parsing");
             return ParseReturnVals.INVALID_FILE_TYPE;
         }
     }
@@ -101,7 +102,7 @@ public class ClientFileParser extends FileParser {
             return ParseReturnVals.PARSE_ERROR;
         }
     } */
-
+    
     private ParseReturnVals parseCSV(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine();
@@ -111,7 +112,8 @@ public class ClientFileParser extends FileParser {
                 String[] values = clientRow.split(",");
 
                 // Process each column, extract values
-                String location = values[0].trim() + " " + values[1].trim();
+                String tempLo = values[0].trim() + " " + values[1].trim();
+                String location = tempLo.replace("\"", "");
                 String name = values[2].trim();
 
                 boolean acceptsPallets = parseYesNo(values[3].trim());
@@ -122,7 +124,7 @@ public class ClientFileParser extends FileParser {
 
                 // service type enum mapping
                 String serviceStr = values[8].trim();
-                Client.ServiceType serviceType = getServiceType(serviceStr);
+                Client.ServiceType serviceType = Client.assignServiceType(serviceStr);
 
                 this.client = new Client(location, name, acceptsPallets, acceptsCrates,
                         loadingDockAccess, liftgateRequired, insideDeliveryNeeded, serviceType);
@@ -134,13 +136,12 @@ public class ClientFileParser extends FileParser {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("ERROR: file not found");
+            // e.printStackTrace();
+            System.err.println("ERROR: client file not found");
             return ParseReturnVals.FILE_NOT_FOUND;
         } catch (Exception e) {
-            System.out.println("client checker");
-            System.err.println("ERROR: could not parse excel sheet");
-            e.printStackTrace();
+            System.err.println("ERROR: could not parse client csv");
+            // e.printStackTrace();
             return ParseReturnVals.PARSE_ERROR;
         }
     }
@@ -148,20 +149,10 @@ public class ClientFileParser extends FileParser {
     // private ParseReturnVals parseTXT(String filePath) {}
 
     // Helper for "y"/"n" → boolean
-    private boolean parseYesNo(String val) {
-        boolean isYes = val.equalsIgnoreCase("y") || val.toLowerCase().contains("y");
-        return val != null && isYes;
-    }
-
-    // helper method for setting type
-    private Client.ServiceType getServiceType(String serviceStr) {
-        if (serviceStr.toLowerCase().contains("delivery") && serviceStr.toLowerCase().contains("installation")) {
-            return Client.ServiceType.DELIVERY_AND_INSTALLATION;
-        } else if (serviceStr.toLowerCase().contains("delivery")) {
-            return Client.ServiceType.DELIVERY;
-        } else if (serviceStr.toLowerCase().contains("installation")) {
-            return Client.ServiceType.INSTALLATION;
+    public static boolean parseYesNo(String val) {
+        if (val == null) {
+            return false;
         }
-        else { return null; }
+        return (val.equalsIgnoreCase("y") || val.toLowerCase().contains("y"));
     }
 }

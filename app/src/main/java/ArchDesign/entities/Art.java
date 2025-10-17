@@ -11,7 +11,8 @@ public class Art {
         AcousticPanel, 
         AcousticPanelFramed, 
         MetalPrint, 
-        Mirror 
+        Mirror,
+        UNKNOWN
     }
     public enum Material {
         Glass(0.0098), 
@@ -21,7 +22,8 @@ public class Art {
         Mirror(0.0191), 
         AcousticPanel(0.0038), 
         AcousticPanelFramed(0.0037), 
-        PatientBoard(0.0347);
+        PatientBoard(0.0347),
+        UNKNOWN(0.0);
 
         public final double LBpSQIN;
 
@@ -29,7 +31,7 @@ public class Art {
             this.LBpSQIN = LBpSQIN;
         }
     }
-    public enum Glazing { Glass, Acrylic, NoGlaze }
+    public enum Glazing { Glass, Acrylic, NoGlaze, UNKNOWN }
     private int hardware;
     private final int lineNumber; 
     private Type type;
@@ -168,5 +170,72 @@ public class Art {
                 throw new IllegalArgumentException("Unknown type: " + type);
         }
         throw new IllegalArgumentException("Unsupported glazing for type: " + type);
+    }
+
+    // ----- Static Helpers (BEAN) ----- 
+
+    // helper method for setting type
+    public static Art.Type assignType(String typeStr) {
+        if (typeStr != null) {
+            typeStr = typeStr.toLowerCase();
+            if (typeStr.contains("print")) {
+                if (typeStr.contains("metal")) {
+                    return Art.Type.MetalPrint;
+                }
+                else if (typeStr.contains("title")) {
+                    return Art.Type.PaperPrintFramedWithTitlePlate;
+                }
+                else { return Art.Type.PaperPrintFramed; }
+            }
+            else if (typeStr.contains("canvas")) {
+                return Art.Type.CanvasFloatFrame;
+            }
+            else if (typeStr.contains("wall")) {
+                return Art.Type.WallDecor;
+            }
+            else if (typeStr.contains("acoustic")) {
+                if (typeStr.contains("framed")) {
+                    return Art.Type.AcousticPanelFramed;
+                }
+                else { return Art.Type.AcousticPanel; }
+            }
+            else if (typeStr.contains("metal")) {
+                return Art.Type.MetalPrint;
+            }
+            else if (typeStr.contains("mirror")) {
+                return Art.Type.Mirror;
+            }
+        }
+        return Art.Type.UNKNOWN;
+    }
+    // helper method for setting glaze
+    public static Art.Glazing assignGlazingType(String glazingStr) {
+        if (glazingStr != null) {
+            glazingStr = glazingStr.toLowerCase();
+            if (glazingStr.contains("glass")) {
+                return Art.Glazing.Glass;
+            } else if (glazingStr.contains("acrylic")) {
+                return Art.Glazing.Acrylic;
+            } else if (glazingStr.contains("glaze")) {
+                return Art.Glazing.NoGlaze;
+            }
+        }
+        return Art.Glazing.UNKNOWN;
+    }
+    // helper method for setting hardware number
+    public static int assignHardware(String hardwareStr) {
+        if (hardwareStr == null || hardwareStr.isEmpty()) {
+            return -1;
+        }
+
+        // Split on whitespace to isolate the first word
+        String firstWord = hardwareStr.trim().split("\\s+")[0];
+        // Keep only digits from the first word
+        String digits = firstWord.replaceAll("\\D+", ""); // \D = non-digit
+        if (digits.isEmpty()) {
+            return -1;
+        }
+
+        return Integer.parseInt(digits);
     }
 }

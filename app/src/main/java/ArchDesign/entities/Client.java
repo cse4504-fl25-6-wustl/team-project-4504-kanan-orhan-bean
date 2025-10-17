@@ -17,7 +17,8 @@ public class Client {
     public static enum ServiceType {
         DELIVERY,
         INSTALLATION,
-        DELIVERY_AND_INSTALLATION
+        DELIVERY_AND_INSTALLATION,
+        UNKNOWN
     }
 
     // Non-static inner class for delivery-related booleans
@@ -73,6 +74,21 @@ public class Client {
     // Setters
     public void setLocation(String location) { this.location = location; }
     public void setServiceType(ServiceType serviceType) { this.serviceType = serviceType; }
+
+        // helper method for setting type
+    public static Client.ServiceType assignServiceType(String serviceStr) {
+        if (serviceStr == null) {
+            return Client.ServiceType.UNKNOWN;
+        }
+        else if (serviceStr.toLowerCase().contains("deliv") && serviceStr.toLowerCase().contains("install")) {
+            return Client.ServiceType.DELIVERY_AND_INSTALLATION;
+        } else if (serviceStr.toLowerCase().contains("deliv")) {
+            return Client.ServiceType.DELIVERY;
+        } else if (serviceStr.toLowerCase().contains("install")) {
+            return Client.ServiceType.INSTALLATION;
+        }
+        else { return Client.ServiceType.UNKNOWN; }
+    }
 
 /*     // for debugging
     @Override

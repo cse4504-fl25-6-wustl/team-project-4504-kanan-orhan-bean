@@ -66,17 +66,6 @@ public class Box {
         this.isCustom = false;
     }
 
-    // BEAN - delete later, after packArtIntoBoxes in packing.java is fixed
-    public void tempFix(double length, double width, double height){
-        this.length = length;
-        this.width = width;
-        this.height = height;
-
-        this.isCustom = true;
-        // BEAN - can a box be custom and oversized?? assume no!
-        this.isOversized = false;
-    }
-
     private void setBoxCustom(double length, double width, double height){
         this.length = length;
         this.width = width;
@@ -148,21 +137,21 @@ public class Box {
         return this.arts; */
 
         if (canArtFit(art)) {
-            if (isArtSameType(art)) {
-                this.arts.add(art);
-                if (this.arts.size() == capacity) {
-                    this.isFull = true;
-                }
+            this.arts.add(art);
+            this.setCapacity();
+            if (this.arts.size() == this.capacity) {
+                this.isFull = true;
             }
         }
         return this.arts;
     };
 
-    private boolean isArtSameType(Art art) {
+    // this needs to be fixed (can add smaller sized art)
+    private boolean isArtSameSize(Art art) {
         if (art.isCustom() && this.isCustom) {
             return true;
         }
-        else if (isArtOversizedForBoxes(art) && this.isOversized()) {
+        else if (isArtOversizedForBoxes(art) && !art.isCustom() && this.isOversized()) {
             return true;
         }
         else if (!art.isCustom() && !isArtOversizedForBoxes(art) && !this.isCustom && !this.isOversized) {
@@ -185,10 +174,11 @@ public class Box {
         if (this.isFull) {
             return false;
         }
-        else if (isArtSameType(art)) {
-            if (this.isEmpty()) {
-                return true;
-            }
+        else if (this.isEmpty()) {
+            return true;
+        }
+        else if (isArtSameSize(art)) {
+            return true;
         }
         return false;
         
@@ -239,6 +229,7 @@ public class Box {
         this.weight = weight;
     }
 
+    // BEAN - dont actually need this since we have an isFull() method
     public int getCapacity(){
         // return its capacity if it can be calculated, else return an IllegalStateException 
         // if we can't determine the capacity due to it being empty. Or we have mirrors in it
@@ -252,8 +243,12 @@ public class Box {
     // (Like Sunrise requiring allowing 8 art per box)
     public void overrideCapacity(int overridenCapacity){
         this.capacity = overridenCapacity;
+        if (this.arts.size() == this.capacity) {
+            this.isFull = true;
+        }
     }
 
+    // BEAN - omg this drastically needs to get fixed
     private boolean setCapacity(){
         //A. Apply Strict Box Capacity Limits based on Product Type.
             //i. Framed Prints: Max 6 pieces per standard box.
