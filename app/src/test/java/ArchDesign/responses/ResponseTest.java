@@ -30,7 +30,7 @@ public class ResponseTest {
     List<Box> boxes = new ArrayList<>();
     List<Container> containers = new ArrayList<>();
 
-    double totalWeight = 123.45;
+    int totalWeight = 124;
     String summary = "Test summary";
 
     // Act

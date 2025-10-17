@@ -14,7 +14,7 @@ public class Response {
     private final List<Art> arts;
     private final List<Box> boxes;
     private final List<Container> containers;
-    private final double totalWeight;
+    private final int totalWeight;
     private final String summary;
 
     /**
@@ -25,7 +25,7 @@ public class Response {
      * @param summary     precomputed human-readable summary (nullable/optional)
      */
     public Response(List<Art> arts, List<Box> boxes, List<Container> containers,
-            double totalWeight, String summary) {
+            int totalWeight, String summary) {
         this.arts = Collections
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(arts, "arts must not be null")));
         this.boxes = Collections
@@ -48,7 +48,7 @@ public class Response {
         return this.containers;
     }
 
-    public double getTotalWeight() {
+    public int getTotalWeight() {
         return this.totalWeight;
     }
 

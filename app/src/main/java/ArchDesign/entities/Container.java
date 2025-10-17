@@ -14,7 +14,7 @@ public class Container {
     private double length;
     private double width;
     private double height;
-    private double weight;
+    private int weight;
     private List<Box> boxes;
     private List<Art> arts;
     private int capacity;
@@ -33,9 +33,9 @@ public class Container {
     private final double CRATE_LENGTH = 50;
     private final double CRATE_WIDTH = 38;
     private final double CRATE_HEIGHT_OVERHEAD = 8;
-    private final double OVERHEAD_PALLET_WEIGHT = 60;
-    private final double OVERHEAD_OVERSIZE_PALLET_WEIGHT = 75;
-    private final double OVERHEAD_CRATE_WEIGHT = 125;
+    private final int OVERHEAD_PALLET_WEIGHT = 60;
+    private final int OVERHEAD_OVERSIZE_PALLET_WEIGHT = 75;
+    private final int OVERHEAD_CRATE_WEIGHT = 125;
     private final int MIRROR_CRATE_LIMIT = 24;
     private final int NORMAL_GLASS_ACRYLIC_CRATE_LIMIT = 25;
     private final int OVERSIZE_GLASS_ACRYLIC_CRATE_LIMIT = 18;
@@ -303,8 +303,8 @@ public class Container {
         return this.arts;
     };
 
-    public double getWeight() {
-        double weight = 0.0;
+    public int getWeight() {
+        int weight = 0;
         if (this.isMirrorCrate()) {
             for (Art art : arts) {
                 weight += art.getWeight();
@@ -325,6 +325,10 @@ public class Container {
             throw new IllegalStateException("Capacity cannot be determined for this Container as it is empty.");
         }
         return this.capacity;
+    }
+
+    public int getJustContainerWeight(){
+        return (int) this.getTareWeight();
     }
 
     // ---------------- helpers ----------------
@@ -358,7 +362,7 @@ public class Container {
         this.height = height;
     }
 
-    private void setWeight(double weight) {
+    private void setWeight(int weight) {
         this.weight = weight;
     }
     
@@ -369,7 +373,7 @@ public class Container {
         return this.isCarryingOversizeBox;
     }
 
-    private double getTareWeight() {
+    private int getTareWeight() {
         if (this.getType() == Type.Crate) {
             return OVERHEAD_CRATE_WEIGHT;
         } else if (this.getType() == Type.Oversize) {

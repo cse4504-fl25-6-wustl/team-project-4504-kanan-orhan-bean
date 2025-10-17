@@ -17,9 +17,16 @@ public class Main {
         System.out.println("Input File Name: " + inputFileName);
         System.out.println("Client File Name: " + inputClientFileName);
 
-        List<Art> arts = Parser.parseArt(inputFileName);
+        Response response = generateResponseForMain(inputFileName, inputClientFileName);
 
-        Client client = Parser.parseClient(inputClientFileName);
+        System.out.println(response.toString());
+
+    }
+
+    public static Response generateResponseForMain(String inputfile, String clientFile){
+        List<Art> arts = Parser.parseArt(inputfile);
+
+        Client client = Parser.parseClient(clientFile);
 
         Request request = new Request(arts, client);
 
@@ -27,7 +34,6 @@ public class Main {
 
         Response response = packing.packEverything(request);
 
-        System.out.println(response.toString());
-
+        return response;
     }
 }

@@ -29,7 +29,7 @@ public class Packing {
         boolean acceptsCrates = caps.doesAcceptCrates();
         List<Container> containers = constructContainersForBoxesLocal(boxes, acceptsPallets, acceptsCrates);
 
-        double totalWeight = computeTotalWeight(arts, boxes, containers);
+        int totalWeight = computeTotalWeight(arts, boxes, containers);
         String summary = buildSummary(arts, boxes, containers, totalWeight);
 
         return new Response(arts, boxes, containers, totalWeight, summary);
@@ -37,17 +37,17 @@ public class Packing {
 
     /* ======================== totals and summary ======================== */
 
-    private double computeTotalWeight(List<Art> arts, List<Box> boxes, List<Container> containers) {
+    private int computeTotalWeight(List<Art> arts, List<Box> boxes, List<Container> containers) {
         try {
             if (!containers.isEmpty()) {
-                double sum = 0.0;
+                int sum = 0;
                 for (Container c : containers)
                     sum += safeContainerWeight(c);
                 if (sum > 0)
                     return sum;
             }
             if (!boxes.isEmpty()) {
-                double sum = 0.0;
+                int sum = 0;
                 for (Box b : boxes)
                     sum += safeBoxWeight(b);
                 if (sum > 0)
@@ -55,7 +55,7 @@ public class Packing {
             }
         } catch (Exception ignored) {
         }
-        double sumArts = 0.0;
+        int sumArts = 0;
         for (Art a : arts)
             if (a != null)
                 sumArts += a.getWeight();
@@ -73,7 +73,7 @@ public class Packing {
         for (int i = 0; i < maxItemsToShow; i++) {
             Art a = arts.get(i);
             sb.append(String.format(
-                    "  - Art #%d (line %d): %.2f\" x %.2f\" %s | weight=%.2f lb%s",
+                    "  - Art #%d (line %d): %.2f\" x %.2f\" %s | weight=%d lb%s",
                     i + 1, a.getLineNumber(), a.getWidth(), a.getHeight(),
                     a.getType(), a.getWeight(), a.isCustom() ? " | CUSTOM" : "")).append(nl);
         }

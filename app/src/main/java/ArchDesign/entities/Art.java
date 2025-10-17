@@ -43,8 +43,10 @@ public class Art {
     private boolean specialHandling;
     private boolean isCustom;
     private Material material;
+    private boolean isOversized;
 
     private final double CUSTOM_THRESHOLD = 43.5;
+    protected final double IS_OVERSIZE_THRESHOLD = 36;
 
     public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
         super();
@@ -56,6 +58,8 @@ public class Art {
         this.hardware = hardware;
         this.material = setMaterial(type, glazing);
         this.specialHandling = setSpecialHandling(type);
+        this.isOversized = setIsOversized(width, height);
+        this.isCustom = setIsCustom(width, height);
         setDepth(4.0);
     }
 
@@ -101,9 +105,9 @@ public class Art {
         return this.hardware;
     };
 
-    public double getWeight(){
+    public int getWeight(){
         this.weight = this.width * this.height * this.material.LBpSQIN;
-        return this.weight;
+        return (int) Math.ceil(this.weight); 
     }
 
     public boolean needSpecialHandling(){
@@ -113,11 +117,28 @@ public class Art {
 
     public boolean isCustom(){
         //B. Any item with a dimension over 44 inches requires "Custom" packaging.
-        this.isCustom = (this.width > CUSTOM_THRESHOLD || this.height > CUSTOM_THRESHOLD);
         return this.isCustom;
     }
 
+    public boolean isOversized(){
+        return this.isOversized;
+    }
+
     // ---------------- helpers ----------------
+
+    private boolean setIsCustom(double width, double height){
+        if (width > CUSTOM_THRESHOLD && this.height > CUSTOM_THRESHOLD){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean setIsOversized(double width, double height){
+        if (width > IS_OVERSIZE_THRESHOLD || height > IS_OVERSIZE_THRESHOLD){
+            return true;
+        }
+        return false;
+    }
 
     private boolean setSpecialHandling(Type type){
         this.specialHandling = false;
@@ -135,6 +156,8 @@ public class Art {
 
     private Material setMaterial(Type type, Glazing glazing){
         // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
+
+        // TODO: Fix later
         switch (type) {
             case PaperPrintFramed:
             case PaperPrintFramedWithTitlePlate:

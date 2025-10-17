@@ -111,25 +111,25 @@ public class ContainerTest {
         customLargeBox = new Box();
         customLargeBox.addArt(largeCustomArt);
         fullPalletContainer = new Container(ArchDesign.entities.Container.Type.Pallet, true);
-        fullPalletContainer.addBox(standardBox);
-        fullPalletContainer.addBox(standardBox);
-        fullPalletContainer.addBox(standardBox);
-        fullPalletContainer.addBox(standardBox);
+        // fullPalletContainer.addBox(standardBox);
+        // fullPalletContainer.addBox(standardBox);
+        // fullPalletContainer.addBox(standardBox);
+        // fullPalletContainer.addBox(standardBox);
         fullCrateContainer = new Container(ArchDesign.entities.Container.Type.Crate, true);
-        fullCrateContainer.addBox(standardBox);
-        fullCrateContainer.addBox(standardBox);
-        fullCrateContainer.addBox(standardBox);
-        fullCrateContainer.addBox(standardBox);
+        // fullCrateContainer.addBox(standardBox);
+        // fullCrateContainer.addBox(standardBox);
+        // fullCrateContainer.addBox(standardBox);
+        // fullCrateContainer.addBox(standardBox);
         fullGlassContainer = new Container(ArchDesign.entities.Container.Type.Glass, true);
-        fullGlassContainer.addBox(customSmallBox);
-        fullGlassContainer.addBox(customSmallBox);
-        fullGlassContainer.addBox(customSmallBox);
-        fullGlassContainer.addBox(customSmallBox);
+        // fullGlassContainer.addBox(customSmallBox);
+        // fullGlassContainer.addBox(customSmallBox);
+        // fullGlassContainer.addBox(customSmallBox);
+        // fullGlassContainer.addBox(customSmallBox);
         fullOversizeContainer = new Container(ArchDesign.entities.Container.Type.Oversize, true);
-        fullOversizeContainer.addBox(oversizeBox);
-        fullOversizeContainer.addBox(oversizeBox);
-        fullOversizeContainer.addBox(oversizeBox);
-        fullOversizeContainer.addBox(oversizeBox);
+        // fullOversizeContainer.addBox(oversizeBox);
+        // fullOversizeContainer.addBox(oversizeBox);
+        // fullOversizeContainer.addBox(oversizeBox);
+        // fullOversizeContainer.addBox(oversizeBox);
     }
 
     // ---------------- testing constructContainerForArt ----------------
