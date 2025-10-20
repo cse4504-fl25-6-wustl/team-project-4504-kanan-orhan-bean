@@ -52,10 +52,10 @@ public class ArtTest {
   @Test
   public void getWeight_usesMaterialDensity() {
     // 10 x 20 = 200 sq in
-    double expectedGlass = 200 * Material.Glass.LBpSQIN;
-    double expectedAcyrlic = 200 * Material.Acyrlic.LBpSQIN;
-    double expectedGallery = 200 * Material.CanvasGallery.LBpSQIN;
-    double expectedMirror = 200 * Material.Mirror.LBpSQIN;
+    int expectedGlass = (int) Math.ceil(200 * Material.Glass.LBpSQIN);
+    int expectedAcyrlic = (int) Math.ceil(200 * Material.Acyrlic.LBpSQIN);
+    int expectedGallery = (int) Math.ceil(200 * Material.CanvasGallery.LBpSQIN);
+    int expectedMirror = (int) Math.ceil(200 * Material.Mirror.LBpSQIN);
 
     assertEquals(expectedGlass, art(Type.PaperPrintFramed, Glazing.Glass, 10, 20).getWeight(), 1e-9);
     assertEquals(expectedAcyrlic, art(Type.PaperPrintFramed, Glazing.Acrylic, 10, 20).getWeight(), 1e-9);
@@ -73,8 +73,31 @@ public class ArtTest {
     assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 43.5, 10.0).isCustom());
     assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 43.5).isCustom());
 
-    // above threshold on either -> true
-    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 43.6, 10.0).isCustom());
-    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 43.6).isCustom());
+    // one above threshold on either -> false
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 43.6, 10.0).isCustom());
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 43.6).isCustom());
+
+    // both above threshold on either -> true
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 43.6, 43.6).isCustom());
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 43.6, 43.6).isCustom());
+  }
+
+  // isOversize(): boundary at 36" (strictly greater)
+  @Test
+  public void isCustom_boundaryChecks_36point0in() {
+    // below threshold on both -> false
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 35.9, 35.9).isOversized());
+
+    // exactly at threshold on either -> false
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 36.0, 10.0).isOversized());
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 36.0).isOversized());
+
+    // one above threshold on either -> true
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 36.1, 10.0).isOversized());
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 36.1).isOversized());
+
+    // both above threshold on either -> true
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 36.1, 36.1).isOversized());
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 36.1, 436.1).isOversized());
   }
 }

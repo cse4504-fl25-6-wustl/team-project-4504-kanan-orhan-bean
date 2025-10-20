@@ -59,6 +59,8 @@ public class Container {
         }
         this.arts = new ArrayList<>();
         this.boxes = new ArrayList<>();
+        this.isEmpty = true;
+        this.isFull = false;
     }
 
     // v--- This is how packing could implement packBoxIntoContainers ---v
@@ -116,6 +118,10 @@ public class Container {
     }
 
     public Container constructContainerForBox(Box box) {
+        if (box.isCustom() && !isSmallEnoughForGlassPallet(box)){
+            // Leave Large Custom Boxes to Bri
+            return null;
+        }
         if (this.isSmallEnoughForGlassPallet(box)) {
             Container myContainer = new Container(Type.Glass, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
@@ -125,7 +131,7 @@ public class Container {
             return myContainer;
         }
         else if (box.getWidth() > OVERSIZE_CRATE_LIMIT || box.getLength() > OVERSIZE_CRATE_LIMIT 
-        || box.getHeight() > OVERSIZE_CRATE_LIMIT){
+        || box.getHeight() > CRATE_ABSOLUTE_HEIGHT_LIMIT){
             Container myContainer = new Container(Type.Custom, this.canAcceptCrate);
             myContainer.setMirrorCrate(false);
             myContainer.addBox(box);
@@ -159,17 +165,20 @@ public class Container {
 
     public boolean addBox(Box box){
         if (this.isMirrorCrate()){
-            throw new IllegalStateException("Can not add a Box to a Mirror Crate.");
+            return false;
+            // throw new IllegalStateException("Can not add a Box to a Mirror Crate.");
         }
         if (this.canBoxFit(box)){
             this.boxes.add(box);
         }
         else {
-            throw new IllegalArgumentException("Box can't fit into this container");
+            return false;
+            // throw new IllegalArgumentException("Box can't fit into this container");
         }
         if (this.getType() == Type.Crate){
             this.setContainerHeight(Math.max(this.getHeight(), box.getHeight() + CRATE_HEIGHT_OVERHEAD));
-        } else {
+        }
+        else {
             this.setContainerHeight(Math.max(this.getHeight(), box.getHeight()));
         }
         this.updateFullness();
@@ -177,9 +186,15 @@ public class Container {
     };
 
     public boolean addArt(Art art){
+        if (this.getType() == Type.Crate && this.isEmpty() && art.getType() == ArchDesign.entities.Art.Type.Mirror){
+            this.setMirrorCrate(true);
+        }
         if (!this.isMirrorCrate()){
             return false;
             // throw new IllegalStateException("Can not add Arts in a Non-Mirror Crate.");
+        }
+        if (this.isFull() || art.getType() != ArchDesign.entities.Art.Type.Mirror){
+            return false;
         }
         this.arts.add(art);
         this.updateFullness();
@@ -198,10 +213,27 @@ public class Container {
 
         // Crate is Full, can't fit Box
         if (this.isFull()) {
+            // throw new IllegalStateException("Container is Full");
             return false;
         }
         // Crate is empty
         else if (this.isEmpty()) {
+            if (box.isCustom() && this.getType() != Type.Custom){
+                return false;
+            }
+            else if (box.isCustom() && this.getType() == Type.Glass && !this.isSmallEnoughForGlassPallet(box)){
+                return false;
+            }
+            else if (box.isCustom() && this.getType() == Type.Glass && this.isSmallEnoughForGlassPallet(box)){
+                return true;
+            } 
+            else if (!box.isCustom() && this.getType() == Type.Custom){
+                return false;
+            }
+            else if (this.getType() == Type.Custom){
+                // Custom Crate, It is for something that is custom, can't put stuff in it
+                return true;
+            }
             // Box is oversize, Crate needs to be Oversize
             if (isBoxOversized) {
                 this.isCarryingOversizeBox = true;
@@ -220,19 +252,25 @@ public class Container {
             // It is a non-full Glass Crate, and the Box is not small enough to fit in it
             return false;
         }
+        else if (box.isCustom()){
+            // Custombox is only for custom crate unless it is smalle enough
+            return false;
+        }
         else if (this.getType() == Type.Custom){
             // Custom Crate, It is for something that is custom, can't put stuff in it
             return false;
         }
         // If Container is Normal Pallet and box is oversized 
-        else if ((!this.isCarryingOversizeBox()) && isBoxOversized && (this.getCapacity() - this.getCurrentSize() < 2)){
+        else if (this.getType() == Type.Pallet && (!this.isCarryingOversizeBox()) && (isBoxOversized) && (this.getCapacity() - this.getCurrentSize() < 2)){
             return false;
         }
-        // Assuming we sorted the Box by size before checking, all other cases are
-        // Container is Oversized, Box isn't
-        // or that they are both Normal or Both Oversized. So in all other cases Box can
-        // fit
-        return true;
+        else {
+            // Assuming we sorted the Box by size before checking, all other cases are
+            // Container is Oversized, Box isn't
+            // or that they are both Normal or Both Oversized. So in all other cases Box can
+            // fit
+            return true;
+        }
     }
 
     public boolean canArtFit(Art art) {
@@ -322,7 +360,8 @@ public class Container {
         // return its capacity if it can be calculated, else return an
         // IllegalStateException
         if (!this.setCapacity()) {
-            throw new IllegalStateException("Capacity cannot be determined for this Container as it is empty.");
+            //throw new IllegalStateException("Capacity cannot be determined for this Container as it is empty.");
+            return -1;
         }
         return this.capacity;
     }
@@ -383,33 +422,46 @@ public class Container {
     }
 
     private void updateFullness() {
-        if (!this.setCapacity()) {
-            this.isEmpty = true;
-            this.isFull = false;
-        } else if (this.isMirrorCrate()) {
-            if (this.arts.size() >= this.getCapacity()) {
-                this.isEmpty = false;
-                this.isFull = true;
-            } else {
+        if (this.isMirrorCrate()) {
+            if (this.arts.size() == 0){
                 this.isEmpty = true;
                 this.isFull = false;
+                return;
             }
-        } else {
-            if (this.boxes.size() >= this.getCapacity()) {
+            else if (this.arts.size() >= this.getCapacity() && this.getCapacity() !=-1) {
                 this.isEmpty = false;
                 this.isFull = true;
+                return;
             } else {
+                this.isEmpty = false;
+                this.isFull = false;
+                return;
+            }
+        } 
+        else {
+            if (this.boxes.size() == 0){
                 this.isEmpty = true;
                 this.isFull = false;
+                return;
+            }
+            else if (this.boxes.size() >= this.getCapacity() && this.getCapacity() !=-1) {
+                this.isEmpty = false;
+                this.isFull = true;
+                return;
+            } else {
+                this.isEmpty = false;
+                this.isFull = false;
+                return;
             }
         }
-        this.isEmpty = false;
-        this.isFull = true;
     }
 
-    private boolean isSmallEnoughForGlassPallet(Box box){
+    protected boolean isSmallEnoughForGlassPallet(Box box){
         //TODO: Ask about the Threshold. It says for small shipments, but never specifies the dimensions so I made it up
-        return (box.getLength() > GLASS_PALLET_LENGTH_THRESHOLD || box.getWidth() > GLASS_PALLET_WIDTH_THRESHOLD) ? false : true;
+        if (box.getLength() > GLASS_PALLET_LENGTH_THRESHOLD || box.getWidth() > GLASS_PALLET_WIDTH_THRESHOLD){
+            return false;
+        }
+        return true;
     }
 
     private boolean setCapacity() {
@@ -427,7 +479,9 @@ public class Container {
         if (!this.isMirrorCrate()){
             containerFirstBox = this.getBoxes().get(0);
             containerType = this.getType();
-            boxOversized = containerFirstBox.isOversized();
+            for (Box box : this.getBoxes()){
+                boxOversized = box.isOversized();
+            }
         }
 
         // Assuming the Container only has Box that is of same or smaller type than
