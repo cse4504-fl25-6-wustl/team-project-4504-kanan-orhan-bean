@@ -164,6 +164,9 @@ public class Packing {
      * Containerize boxes. If a box is mirror-only and site allows crates,
      * start a Crate for it; otherwise prefer Pallet (if site allows).
      * All subsequent placement uses Container.canBoxFit(...) + addBox(...).
+     *
+     * **Bug fix**: only add a newly created container to the result
+     * if we successfully place the box into it.
      */
     private static List<Container> constructContainersForBoxesLocal(
             List<Box> myBoxes, boolean acceptsPallets, boolean canAcceptCrates) {
@@ -175,9 +178,12 @@ public class Packing {
         if (!acceptsPallets && !canAcceptCrates)
             return result;
 
+        myBoxes.sort(Comparator.comparing(Box::isOversized).thenComparing(Box::isCustom));
+
         for (Box box : myBoxes) {
             boolean added = false;
 
+            // Try to place into any existing container first
             for (Container cont : result) {
                 try {
                     if (cont.canBoxFit(box)) {
@@ -186,30 +192,58 @@ public class Packing {
                         break;
                     }
                 } catch (Exception ignored) {
-                    /* try next container */ }
+                    /* try next container */
+                }
             }
 
             if (!added) {
-                Container.Type freshType;
+                // Choose preferred fresh type for this box
+                Container.Type preferred;
                 if (isMirrorOnly(box) && canAcceptCrates) {
-                    freshType = Container.Type.Crate;
+                    preferred = Container.Type.Crate;
                 } else if (acceptsPallets) {
-                    freshType = Container.Type.Pallet;
+                    preferred = Container.Type.Pallet;
                 } else if (canAcceptCrates) {
-                    freshType = Container.Type.Crate;
+                    preferred = Container.Type.Crate;
                 } else {
+                    // Nowhere to place
                     continue;
                 }
 
-                Container fresh = new Container(freshType, canAcceptCrates);
-                try {
-                    fresh.addBox(box);
-                } catch (Exception ignored) {
+                // Try preferred type
+                if (tryCreateAndPlace(box, preferred, canAcceptCrates, result)) {
+                    added = true;
+                } else {
+                    // Fallback to the other allowed type if available
+                    if (preferred == Container.Type.Pallet && canAcceptCrates) {
+                        added = tryCreateAndPlace(box, Container.Type.Crate, canAcceptCrates, result);
+                    } else if (preferred == Container.Type.Crate && acceptsPallets) {
+                        added = tryCreateAndPlace(box, Container.Type.Pallet, canAcceptCrates, result);
+                    }
                 }
-                result.add(fresh);
+
+                // If still not added, we skip; DO NOT append empty containers.
             }
         }
         return result;
+    }
+
+    // Create a container of 'type', attempt to add the box, and only append to
+    // 'out'
+    // if the placement succeeds.
+    private static boolean tryCreateAndPlace(Box box, Container.Type type, boolean canAcceptCrates,
+            List<Container> out) {
+        Container fresh = new Container(type, canAcceptCrates);
+        try {
+            if (fresh.canBoxFit(box)) {
+                fresh.addBox(box);
+                out.add(fresh);
+                return true;
+            }
+        } catch (Exception ignored) {
+            // fall through -> return false
+        }
+        return false;
     }
 
     private static boolean isMirrorOnly(Box b) {
