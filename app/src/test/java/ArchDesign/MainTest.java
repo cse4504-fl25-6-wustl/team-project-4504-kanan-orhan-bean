@@ -59,7 +59,7 @@ public class MainTest {
     assertTrue(output.trim().length() > 50);
   }
 
-  // @Test
+  @Test
   public void main_withInput2_printsExpectedSummary() {
     String output = runMain("input/Input2.csv", "input/Site_requirements.csv");
 
@@ -70,7 +70,7 @@ public class MainTest {
     assertTrue(output.trim().length() > 50);
   }
 
-  // @Test
+  @Test
   public void main_withMissingArgs_doesNotCrash() {
     assertThrows(ArrayIndexOutOfBoundsException.class, () -> Main.main(new String[] {}));
   }
@@ -100,7 +100,10 @@ public class MainTest {
     int totalPallets = 0;
     int totalOversizePallets = 0;
     int totalCrates = 0;
+    String string = "";
+    int i = 1;
     for (Container container : response.getContainers()){
+      string += "Container " + i + " of type " + container.getType().toString() + " Boxes#: " + container.getBoxes().size() + " First Box has " + container.getBoxes().getFirst().getArts().size() + " Arts \n";
       totalContainerWeight += container.getJustContainerWeight();
       totalContainers++;
       if (container.getType() == ArchDesign.entities.Container.Type.Pallet){
@@ -112,6 +115,7 @@ public class MainTest {
       else if (container.getType() == ArchDesign.entities.Container.Type.Crate){
         totalCrates++;
       }
+      i++;
     }
     assertEquals(55, totalArtworkPieces);
     assertEquals(49, totalStandardArtworkPieces);
@@ -137,7 +141,7 @@ public class MainTest {
     assertEquals(1, oversize56dash32);
     assertEquals(3, oversize48dash32);
     assertEquals(784, totalArtworkWeight);
-    assertEquals(2, totalContainers);
+    assertEquals(string, 2, totalContainers);
     assertEquals(0, totalPallets);
     assertEquals(2, totalOversizePallets);
     assertEquals(0, totalCrates);
@@ -234,7 +238,7 @@ public class MainTest {
       }
     }
     assertEquals(13, totalArtworkPieces);
-    assertEquals(1, totalStandardArtworkPieces);
+    assertEquals(11, totalStandardArtworkPieces);
     assertEquals(2, totalOversizedArtworkPieces);
     int oversize31dash55 = 0;
     int oversize34dash47 = 0;

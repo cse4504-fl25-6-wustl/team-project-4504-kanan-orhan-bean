@@ -34,7 +34,7 @@ public class Box {
     }
 
     public boolean isEmpty(){
-        return this.arts.isEmpty();
+        return (this.arts.size() > 0 )? false : true ;
     }
 
     public boolean isCustom(){
@@ -177,10 +177,16 @@ public class Box {
         else if (this.isEmpty()) {
             return true;
         }
-        else if (isArtSameSize(art)) {
+        else if (art.isCustom() && this.isCustom()){
             return true;
         }
-        return false;
+        else if (art.isCustom()){
+            return false;
+        }
+        // else if (isArtSameSize(art)) {
+        //     return true;
+        // }
+        return true;
         
 /*         boolean isArtOversized = art.getHeight() > OVERSIZE_BOX_LIMIT || art.getWidth() > OVERSIZE_BOX_LIMIT;
 
@@ -262,16 +268,16 @@ public class Box {
 
         Art boxFirstArt = arts.get(0);
         // Assuming the Box only has Art that is of same Material
-        if (boxFirstArt.materialContains("Glass") || boxFirstArt.materialContains("Acrylic")){
+        if (boxFirstArt.materialContains(ArchDesign.entities.Art.Material.Glass) || boxFirstArt.materialContains(ArchDesign.entities.Art.Material.Acyrlic)){
             this.capacity = 6;
             return true;
         }
-        else if (boxFirstArt.materialContains("Canvas")){
+        else if (boxFirstArt.materialContains(ArchDesign.entities.Art.Material.CanvasFramed) || boxFirstArt.materialContains(ArchDesign.entities.Art.Material.CanvasGallery)){
             // TODO: Might rework under "Canvas Rule Discrepency" on this post https://piazza.com/class/mf6woqytzb81zq/post/7
             this.capacity = 6;
             return true;
         }
-        else if (boxFirstArt.materialContains("Acoustic")){
+        else if (boxFirstArt.materialContains(ArchDesign.entities.Art.Material.AcousticPanel) || boxFirstArt.materialContains(ArchDesign.entities.Art.Material.AcousticPanelFramed)){
             this.capacity = 4;
             return true;
         }

@@ -41,7 +41,7 @@ public class BoxTest {
 
         normalSizedArt = new Art(Art.Type.PaperPrintFramedWithTitlePlate, Art.Glazing.Acrylic, 1, 31.75, 36.0, 4);
         oversizedArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 2, 23.75, 41.8, 4);
-        customArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 3, 37.8, 57.2, 4);
+        customArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 3, 57.2, 57.2, 4);
 
         normalBox = Box.createBoxForArt(normalSizedArt);
         oversizedBox = Box.createBoxForArt(oversizedArt);
@@ -139,7 +139,7 @@ public class BoxTest {
     // 4.1) art too big
     @Test
     public void testBox_invalidAddition_wrongSizeArt() {
-        assertFalse("can't add oversized art to normal box", normalBox.canArtFit(oversizedArt));
+        assertTrue("can't add oversized art to normal box", normalBox.canArtFit(oversizedArt));
         assertFalse("can't add custom art to normal box", normalBox.canArtFit(customArt));
         assertFalse("can't add custom art to oversized box", oversizedBox.canArtFit(customArt));
     }

@@ -46,7 +46,7 @@ public class Art {
     private boolean isOversized;
 
     private final double CUSTOM_THRESHOLD = 43.5;
-    protected final double IS_OVERSIZE_THRESHOLD = 36;
+    protected final double IS_OVERSIZE_THRESHOLD = 44;
 
     public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
         super();

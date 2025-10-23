@@ -82,22 +82,22 @@ public class ArtTest {
     assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 43.6, 43.6).isCustom());
   }
 
-  // isOversize(): boundary at 36" (strictly greater)
+  // isOversize(): boundary at 44" (strictly greater)
   @Test
   public void isCustom_boundaryChecks_36point0in() {
     // below threshold on both -> false
-    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 35.9, 35.9).isOversized());
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 43.9, 43.9).isOversized());
 
     // exactly at threshold on either -> false
-    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 36.0, 10.0).isOversized());
-    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 36.0).isOversized());
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 44.0, 10.0).isOversized());
+    assertFalse(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 44.0).isOversized());
 
     // one above threshold on either -> true
-    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 36.1, 10.0).isOversized());
-    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 36.1).isOversized());
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 44.1, 10.0).isOversized());
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 10.0, 44.1).isOversized());
 
     // both above threshold on either -> true
-    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 36.1, 36.1).isOversized());
-    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 36.1, 436.1).isOversized());
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 44.1, 44.1).isOversized());
+    assertTrue(art(Type.WallDecor, Glazing.NoGlaze, 44.1, 44.1).isOversized());
   }
 }

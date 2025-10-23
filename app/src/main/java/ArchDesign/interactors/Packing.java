@@ -27,7 +27,15 @@ public class Packing {
         var caps = currentClient.getDeliveryCapabilities();
         boolean acceptsPallets = caps.doesAcceptPallets();
         boolean acceptsCrates = caps.doesAcceptCrates();
-        List<Container> containers = constructContainersForBoxesLocal(boxes, acceptsPallets, acceptsCrates);
+        List<Container> containersOversize = constructContainersForBoxesLocalOversize(boxes, acceptsPallets, acceptsCrates);
+        List<Container> containersPallet = constructContainersForBoxesLocal(boxes, acceptsPallets, acceptsCrates);
+        List<Container> containers;
+        if (containersOversize.size() < containersPallet.size()){
+            containers = containersOversize;
+        }
+        else {
+            containers = containersPallet;
+        }
 
         int totalWeight = computeTotalWeight(arts, boxes, containers);
         String summary = buildSummary(arts, boxes, containers, totalWeight);
@@ -203,6 +211,74 @@ public class Packing {
                     preferred = Container.Type.Crate;
                 } else if (acceptsPallets) {
                     preferred = Container.Type.Pallet;
+                } else if (canAcceptCrates) {
+                    preferred = Container.Type.Crate;
+                } else {
+                    // Nowhere to place
+                    continue;
+                }
+
+                // Try preferred type
+                if (tryCreateAndPlace(box, preferred, canAcceptCrates, result)) {
+                    added = true;
+                } else {
+                    // Fallback to the other allowed type if available
+                    if (preferred == Container.Type.Pallet && canAcceptCrates) {
+                        added = tryCreateAndPlace(box, Container.Type.Crate, canAcceptCrates, result);
+                    } else if (preferred == Container.Type.Crate && acceptsPallets) {
+                        added = tryCreateAndPlace(box, Container.Type.Pallet, canAcceptCrates, result);
+                    }
+                }
+
+                // If still not added, we skip; DO NOT append empty containers.
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Containerize boxes. If a box is mirror-only and site allows crates,
+     * start a Crate for it; otherwise prefer Pallet (if site allows).
+     * All subsequent placement uses Container.canBoxFit(...) + addBox(...).
+     *
+     * **Bug fix**: only add a newly created container to the result
+     * if we successfully place the box into it.
+     */
+    private static List<Container> constructContainersForBoxesLocalOversize(
+            List<Box> myBoxes, boolean acceptsPallets, boolean canAcceptCrates) {
+
+        List<Container> result = new ArrayList<>();
+        if (myBoxes == null || myBoxes.isEmpty())
+            return result;
+
+        if (!acceptsPallets && !canAcceptCrates)
+            return result;
+
+        myBoxes.sort(Comparator.comparing(Box::isOversized).thenComparing(Box::isCustom));
+
+        for (Box box : myBoxes) {
+            boolean added = false;
+
+            // Try to place into any existing container first
+            for (Container cont : result) {
+                try {
+                    if (cont.canBoxFit(box)) {
+                        cont.addBox(box);
+                        added = true;
+                        break;
+                    }
+                } catch (Exception ignored) {
+                    /* try next container */
+                }
+            }
+
+            if (!added) {
+                // Choose preferred fresh type for this box
+                Container.Type preferred;
+                if (isMirrorOnly(box) && canAcceptCrates) {
+                    preferred = Container.Type.Crate;
+                } else if (acceptsPallets) {
+                    preferred = Container.Type.Oversize;
                 } else if (canAcceptCrates) {
                     preferred = Container.Type.Crate;
                 } else {
