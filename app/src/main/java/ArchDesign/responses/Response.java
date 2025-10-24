@@ -8,6 +8,7 @@ import java.util.Collections;
 import ArchDesign.entities.Art;
 import ArchDesign.entities.Box;
 import ArchDesign.entities.Container;
+import ArchDesign.interactors.Packing.oversizeObjects;;
 
 public class Response {
 
@@ -17,7 +18,7 @@ public class Response {
 
     private final int total_pieces;
     private final int standard_size_pieces;
-    private final List<int[]> oversized_pieces;
+    private final oversizeObjects[] oversized_pieces;
     private final int standard_box_count;
     private final int large_box_count;
     private final int custom_piece_count;
@@ -36,7 +37,7 @@ public class Response {
      * @param summary     precomputed human-readable summary (nullable/optional)
      */
     public Response(List<Art> arts, List<Box> boxes, List<Container> containers, int total_pieces, int standard_size_pieces, 
-    List<int[]> oversized_pieces, int standard_box_count, int large_box_count, int custom_piece_count, int standard_pallet_count,
+    oversizeObjects[] oversized_pieces, int standard_box_count, int large_box_count, int custom_piece_count, int standard_pallet_count,
     int oversized_pallet_count, int crate_count, int total_artwork_weight, int total_packaging_weight, int final_shipment_weight) {
         this.arts = Collections
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(arts, "arts must not be null")));

@@ -14,6 +14,18 @@ import ArchDesign.responses.Response;
 
 public class Packing {
 
+    public class oversizeObjects {
+        public int side1;
+        public int side2;
+        public int quantity;
+
+        public oversizeObjects(int side1, int side2, int quantity){
+            this.side1 = side1;
+            this.side2 = side2;
+            this.quantity = quantity;
+        }
+    }
+
     private Client currentClient;
 
     public Response packEverything(Request request) {
