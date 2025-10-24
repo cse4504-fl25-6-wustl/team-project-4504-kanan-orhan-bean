@@ -60,7 +60,7 @@ public class Art {
         this.specialHandling = setSpecialHandling(type);
         this.isOversized = setIsOversized(width, height);
         this.isCustom = setIsCustom(width, height);
-        setDepth(4.0);
+        this.depth = setDepth(this.material);
     }
 
     public boolean materialContains(Material material){
@@ -149,9 +149,10 @@ public class Art {
         return this.specialHandling;
     }
 
-    private boolean setDepth(double depth){
-        this.depth = depth;
-        return true;
+    private double setDepth(Material material){
+        // TODO: Do Logic
+        this.depth = 4.0;
+        return this.depth;
     }
 
     private Material setMaterial(Type type, Glazing glazing){
