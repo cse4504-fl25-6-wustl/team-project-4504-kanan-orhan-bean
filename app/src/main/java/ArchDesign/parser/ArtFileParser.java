@@ -1,0 +1,169 @@
+/**
+ * ArtParser.java
+ * Author: Bean Royal
+ *
+ * Concrete implementation of Parser for parsing art files (line item input).
+ * Responsible for reading the art file based on its type, and producing a list of art objects.
+ */
+
+package ArchDesign.parser;
+
+import java.io.BufferedReader;
+// import java.io.BufferedWriter;
+import java.io.FileReader;
+// import java.io.FileWriter;
+import java.io.IOException;
+
+// import java.io.FileInputStream;
+import java.nio.file.Path;
+
+import java.util.List;
+
+import ArchDesign.entities.Art;
+
+// *TODO: add lots of checks for input
+// *TODO: add methods for other input file types
+public class ArtFileParser extends FileParser {
+    private List<Art> artCollection;
+    
+    protected ArtFileParser(List<Art> artCollection) {
+        this.artCollection = artCollection;
+    }
+
+    protected List<Art> getArt() {
+        return this.artCollection;
+    }
+
+    // check for type, call appropriate parser
+    @Override
+    protected ParseReturnVals parse(String filePath) {
+        // Normalize case and extract extension
+        String extension = Path.of(filePath).getFileName().toString().toLowerCase();
+
+        if (extension.endsWith(".xlsx")) {
+            // return parseExcel(filePath);
+            System.err.println("excel type not yet supported for line input parsing");
+            return null;
+        } else if (extension.endsWith(".csv")) {
+            return parseCSV(filePath);
+        } else if (extension.endsWith(".txt")) {
+            System.err.println("txt type not yet supported for line input parsing");
+            return null;
+        } else {
+            System.err.println("invalid file type for line item parsing");
+            return ParseReturnVals.INVALID_FILE_TYPE;
+        }
+    }
+
+/*     private ParseReturnVals parseExcel(String filePath) {
+        try (FileInputStream fis = new FileInputStream(filePath);
+            Workbook workbook = new XSSFWorkbook(fis)) {
+
+            Sheet sheet = workbook.getSheetAt(0); // assume first sheet
+            // formatter returns a string in the same format (display style) as shown in the excel sheet
+            DataFormatter formatter = new DataFormatter();
+
+            // Skip header row (row 0), start at row 1
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue; // skip empty rows
+
+                try {
+                    int lineNumber   = Integer.parseInt(formatter.formatCellValue(row.getCell(0)));
+                    int quantity     = Integer.parseInt(formatter.formatCellValue(row.getCell(1)));
+                    int tagNumber    = Integer.parseInt(formatter.formatCellValue(row.getCell(2)));
+                    
+                    // Type enum mapping
+                    String typeStr    = formatter.formatCellValue(row.getCell(3));
+                    Type type = setType(typeStr);
+                    
+                    double width     = Double.parseDouble(formatter.formatCellValue(row.getCell(4)));
+                    double height    = Double.parseDouble(formatter.formatCellValue(row.getCell(5)));
+
+                    // Glazing enum mapping
+                    String glazingStr = formatter.formatCellValue(row.getCell(6)).trim().toLowerCase();
+                    GlazingType glazing = setGlazingType(glazingStr);
+
+                    String frameMoulding = formatter.formatCellValue(row.getCell(7));
+
+                    // hardware int extracting
+                    String hardwareStr      = formatter.formatCellValue(row.getCell(8));
+                    int hardware = setHardware(hardwareStr);
+
+                    // Build ArtPiece and add to collection
+                    // FIX LATER
+                    Art artPiece = new Art(Art.Type.PaperPrint, Art.Glazing.Glass, lineNumber, -1, -1, hardware);
+                    this.artCollection.add(artPiece);
+
+                } catch (Exception e) {
+                    System.err.println("Skipping row " + i + " due to parse error: " + e.getMessage());
+                }
+            }
+
+            return ParseReturnVals.SUCCESS;
+
+        } catch (IOException e) {
+            System.err.println("ERROR: file not found");
+            e.printStackTrace();
+            return ParseReturnVals.FILE_NOT_FOUND;
+        } catch (Exception e) {
+            System.err.println("ERROR: could not parse excel sheet");
+            e.printStackTrace();
+            return ParseReturnVals.PARSE_ERROR;
+        }
+    } */
+
+    // *why is quantity, tagNumber, and frameMoulding NOT used?
+    private ParseReturnVals parseCSV(String filePath) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            // skip header row
+            br.readLine();
+            String currLine;
+
+            // process each row
+            while ((currLine = br.readLine()) != null) {
+                String[] values = currLine.split(",");
+
+                // Process each column, extract values
+                int lineNumber = Integer.parseInt(values[0].trim());
+                int quantity = Integer.parseInt(values[1].trim());
+                int tagNumber = Integer.parseInt(values[2].trim());
+                
+                // Type enum mapping
+                String typeStr = values[3].trim();
+                Art.Type type = Art.assignType(typeStr);
+                
+                double width = Double.parseDouble(values[4].trim());
+                double height = Double.parseDouble(values[5].trim());
+
+                // Glazing enum mapping
+                String glazingStr = values[6].trim();
+                Art.Glazing glazing = Art.assignGlazingType(glazingStr);
+
+                String frameMoulding = values[7].trim();
+
+                // hardware int extracting
+                String hardwareStr = values[8].trim();
+                int hardware = Art.assignHardware(hardwareStr);
+
+                // Build ArtPiece and add to collection
+                for (int i=1; i<=quantity; ++i) {
+                    Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
+                this.artCollection.add(artPiece);
+                }
+            }
+            return ParseReturnVals.SUCCESS;
+
+        } catch (IOException e) {
+            System.err.println("ERROR: line input file not found");
+            // e.printStackTrace();
+            return ParseReturnVals.FILE_NOT_FOUND;
+        } catch (Exception e) {
+            System.err.println("ERROR: could not parse line input csv");
+            // e.printStackTrace();
+            return ParseReturnVals.PARSE_ERROR;
+        }
+    }
+    
+    // private ParseReturnVals parseTXT(String filePath);
+}
