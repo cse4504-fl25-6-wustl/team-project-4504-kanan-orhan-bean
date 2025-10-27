@@ -4,15 +4,78 @@ public class Art {
     
     // TODO: Figure out how to handle the Type, Material, and Glazing Enums depending on https://piazza.com/class/mf6woqytzb81zq/post/14
     public enum Type { 
-        PaperPrintFramed, 
-        PaperPrintFramedWithTitlePlate, 
-        CanvasFloatFrame, 
-        WallDecor, 
-        AcousticPanel, 
-        AcousticPanelFramed, 
-        MetalPrint, 
-        Mirror,
-        UNKNOWN
+        // AcousticPanelGalleryWrapped,
+        // TwoInchAcousticPanelFloatFrame,
+        // OneInchAcousticPanelFloatFrame,
+        // VECanvasFloatFrame,
+        // UVCanvasGalleryWrapped,
+        // UVCanvasFramed,
+        // UVCanvasFloatFrame,
+        // HandEmbellishedCanvasGalleryWrapped,
+        // HandEmbellishedCanvasFramed,
+        // HandEmbellishedCanvasFloatFrame,
+        // CanvasGalleryWrapped,
+        // CanvasFramed,
+        // CanvasFloatFrame,
+        // PrintRaisedMat,
+        // PrintRaisedFloatMountwithTitlePlate,
+        // PrintRaisedFloatMountandRaisedMat,
+        // PrintRaisedFloatMountandDeckledEdge,
+        // PrintRaisedFloatMount,
+        // PrintFramedwithTitlePlate,
+        // PrintFloatMountwithTitlePlate,
+        // PrintFloatMountandDeckledEdge,
+        // PrintFloatMount,
+        // PaperPrintFramed,
+        // MirrorBeveled,
+        // Mirror,
+        // Signage,
+        // WoodPrint,
+        // MetalPrint,
+        // AcrylicwithStandoffsSquared,
+        // AcrylicwithStandoffsRounded,
+        // AcrylicFloatingSquared,
+        // AcrylicFloatingRounded,
+        // SintraFramed,
+        // PatientBoard,
+        // Whiteboard,
+        // MagneticBoardFabricWrapped,
+        // CorkBoardLinenWrapped,
+        // CorkBoard,
+        // Chalkboard,
+        // TactilePanelFlat,
+        // TactilePanelDimensional,
+        // Shadowbox,
+        // ObjectFramed,
+        // HardwareOnly,
+        // HangingSystem,
+        // SpecialtyProduct,
+        // SpecialtyFramingItem,
+        // Commission,
+        // PrintServices,
+        // PlaqueOnly,
+        // WallDécor,
+        // WallpaperCovering,
+        // VinylWindowFilm,
+        // VinylWallGraphic,
+        // UNKNOWN
+        PaperPrintFramed(1.83), 
+        PaperPrintFramedWithTitlePlate(1.83), 
+        CanvasGalleryWrapped(2.75),
+        CanvasFramed(2.75),
+        CanvasFloatFrame(2.75), 
+        WallDecor(0.0), 
+        AcousticPanel(2.50), 
+        AcousticPanelFramed(2.50), 
+        MetalPrint(1.83), 
+        Mirror(1.83),
+        UNKNOWN(0.0);
+
+        public final double depth;
+
+        private Type(double depth) {
+            this.depth = depth;
+        }
     }
     public enum Material {
         Glass(0.0098), 
@@ -23,6 +86,11 @@ public class Art {
         AcousticPanel(0.0038), 
         AcousticPanelFramed(0.0037), 
         PatientBoard(0.0347),
+        // Signage(0.0),
+        // SolidSurface(0.0),
+        // FramedItemDeep(0.0),
+        // RolledProduct(0.0),
+        // Plaque(0.0),
         UNKNOWN(0.0);
 
         public final double LBpSQIN;
@@ -45,7 +113,7 @@ public class Art {
     private Material material;
     private boolean isOversized;
 
-    private final double CUSTOM_THRESHOLD = 43.5;
+    protected final double CUSTOM_THRESHOLD = 43.5;
     protected final double IS_OVERSIZE_THRESHOLD = 44;
 
     public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
@@ -60,7 +128,7 @@ public class Art {
         this.specialHandling = setSpecialHandling(type);
         this.isOversized = setIsOversized(width, height);
         this.isCustom = setIsCustom(width, height);
-        this.depth = setDepth(this.material);
+        this.depth = setDepth();
     }
 
     public boolean materialContains(Material material){
@@ -149,16 +217,13 @@ public class Art {
         return this.specialHandling;
     }
 
-    private double setDepth(Material material){
-        // TODO: Do Logic
-        this.depth = 4.0;
+    private double setDepth(){
+        this.depth = this.getType().depth;
         return this.depth;
     }
 
     private Material setMaterial(Type type, Glazing glazing){
-        // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14
-
-        // TODO: Fix later
+        // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14 will Fix later
         switch (type) {
             case PaperPrintFramed:
             case PaperPrintFramedWithTitlePlate:
@@ -200,6 +265,7 @@ public class Art {
 
     // helper method for setting type
     public static Art.Type assignType(String typeStr) {
+        // TODO: Update
         if (typeStr != null) {
             typeStr = typeStr.toLowerCase();
             if (typeStr.contains("print")) {
@@ -232,6 +298,7 @@ public class Art {
         }
         return Art.Type.UNKNOWN;
     }
+
     // helper method for setting glaze
     public static Art.Glazing assignGlazingType(String glazingStr) {
         if (glazingStr != null) {
