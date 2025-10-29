@@ -7,7 +7,6 @@ public class CommandLineSerializer {
     private final String summaryMessage = "";
 
     public CommandLineSerializer(Response response){
-        // TODO: It correctly creates a summary Message
 
         this.summaryMessage += "Work Order Summary: \n";
         this.summaryMessage += "- Total Pieces: " + response.getTotalPieces() + "\n";
