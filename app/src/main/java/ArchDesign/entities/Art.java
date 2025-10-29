@@ -4,94 +4,128 @@ public class Art {
     
     // TODO: Figure out how to handle the Type, Material, and Glazing Enums depending on https://piazza.com/class/mf6woqytzb81zq/post/14
     public enum Type { 
-        // AcousticPanelGalleryWrapped,
-        // TwoInchAcousticPanelFloatFrame,
-        // OneInchAcousticPanelFloatFrame,
-        // VECanvasFloatFrame,
-        // UVCanvasGalleryWrapped,
-        // UVCanvasFramed,
-        // UVCanvasFloatFrame,
-        // HandEmbellishedCanvasGalleryWrapped,
-        // HandEmbellishedCanvasFramed,
-        // HandEmbellishedCanvasFloatFrame,
-        // CanvasGalleryWrapped,
-        // CanvasFramed,
-        // CanvasFloatFrame,
-        // PrintRaisedMat,
-        // PrintRaisedFloatMountwithTitlePlate,
-        // PrintRaisedFloatMountandRaisedMat,
-        // PrintRaisedFloatMountandDeckledEdge,
-        // PrintRaisedFloatMount,
-        // PrintFramedwithTitlePlate,
-        // PrintFloatMountwithTitlePlate,
-        // PrintFloatMountandDeckledEdge,
-        // PrintFloatMount,
-        // PaperPrintFramed,
-        // MirrorBeveled,
-        // Mirror,
-        // Signage,
-        // WoodPrint,
-        // MetalPrint,
-        // AcrylicwithStandoffsSquared,
-        // AcrylicwithStandoffsRounded,
-        // AcrylicFloatingSquared,
-        // AcrylicFloatingRounded,
-        // SintraFramed,
-        // PatientBoard,
-        // Whiteboard,
-        // MagneticBoardFabricWrapped,
-        // CorkBoardLinenWrapped,
-        // CorkBoard,
-        // Chalkboard,
-        // TactilePanelFlat,
-        // TactilePanelDimensional,
-        // Shadowbox,
-        // ObjectFramed,
-        // HardwareOnly,
-        // HangingSystem,
-        // SpecialtyProduct,
-        // SpecialtyFramingItem,
-        // Commission,
-        // PrintServices,
-        // PlaqueOnly,
-        // WallDécor,
-        // WallpaperCovering,
-        // VinylWindowFilm,
-        // VinylWallGraphic,
-        // UNKNOWN
-        PaperPrintFramed(1.83), 
-        PaperPrintFramedWithTitlePlate(1.83), 
-        CanvasGalleryWrapped(2.75),
-        CanvasFramed(2.75),
-        CanvasFloatFrame(2.75), 
-        WallDecor(0.0), 
-        AcousticPanel(2.50), 
-        AcousticPanelFramed(2.50), 
-        MetalPrint(1.83), 
-        Mirror(1.83),
-        UNKNOWN(0.0);
+        AcousticPanelGalleryWrapped(2.5, Art.Material.AcousticPanel, false, true),
+        TwoInchAcousticPanelFloatFrame(2.5, Art.Material.AcousticPanelFramed, false, true),
+        OneInchAcousticPanelFloatFrame(2.5, Art.Material.AcousticPanelFramed, false, true),
+        VECanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
+        UVCanvasGalleryWrapped(2.5, Art.Material.CanvasGallery),
+        UVCanvasFramed(2.5, Art.Material.CanvasFramed),
+        UVCanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
+        HandEmbellishedCanvasGalleryWrapped(2.5, Art.Material.CanvasGallery),
+        HandEmbellishedCanvasFramed(2.5, Art.Material.CanvasFramed),
+        HandEmbellishedCanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
+        CanvasGalleryWrapped(2.5, Art.Material.CanvasGallery),
+        CanvasFramed(2.5, Art.Material.CanvasFramed),
+        CanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
+        PrintRaisedMat(1.0, Art.Material.KNOWNBUTGLAZING, true),
+        PrintRaisedFloatMountwithTitlePlate(0.625, Art.Material.KNOWNBUTGLAZING, true),
+        PrintRaisedFloatMountandRaisedMat(1.0, Art.Material.KNOWNBUTGLAZING, true),
+        PrintRaisedFloatMountandDeckledEdge(0.625, Art.Material.KNOWNBUTGLAZING, true),
+        PrintRaisedFloatMount(0.625, Art.Material.KNOWNBUTGLAZING, true),
+        PrintFramedwithTitlePlate(1.83, Art.Material.KNOWNBUTGLAZING),
+        PrintFloatMountwithTitlePlate(0.75, Art.Material.KNOWNBUTGLAZING, true),
+        PrintFloatMountandDeckledEdge(0.75, Art.Material.KNOWNBUTGLAZING, true),
+        PrintFloatMount(0.75, Art.Material.KNOWNBUTGLAZING, true),
+        PaperPrintFramed(1.83, Art.Material.KNOWNBUTGLAZING),
+        MirrorBeveled(1.83, Art.Material.Mirror),
+        Mirror(1.83, Art.Material.Mirror),
+        Signage(0.0, Art.Material.Signage, true),
+        WoodPrint(1.83, Art.Material.SolidSurface),
+        MetalPrint(1.83, Art.Material.SolidSurface),
+        AcrylicwithStandoffsSquared(1.83, Art.Material.SolidSurface),
+        AcrylicwithStandoffsRounded(1.83, Art.Material.SolidSurface),
+        AcrylicFloatingSquared(1.83, Art.Material.SolidSurface),
+        AcrylicFloatingRounded(1.83, Art.Material.SolidSurface),
+        SintraFramed(1.83, Art.Material.SolidSurface),
+        PatientBoard(1.83, Art.Material.PatientBoard),
+        Whiteboard(1.83, Art.Material.Board),
+        MagneticBoardFabricWrapped(1.83, Art.Material.Board),
+        CorkBoardLinenWrapped(1.83, Art.Material.Board),
+        CorkBoard(1.83, Art.Material.Board),
+        Chalkboard(1.83, Art.Material.Board),
+        TactilePanelFlat(1.83, Art.Material.FramedItemDeep),
+        TactilePanelDimensional(8.0, Art.Material.FramedItemDeep, true),
+        Shadowbox(3.0, Art.Material.FramedItemDeep),
+        ObjectFramed(3.0, Art.Material.FramedItemDeep),
+        HardwareOnly(0.0, Art.Material.Hardware, true),
+        HangingSystem(0.0, Art.Material.Hardware, true),
+        SpecialtyProduct(0.0, Art.Material.Misc, true),
+        SpecialtyFramingItem(0.0, Art.Material.Misc, true),
+        Commission(0.0, Art.Material.Misc, true),
+        PrintServices(0.0, Art.Material.Misc, true),
+        PlaqueOnly(0.0, Art.Material.Plaque, true),
+        WallDecor(0.0, Art.Material.Misc, true),
+        WallpaperCovering(0.0, Art.Material.Misc, true),
+        VinylWindowFilm(0.0, Art.Material.RolledProduct, true),
+        VinylWallGraphic(0.0, Art.Material.RolledProduct, true),
+        UNKNOWN(0.0, Art.Material.RolledProduct, true);
+        // PaperPrintFramed(1.83), 
+        // PaperPrintFramedWithTitlePlate(1.83), 
+        // CanvasGalleryWrapped(2.75),
+        // CanvasFramed(2.75),
+        // CanvasFloatFrame(2.75), 
+        // WallDecor(0.0), 
+        // AcousticPanel(2.50), 
+        // AcousticPanelFramed(2.50), 
+        // MetalPrint(1.83), 
+        // Mirror(1.83),
+        // UNKNOWN(0.0);
 
         public final double depth;
+        public final boolean requiresCustom;
+        public final boolean requiresSpecialHandling;
+        public final Material preliminaryMaterial;
 
-        private Type(double depth) {
+        private Type(double depth, Material preliminaryMaterial) {
             this.depth = depth;
+            this.preliminaryMaterial = preliminaryMaterial;
+            this.requiresCustom = false;
+            this.requiresSpecialHandling = false;
+        }
+
+        private Type(double depth, Material preliminaryMaterial, boolean requiresCustom) {
+            this.depth = depth;
+            this.preliminaryMaterial = preliminaryMaterial;
+            this.requiresCustom = requiresCustom;
+            this.requiresSpecialHandling = false;
+        }
+
+        private Type(double depth, Material preliminaryMaterial, boolean requiresCustom, boolean requiresSpecialHandling) {
+            this.depth = depth;
+            this.preliminaryMaterial = preliminaryMaterial;
+            this.requiresCustom = requiresCustom;
+            this.requiresSpecialHandling = requiresSpecialHandling;
         }
     }
     public enum Material {
-        Glass(0.0098), 
-        Acyrlic(0.0094), 
-        CanvasFramed(0.0085), 
-        CanvasGallery(0.0061), 
-        Mirror(0.0191), 
-        AcousticPanel(0.0038), 
-        AcousticPanelFramed(0.0037), 
+        // TODO: Find the LBpSQIN for all Materials listed as 0.0
+        AcousticPanel(0.0038),
+        AcousticPanelFramed(0.0037),
+        CanvasFramed(0.0085),
+        CanvasGallery(0.0061),
+        Glass(0.0098),
+        Acyrlic(0.0094),
+        Mirror(0.0191),
         PatientBoard(0.0347),
-        // Signage(0.0),
-        // SolidSurface(0.0),
-        // FramedItemDeep(0.0),
-        // RolledProduct(0.0),
-        // Plaque(0.0),
+        Board(0.0),
+        Signage(0.0),
+        SolidSurface(0.0),
+        FramedItemDeep(0.0),
+        Hardware(0.0),
+        Misc(0.0),
+        Plaque(0.0),
+        RolledProduct(0.0),
+        KNOWNBUTGLAZING(0.0),
         UNKNOWN(0.0);
+        // Glass(0.0098), 
+        // Acyrlic(0.0094), 
+        // CanvasFramed(0.0085), 
+        // CanvasGallery(0.0061), 
+        // Mirror(0.0191), 
+        // AcousticPanel(0.0038), 
+        // AcousticPanelFramed(0.0037), 
+        // PatientBoard(0.0347),
+        // UNKNOWN(0.0);
 
         public final double LBpSQIN;
 
@@ -124,8 +158,8 @@ public class Art {
         this.width = width;
         this.height = height;
         this.hardware = hardware;
-        this.material = setMaterial(type, glazing);
-        this.specialHandling = setSpecialHandling(type);
+        this.material = setMaterial();
+        this.specialHandling = setSpecialHandling();
         this.isOversized = setIsOversized(width, height);
         this.isCustom = setIsCustom(width, height);
         this.depth = setDepth();
@@ -208,12 +242,8 @@ public class Art {
         return false;
     }
 
-    private boolean setSpecialHandling(Type type){
-        this.specialHandling = false;
-        if (this.getType() == Type.AcousticPanel || this.getType() == Type.AcousticPanelFramed 
-        || this.getType() == Type.CanvasFloatFrame){
-            this.specialHandling = true;
-        }
+    private boolean setSpecialHandling(){
+        this.specialHandling = this.getType().requiresSpecialHandling;
         return this.specialHandling;
     }
 
@@ -222,79 +252,255 @@ public class Art {
         return this.depth;
     }
 
-    private Material setMaterial(Type type, Glazing glazing){
+    private Material setMaterial(){
         // TODO: waiting on https://piazza.com/class/mf6woqytzb81zq/post/14 will Fix later
-        switch (type) {
-            case PaperPrintFramed:
-            case PaperPrintFramedWithTitlePlate:
-                switch (glazing) {
-                    case Glass:
-                        return Material.Glass;
-                    case Acrylic:
-                        return Material.Acyrlic;
-                    case NoGlaze:
-                        return Material.CanvasFramed;
-                }
-                break;
-    
-            case CanvasFloatFrame:
-                return Material.CanvasFramed;
-    
-            case WallDecor:
-                return Material.CanvasGallery;
-    
-            case AcousticPanel:
-                return Material.AcousticPanel;
-    
-            case AcousticPanelFramed:
-                return Material.AcousticPanelFramed;
-    
-            case MetalPrint:
-                return Material.PatientBoard;
-    
-            case Mirror:
-                return Material.Mirror;
-    
-            default:
-                throw new IllegalArgumentException("Unknown type: " + type);
+        if (this.getType().preliminaryMaterial == Art.Material.UNKNOWN){
+            throw new IllegalArgumentException("Unknown type: " + type);
         }
-        throw new IllegalArgumentException("Unsupported glazing for type: " + type);
+        else if (this.getType().preliminaryMaterial == Art.Material.KNOWNBUTGLAZING){
+            switch (this.glazing) {
+                case Glass:
+                    this.material = Art.Material.Glass;
+                    return Material.Glass;
+                case Acrylic:
+                    this.material = Art.Material.Glass;
+                    return Material.Acyrlic;
+                default:
+                    throw new IllegalArgumentException("Unkown Glazing for Paper Print: " + this.glazing);
+            }
+        }
+        else {
+            this.material = this.getType().preliminaryMaterial;
+            return this.material;
+        }
     }
 
     // ----- Static Helpers (BEAN) ----- 
 
     // helper method for setting type
     public static Art.Type assignType(String typeStr) {
-        // TODO: Update
         if (typeStr != null) {
+            typeStr.replaceAll("-", "");
             typeStr = typeStr.toLowerCase();
-            if (typeStr.contains("print")) {
-                if (typeStr.contains("metal")) {
+            if (typeStr.contains("acoustic")){
+                if(typeStr.contains("float")){
+                    if(typeStr.contains("two") || typeStr.contains("2")){
+                        return Art.Type.TwoInchAcousticPanelFloatFrame;
+                    }
+                    else {
+                        return Art.Type.OneInchAcousticPanelFloatFrame;
+                    }
+                }
+                else {
+                    return Art.Type.AcousticPanelGalleryWrapped;
+                }
+            }
+            else if (typeStr.contains("canvas")){
+                if (typeStr.contains("handembellished")){
+                    if (typeStr.contains("gallery")){
+                        return Art.Type.HandEmbellishedCanvasGalleryWrapped;
+                    }
+                    else if (typeStr.contains("float")){
+                        return Art.Type.HandEmbellishedCanvasFloatFrame;
+                    }
+                    else{
+                        return Art.Type.HandEmbellishedCanvasFramed;
+                    }
+                }
+                else if (typeStr.contains("uvcanvas")){
+                    if (typeStr.contains("gallery")){
+                        return Art.Type.UVCanvasGalleryWrapped;
+                    }
+                    else if (typeStr.contains("float")){
+                        return Art.Type.UVCanvasFloatFrame;
+                    }
+                    else{
+                        return Art.Type.UVCanvasFramed;
+                    }
+                }
+                else if (typeStr.contains("vecanvas")){
+                    return Art.Type.VECanvasFloatFrame;
+                }
+                else {
+                    if (typeStr.contains("gallery")){
+                        return Art.Type.CanvasGalleryWrapped;
+                    }
+                    else if (typeStr.contains("float")){
+                        return Art.Type.CanvasFloatFrame;
+                    }
+                    else{
+                        return Art.Type.CanvasFramed;
+                    }
+                }
+            }
+            else if (typeStr.contains("print")){
+                if (typeStr.contains("raised")){
+                    if (typeStr.contains("mat")){
+                        if (typeStr.contains("floatmount")){
+                            return Art.Type.PrintRaisedFloatMountandRaisedMat;
+                        }
+                        else{
+                            return Art.Type.PrintRaisedMat;
+                        }
+                    }
+                    else if (typeStr.contains("titleplate")){
+                        return Art.Type.PrintRaisedFloatMountwithTitlePlate;
+                    }
+                    else if (typeStr.contains("decklededge")){
+                        return Art.Type.PrintRaisedFloatMountandDeckledEdge;
+                    }
+                    else {
+                        return Art.Type.PrintRaisedFloatMount;
+                    }
+                }
+                else if (typeStr.contains("printframed")){
+                    if (typeStr.contains("titleplate")){
+                        return Art.Type.PrintFramedwithTitlePlate;
+                    }
+                    else{
+                        return Art.Type.PaperPrintFramed;
+                    }
+                }
+                else if (typeStr.contains("printfloat")){
+                    if (typeStr.contains("titleplate")){
+                        return Art.Type.PrintFloatMountwithTitlePlate;
+                    }
+                    else if (typeStr.contains("decklededge")){
+                        return Art.Type.PrintFloatMountandDeckledEdge;
+                    }
+                    else {
+                        return Art.Type.PrintFloatMount;
+                    }
+                }
+                else if (typeStr.contains("woodprint")){
+                    return Art.Type.WoodPrint;
+                }
+                else if (typeStr.contains("metalprint")){
                     return Art.Type.MetalPrint;
                 }
-                else if (typeStr.contains("title")) {
-                    return Art.Type.PaperPrintFramedWithTitlePlate;
+                else if (typeStr.contains("printservices")){
+                    return Art.Type.PrintServices;
                 }
-                else { return Art.Type.PaperPrintFramed; }
             }
-            else if (typeStr.contains("canvas")) {
-                return Art.Type.CanvasFloatFrame;
+            else if (typeStr.contains("mirror")){
+                if (typeStr.contains("beveled")){
+                    return Art.Type.MirrorBeveled;
+                }
+                else {
+                    return Art.Type.Mirror;
+                }
             }
-            else if (typeStr.contains("wall")) {
+            else if (typeStr.contains("signage")){
+                return Art.Type.Signage;
+            }
+            else if (typeStr.contains("acrylic")){
+                if (typeStr.contains("floating")){
+                    if (typeStr.contains("squared")){
+                        return Art.Type.AcrylicFloatingSquared;
+                    }
+                    else {
+                        return Art.Type.AcrylicFloatingRounded;
+                    }
+                }
+                else {
+                    if (typeStr.contains("squared")){
+                        return Art.Type.AcrylicwithStandoffsSquared;
+                    }
+                    else {
+                        return Art.Type.AcrylicwithStandoffsRounded;
+                    }
+                }
+            }
+            else if (typeStr.contains("sintraframed")){
+                return Art.Type.SintraFramed;
+            }
+            else if (typeStr.contains("patientboard")){
+                return Art.Type.PatientBoard;
+            }
+            else if (typeStr.contains("whiteboard")){
+                return Art.Type.Whiteboard;
+            }
+            else if (typeStr.contains("magneticboard")){
+                return Art.Type.MagneticBoardFabricWrapped;
+            }
+            else if (typeStr.contains("corkboardlinenwrapped")){
+                return Art.Type.CorkBoardLinenWrapped;
+            }
+            else if (typeStr.contains("corkboard")){
+                return Art.Type.CorkBoard;
+            }
+            else if (typeStr.contains("chalkboard")){
+                return Art.Type.Chalkboard;
+            }
+            else if (typeStr.contains("tactilepanelflat")){
+                return Art.Type.TactilePanelFlat;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.TactilePanelDimensional;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.Shadowbox;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.ObjectFramed;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.HardwareOnly;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.HangingSystem;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.SpecialtyProduct;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.SpecialtyFramingItem;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.Commission;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.PlaqueOnly;
+            }
+            else if (typeStr.contains("tactilepaneldimensional")){
                 return Art.Type.WallDecor;
             }
-            else if (typeStr.contains("acoustic")) {
-                if (typeStr.contains("framed")) {
-                    return Art.Type.AcousticPanelFramed;
-                }
-                else { return Art.Type.AcousticPanel; }
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.WallpaperCovering;
             }
-            else if (typeStr.contains("metal")) {
-                return Art.Type.MetalPrint;
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.VinylWindowFilm;
             }
-            else if (typeStr.contains("mirror")) {
-                return Art.Type.Mirror;
+            else if (typeStr.contains("tactilepaneldimensional")){
+                return Art.Type.VinylWallGraphic;
             }
+            // if (typeStr.contains("print")) {
+            //     if (typeStr.contains("metal")) {
+            //         return Art.Type.MetalPrint;
+            //     }
+            //     else if (typeStr.contains("title")) {
+            //         return Art.Type.PaperPrintFramedWithTitlePlate;
+            //     }
+            //     else { return Art.Type.PaperPrintFramed; }
+            // }
+            // else if (typeStr.contains("canvas")) {
+            //     return Art.Type.CanvasFloatFrame;
+            // }
+            // else if (typeStr.contains("wall")) {
+            //     return Art.Type.WallDecor;
+            // }
+            // else if (typeStr.contains("acoustic")) {
+            //     if (typeStr.contains("framed")) {
+            //         return Art.Type.AcousticPanelFramed;
+            //     }
+            //     else { return Art.Type.AcousticPanel; }
+            // }
+            // else if (typeStr.contains("metal")) {
+            //     return Art.Type.MetalPrint;
+            // }
+            // else if (typeStr.contains("mirror")) {
+            //     return Art.Type.Mirror;
+            // }
         }
         return Art.Type.UNKNOWN;
     }
