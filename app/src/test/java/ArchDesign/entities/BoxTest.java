@@ -20,9 +20,9 @@ public class BoxTest {
     public void setUp() {
         emptyBox = new Box();
 
-        normalSizedArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 1, 35, 35, 4);
-        oversizedArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 2, 40, 40, 4);
-        customArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 3, 45, 45, 4);
+        normalSizedArt = new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.Acrylic, 1, 31.75, 36.0, 4);
+        oversizedArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 2, 23.75, 41.8, 4);
+        customArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 3, 57.2, 57.2, 4);
 
         normalBox = Box.createBoxForArt(normalSizedArt);
         oversizedBox = Box.createBoxForArt(oversizedArt);
@@ -31,6 +31,17 @@ public class BoxTest {
         normalBox.addArt(normalSizedArt);
         oversizedBox.addArt(oversizedArt);
         customBox.addArt(customArt);
+
+        boxWithGlassMaterial = Box.createBoxForArt(normalSizedArt);
+        boxWithGlassMaterial.addArt(new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.Glass, 1, 20, 20, 4));
+        boxWithAcrylicMaterial = Box.createBoxForArt(normalSizedArt);
+        boxWithAcrylicMaterial.addArt(new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.Acrylic, 1, 20, 20, 4));
+        boxWithCanvasMaterial = Box.createBoxForArt(normalSizedArt);
+        boxWithCanvasMaterial.addArt(new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.NoGlaze, 1, 20, 20, 4));
+        boxWithAcousticMaterial = Box.createBoxForArt(normalSizedArt);
+        boxWithAcousticMaterial.addArt(new Art(Art.Type.OneInchAcousticPanelFloatFrame, Art.Glazing.Glass, 1, 20, 20, 4));
+        boxWithMirrorMaterial = Box.createBoxForArt(normalSizedArt);
+        boxWithMirrorMaterial.addArt(new Art(Art.Type.Mirror, Art.Glazing.Glass, 1, 20, 20, 4));
 
         fullBox = Box.createBoxForArt(normalSizedArt);
         boolean canAdd = true;

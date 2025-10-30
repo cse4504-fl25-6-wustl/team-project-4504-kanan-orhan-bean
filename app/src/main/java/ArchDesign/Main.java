@@ -35,7 +35,7 @@ public class Main {
 
         if (args.length == 3) {
             String outputFileName = args[2];
-            new JSONSerializer(response, outputFileName);
+            JSONSerializer.ShipmentToJSONSummary(response, outputFileName);
         }
 
         // CLI summary is produced by the serializer (not the interactor)

@@ -17,11 +17,11 @@ public class ArtStaticHelpersTest {
         assertEquals(Art.Type.PaperPrintFramed, Art.assignType("paperprintframed"));
 
         // paper print framed with title (print -> title)
-        assertEquals(Art.Type.PaperPrintFramedWithTitlePlate, Art.assignType("print title"));
-        assertEquals(Art.Type.PaperPrintFramedWithTitlePlate, Art.assignType("TITLE print"));
-        assertEquals(Art.Type.PaperPrintFramedWithTitlePlate, Art.assignType("printtitle"));
-        assertEquals(Art.Type.PaperPrintFramedWithTitlePlate, Art.assignType("paper print framed with title plate"));
-        assertEquals(Art.Type.PaperPrintFramedWithTitlePlate, Art.assignType("paperprintframedwithtitleplate"));
+        assertEquals(Art.Type.PrintFramedwithTitlePlate, Art.assignType("print title"));
+        assertEquals(Art.Type.PrintFramedwithTitlePlate, Art.assignType("TITLE print"));
+        assertEquals(Art.Type.PrintFramedwithTitlePlate, Art.assignType("printtitle"));
+        assertEquals(Art.Type.PrintFramedwithTitlePlate, Art.assignType("paper print framed with title plate"));
+        assertEquals(Art.Type.PrintFramedwithTitlePlate, Art.assignType("paperprintframedwithtitleplate"));
 
         // metal print (print -> metal OR metal)
         assertEquals(Art.Type.MetalPrint, Art.assignType("metal print"));
@@ -44,17 +44,17 @@ public class ArtStaticHelpersTest {
         assertEquals(Art.Type.WallDecor, Art.assignType("walldecor"));
 
         // acoustic panel (acoustic)
-        assertEquals(Art.Type.AcousticPanel, Art.assignType("acoustic"));
-        assertEquals(Art.Type.AcousticPanel, Art.assignType("ACOUSTIC"));
-        assertEquals(Art.Type.AcousticPanel, Art.assignType("acoustic PANEL"));
-        assertEquals(Art.Type.AcousticPanel, Art.assignType("panel acoustic"));
-        assertEquals(Art.Type.AcousticPanel, Art.assignType("acousticpanel"));
+        assertEquals(Art.Type.AcousticPanelGalleryWrapped, Art.assignType("acoustic"));
+        assertEquals(Art.Type.AcousticPanelGalleryWrapped, Art.assignType("ACOUSTIC"));
+        assertEquals(Art.Type.AcousticPanelGalleryWrapped, Art.assignType("acoustic PANEL"));
+        assertEquals(Art.Type.AcousticPanelGalleryWrapped, Art.assignType("panel acoustic"));
+        assertEquals(Art.Type.AcousticPanelGalleryWrapped, Art.assignType("acousticpanel"));
 
         // acoustic panel framed (acoustic -> framed)
-        assertEquals(Art.Type.AcousticPanelFramed, Art.assignType("acoustic framed"));
-        assertEquals(Art.Type.AcousticPanelFramed, Art.assignType("FRAMED acoustic"));
-        assertEquals(Art.Type.AcousticPanelFramed, Art.assignType("acoustic framed PANEL"));
-        assertEquals(Art.Type.AcousticPanelFramed, Art.assignType("acousticframedPANEL"));
+        assertEquals(Art.Type.OneInchAcousticPanelFloatFrame, Art.assignType("acoustic framed"));
+        assertEquals(Art.Type.OneInchAcousticPanelFloatFrame, Art.assignType("FRAMED acoustic"));
+        assertEquals(Art.Type.OneInchAcousticPanelFloatFrame, Art.assignType("acoustic framed PANEL"));
+        assertEquals(Art.Type.OneInchAcousticPanelFloatFrame, Art.assignType("acousticframedPANEL"));
 
         // mirror (mirror)
         assertEquals(Art.Type.Mirror, Art.assignType("mirror"));
