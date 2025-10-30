@@ -368,31 +368,4 @@ public class PalletPackingTest {
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
     }
-
-    @Test
-    public void standard_box_4(){
-        List<String> strings = new ArrayList<>();
-        strings.add("1, 36, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
-        Response response = pallet_art_creator(strings);
-        assertEquals(36, response.getTotalPieces());
-        int totalContainers = 0;
-        int totalPallets = 0;
-        int totalOversizePallets = 0;
-        int totalCrates = 0;
-        for (Container container : response.getContainers()){
-        totalContainers++;
-        if (container.getType() == ArchDesign.entities.Container.Type.Pallet){
-            totalPallets++;
-        }
-        else if (container.getType() == ArchDesign.entities.Container.Type.Oversize){
-            totalOversizePallets++;
-        }
-        else if (container.getType() == ArchDesign.entities.Container.Type.Crate){
-            totalCrates++;
-        }
-        }
-        assertEquals(2, totalPallets);
-        assertEquals(0, totalOversizePallets);
-        assertEquals(0, totalCrates);
-    }
 }

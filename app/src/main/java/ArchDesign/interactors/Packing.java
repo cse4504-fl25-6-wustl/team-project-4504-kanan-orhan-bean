@@ -21,11 +21,13 @@ public class Packing {
         public final int side1; // longer side
         public final int side2; // shorter side
         public final int quantity;
+        public final int weight;
 
-        public oversizeObjects(int side1, int side2, int quantity) {
+        public oversizeObjects(int side1, int side2, int quantity, int weight) {
             this.side1 = side1;
             this.side2 = side2;
             this.quantity = quantity;
+            this.weight = weight;
         }
     }
 
@@ -115,12 +117,13 @@ public class Packing {
             int h = (int) Math.ceil(a.getHeight());
             int s1 = Math.max(w, h);
             int s2 = Math.min(w, h);
+            int weight = a.getWeight();
             String key = s1 + "x" + s2;
             oversizeObjects cur = bucket.get(key);
             if (cur == null) {
-                bucket.put(key, new oversizeObjects(s1, s2, 1));
+                bucket.put(key, new oversizeObjects(s1, s2, 1, weight));
             } else {
-                bucket.put(key, new oversizeObjects(cur.side1, cur.side2, cur.quantity + 1));
+                bucket.put(key, new oversizeObjects(cur.side1, cur.side2, cur.quantity + 1, weight));
             }
         }
         return bucket.values().toArray(new oversizeObjects[0]);

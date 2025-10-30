@@ -18,6 +18,18 @@ public class Response {
     private final int final_shipment_weight;
     private final ShipmentSummary shipmentSummary;
 
+    private final int total_pieces;
+    private final int standard_size_pieces;
+    private final oversizeObjects[] oversized_pieces;
+    private final int standard_box_count;
+    private final int large_box_count;
+    private final int custom_piece_count;
+    private final int standard_pallet_count;
+    private final int oversized_pallet_count;
+    private final int crate_count;
+    private final int total_artwork_weight;
+    private final int total_packaging_weight;
+
     public Response(List<Art> arts, List<Box> boxes, List<Container> containers,
             int total_pieces, int standard_size_pieces, oversizeObjects[] oversized_pieces,
             int standard_box_count, int large_box_count, int custom_piece_count,
