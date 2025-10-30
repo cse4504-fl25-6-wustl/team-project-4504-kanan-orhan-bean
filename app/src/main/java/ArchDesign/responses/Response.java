@@ -15,19 +15,8 @@ public class Response {
     private final List<Art> arts;
     private final List<Box> boxes;
     private final List<Container> containers;
-
-    private final int total_pieces;
-    private final int standard_size_pieces;
-    private final oversizeObjects[] oversized_pieces;
-    private final int standard_box_count;
-    private final int large_box_count;
-    private final int custom_piece_count;
-    private final int standard_pallet_count;
-    private final int oversized_pallet_count;
-    private final int crate_count;
-    private final int total_artwork_weight;
-    private final int total_packaging_weight;
     private final int final_shipment_weight;
+    private final ShipmentSummary shipmentSummary;
 
     /**
      * @param arts        items to be shipped (non-null; may be empty)
@@ -45,17 +34,8 @@ public class Response {
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(boxes, "boxes must not be null")));
         this.containers = Collections
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(containers, "containers must not be null")));
-        this.total_pieces = total_pieces;
-        this.standard_size_pieces = standard_size_pieces;
-        this.oversized_pieces = oversized_pieces;
-        this.standard_box_count = standard_box_count;
-        this.large_box_count = large_box_count;
-        this.custom_piece_count = custom_piece_count;
-        this.standard_pallet_count = standard_pallet_count;
-        this.oversized_pallet_count = oversized_pallet_count;
-        this.crate_count = crate_count;
-        this.total_artwork_weight = total_artwork_weight;
-        this.total_packaging_weight = total_packaging_weight;
+        this.shipmentSummary = new ShipmentSummary(total_pieces, standard_size_pieces, oversized_pieces, standard_box_count, large_box_count, custom_piece_count, 
+            standard_pallet_count, oversized_pallet_count, crate_count, total_artwork_weight, total_packaging_weight);
         this.final_shipment_weight = final_shipment_weight;
     }
 
@@ -73,5 +53,9 @@ public class Response {
 
     public int getTotalWeight() {
         return this.final_shipment_weight;
+    }
+
+    public ShipmentSummary getShipmentSummary() {
+        return this.shipmentSummary;
     }
 }
