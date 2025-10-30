@@ -29,8 +29,9 @@ public class ArtTest {
     // Direct mappings by type
     assertEquals(Material.CanvasFramed, art(Type.CanvasFloatFrame, Glazing.NoGlaze, 10, 12).getMaterial());
     assertEquals(Material.CanvasGallery, art(Type.WallDecor, Glazing.NoGlaze, 10, 12).getMaterial());
-    assertEquals(Material.AcousticPanel, art(Type.AcousticPanel, Glazing.NoGlaze, 10, 12).getMaterial());
-    assertEquals(Material.AcousticPanelFramed, art(Type.AcousticPanelFramed, Glazing.NoGlaze, 10, 12).getMaterial());
+    assertEquals(Material.AcousticPanel, art(Type.AcousticPanelGalleryWrapped, Glazing.NoGlaze, 10, 12).getMaterial());
+    assertEquals(Material.AcousticPanelFramed, art(Type.TwoInchAcousticPanelFloatFrame, Glazing.NoGlaze, 10, 12).getMaterial());
+    assertEquals(Material.AcousticPanelFramed, art(Type.OneInchAcousticPanelFloatFrame, Glazing.NoGlaze, 10, 12).getMaterial());
     assertEquals(Material.PatientBoard, art(Type.MetalPrint, Glazing.NoGlaze, 10, 12).getMaterial());
     assertEquals(Material.Mirror, art(Type.Mirror, Glazing.NoGlaze, 10, 12).getMaterial());
   }
@@ -38,8 +39,9 @@ public class ArtTest {
   // Constructor: special handling flag
   @Test
   public void ctor_setsSpecialHandling_true_for_expected_types() {
-    assertTrue(art(Type.AcousticPanel, Glazing.NoGlaze, 10, 12).needSpecialHandling());
-    assertTrue(art(Type.AcousticPanelFramed, Glazing.NoGlaze, 10, 12).needSpecialHandling());
+    assertTrue(art(Type.AcousticPanelGalleryWrapped, Glazing.NoGlaze, 10, 12).needSpecialHandling());
+    assertTrue(art(Type.TwoInchAcousticPanelFloatFrame, Glazing.NoGlaze, 10, 12).needSpecialHandling());
+    assertTrue(art(Type.OneInchAcousticPanelFloatFrame, Glazing.NoGlaze, 10, 12).needSpecialHandling());
     assertTrue(art(Type.CanvasFloatFrame, Glazing.NoGlaze, 10, 12).needSpecialHandling());
 
     assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 10, 12).needSpecialHandling());
