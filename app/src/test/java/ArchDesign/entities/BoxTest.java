@@ -32,17 +32,6 @@ public class BoxTest {
         oversizedBox.addArt(oversizedArt);
         customBox.addArt(customArt);
 
-        // boxWithGlassMaterial = Box.createBoxForArt(normalSizedArt);
-        // boxWithGlassMaterial.addArt(new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.Glass, 1, 20, 20, 4));
-        // boxWithAcrylicMaterial = Box.createBoxForArt(normalSizedArt);
-        // boxWithAcrylicMaterial.addArt(new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.Acrylic, 1, 20, 20, 4));
-        // boxWithCanvasMaterial = Box.createBoxForArt(normalSizedArt);
-        // boxWithCanvasMaterial.addArt(new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.NoGlaze, 1, 20, 20, 4));
-        // boxWithAcousticMaterial = Box.createBoxForArt(normalSizedArt);
-        // boxWithAcousticMaterial.addArt(new Art(Art.Type.OneInchAcousticPanelFloatFrame, Art.Glazing.Glass, 1, 20, 20, 4));
-        // boxWithMirrorMaterial = Box.createBoxForArt(normalSizedArt);
-        // boxWithMirrorMaterial.addArt(new Art(Art.Type.Mirror, Art.Glazing.Glass, 1, 20, 20, 4));
-
         fullBox = Box.createBoxForArt(normalSizedArt);
         boolean canAdd = true;
         while (canAdd) {
@@ -158,15 +147,15 @@ public class BoxTest {
     // 3.3) after 1 addition, normal sized
     @Test
     public void testBox_checkCapacity_oversized() {
-        double expected = oversizedBox.getWidth() - (oversizedArt.getDepth());
+        double expected = 11 - (oversizedArt.getDepth());
         assertEquals("wrong remaining capacity calculated for oversized box after 1st addition", expected, oversizedBox.getCapacity(), 0.00001);
     }
 
     // 3.4) custom
-    // @Test
-    // public void testBox_checkCapacity_custom() {
-    //     assertEquals("custom box capacity should always be 0", 0, customBox.getCapacity(), 0.00001);
-    // }
+    @Test
+    public void testBox_checkCapacity_custom() {
+        assertEquals("custom box capacity should always be 0", 0, customBox.getCapacity(), 0.00001);
+    }
 
     // 3.5)) full box
     @Test
@@ -210,10 +199,10 @@ public class BoxTest {
     }
 
     // 5.2) custom box
-    // @Test
-    // public void testBox_dimensionsCheck_customBox() {
-    //     assertEquals("wrong length set for custom box", 0, customBox.getLength(), 0.00001);
-    //     assertEquals("wrong width set for custom box", 0, customBox.getWidth(), 0.00001);
-    //     assertEquals("wrong height set for custom box", 0, customBox.getHeight(), 0.00001);
-    // }
+    @Test
+    public void testBox_dimensionsCheck_customBox() {
+        assertEquals("wrong length set for custom box", 0, customBox.getLength(), 0.00001);
+        assertEquals("wrong width set for custom box", 0, customBox.getWidth(), 0.00001);
+        assertEquals("wrong height set for custom box", 0, customBox.getHeight(), 0.00001);
+    }
 }

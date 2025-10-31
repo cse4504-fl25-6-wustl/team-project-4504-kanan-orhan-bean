@@ -17,7 +17,7 @@ public class Box {
     private boolean isCustom;
 
     // TODO: UPDATE VALUE LATER
-    protected static final double SMALLEST_ART_DEPTH = 4;
+    protected static final double SMALLEST_ART_DEPTH = 0.625;
 
     protected static final double STANDARD_LENGTH = 37;
     protected static final double STANDARD_WIDTH = 11;
@@ -84,20 +84,24 @@ public class Box {
 // --- utility functions ---
 
     // BEAN - factory function that creates standard, oversized, or custom boxes (set to size 0) based on an art piece
+    // TODO: figure out custom box logic (since we will never pack these)
+    // TODO: handle large box capacity for special cases (i.e. fitting 6 vs 7, according to depths)
     public static Box createBoxForArt(Art art) {
         Box box = new Box();
 
         if (isArtWithinStandardLimit(art)) {
             box.setBoxNormal();
+            box.remainingCapacity = 11;
         }
         else if (isArtWithinOversiveLimit(art)) {
             box.setBoxOversize();
+            box.remainingCapacity = 11;
         }
         // can't do custom boxes
         else {
-            box.setBoxCustom(art.getDepth(), art.getWidth(), art.getHeight());
+            box.setBoxCustom(0, 0, 0);
+            box.remainingCapacity = 0;
         }
-        box.remainingCapacity = box.width;
         return box;
     }    
     
@@ -107,7 +111,7 @@ public class Box {
             this.arts.add(art);
             setRemainingCapacity(art);
             setWeight(art.getWeight());
-            if (this.remainingCapacity <= art.getDepth()) {
+            if (this.remainingCapacity <= SMALLEST_ART_DEPTH) {
                 this.isFull = true;
             }
             return true;
