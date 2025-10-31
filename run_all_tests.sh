@@ -26,7 +26,11 @@ process_csv_files() {
 
         # 1️⃣ Run your application with this CSV as input
         echo "Running Java app..."
-        gradle run --args="$csv_file $client_config $output_json" > /dev/null 2>&1
+        gradle run --args="$csv_file $client_config $output_json" > /dev/null 2>&1 || {
+            echo -e "${RED}❌ Gradle run failed for $csv_file${NC}"
+            continue
+        }
+
 
         # 2️⃣ Verify the output JSON was produced
         if [[ ! -s "$output_json" ]]; then
