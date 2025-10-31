@@ -20,7 +20,7 @@ public class BoxTest {
     public void setUp() {
         emptyBox = new Box();
 
-        normalSizedArt = new Art(Art.Type.PrintFramedwithTitlePlate, Art.Glazing.Acrylic, 1, 31.75, 36.0, 4);
+        normalSizedArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 1, 31.75, 36.0, 4);
         oversizedArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 2, 37.50, 41.8, 4);
         customArt = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Acrylic, 3, 57.2, 57.2, 4);
 
@@ -80,7 +80,7 @@ public class BoxTest {
     public void testBox_successfulFirstAddition() {
         assertFalse("normal art should not be empty after adding art", normalBox.isEmpty());
         assertFalse("oversized art should not be empty after adding art", oversizedBox.isEmpty());
-        // assertTrue("custom art should always be empty", customBox.isEmpty());
+        assertTrue("custom art should always be empty", customBox.isEmpty());
     }
 
     // 2.2) second art
@@ -88,7 +88,7 @@ public class BoxTest {
     public void testBox_successfulNextAddition() {
         assertTrue("next art not added to normal box", normalBox.addArt(normalSizedArt));
         assertTrue("next art not added to oversized box", oversizedBox.addArt(oversizedArt));
-        // assertFalse("next art added to custom box", customBox.addArt(customArt));
+        assertFalse("next art added to custom box", customBox.addArt(customArt));
     }
     
     // second art, different materials
@@ -104,30 +104,13 @@ public class BoxTest {
         assertTrue("next art of different material not added to normal box, canvas", normalBox.addArt(new Art(Art.Type.CanvasFloatFrame, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
         assertTrue("next art of different material not added to oversized box, canvas", oversizedBox.addArt(new Art(Art.Type.CanvasFloatFrame, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
     }
-/*     // 2.5)
+    // 2.5)
     @Test
     public void testBox_successfulNextAddition_differentMaterials_AP() {
-        assertTrue("next art of different material not added to normal box, acoustic panel", normalBox.addArt(new Art(Art.Type.AcousticPanel, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
-        assertTrue("next art of different material not added to oversized box, acoustic panel", oversizedBox.addArt(new Art(Art.Type.AcousticPanel, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
+        assertTrue("next art of different material not added to normal box, acoustic panel", normalBox.addArt(new Art(Art.Type.AcousticPanelGalleryWrapped, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
+        assertTrue("next art of different material not added to oversized box, acoustic panel", oversizedBox.addArt(new Art(Art.Type.AcousticPanelGalleryWrapped, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
     }
-    // 2.6)
-    @Test
-    public void testBox_successfulNextAddition_differentMaterials_APF() {
-        assertTrue("next art of different material not added to normal box, acoustic panel framed", normalBox.addArt(new Art(Art.Type.AcousticPanelFramed, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
-        assertTrue("next art of different material not added to oversized box, acoustic panel framed", oversizedBox.addArt(new Art(Art.Type.AcousticPanelFramed, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
-    }
-    // 2.7)
-    @Test
-    public void testBox_successfulNextAddition_differentMaterials_wall() {
-        assertTrue("next art of different material not added to normal box, wall decor", normalBox.addArt(new Art(Art.Type.WallDecor, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
-        assertTrue("next art of different material not added to oversized box, wall decor", oversizedBox.addArt(new Art(Art.Type.WallDecor, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
-    }
-    // 2.8)
-    @Test
-    public void testBox_successfulNextAddition_differentMaterials_metal() {
-        assertTrue("next art of different material not added to normal box, metal print", normalBox.addArt(new Art(Art.Type.MetalPrint, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
-        assertTrue("next art of different material not added to oversized box, metal print", oversizedBox.addArt(new Art(Art.Type.MetalPrint, Art.Glazing.NoGlaze, 4, 20, 20, 4)));
-    } */
+
     // TODO: ADD CHECK THAT YOU CANT ADD MIRRORS
 
     // 3) check capacities
