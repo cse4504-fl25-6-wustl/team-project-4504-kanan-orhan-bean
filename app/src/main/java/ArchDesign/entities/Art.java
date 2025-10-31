@@ -139,8 +139,8 @@ public class Art {
     private Type type;
     private Glazing glazing;
     private double depth;
-    private double width;
-    private double height;
+    private double width; //short-side
+    private double height; //long-side
     private double weight;
     private boolean specialHandling;
     private boolean isCustom;
@@ -155,8 +155,8 @@ public class Art {
         this.lineNumber = lineNumber;
         this.type = type;
         this.glazing = glazing;
-        this.width = width;
-        this.height = height;
+        this.width = Math.min(width, height);
+        this.height = Math.max(width, height);
         this.hardware = hardware;
         this.material = setMaterial();
         this.specialHandling = setSpecialHandling();
@@ -229,6 +229,9 @@ public class Art {
     // ---------------- helpers ----------------
 
     private boolean setIsCustom(double width, double height){
+        if (this.getType().requiresCustom){
+            return true;
+        }
         if (width > CUSTOM_THRESHOLD && this.height > CUSTOM_THRESHOLD){
             return true;
         }
