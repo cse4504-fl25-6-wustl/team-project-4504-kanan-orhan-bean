@@ -67,8 +67,8 @@ process_csv_files() {
 }
 
 # -------- CONFIG --------
-INPUT_DIR="/Users/orhanerdogan/test_cases"
-CONFIG_DIR="/Users/orhanerdogan/team-project-4504-kanan-orhan-bean/app/input"
+INPUT_DIR="/Users/orhanerdogan/test_cases" #This is where you cloned test_cases
+CONFIG_DIR="/Users/orhanerdogan/team-project-4504-kanan-orhan-bean/app/input" #This is where you cloned this project + /app/input
 
 NO_CRATES_CONFIG="$CONFIG_DIR/Site_requirements.csv"
 ALLOW_CRATES_CONFIG="$CONFIG_DIR/Site_requirements_crate.csv"
