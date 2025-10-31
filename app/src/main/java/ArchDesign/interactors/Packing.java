@@ -187,7 +187,9 @@ public class Packing {
                 }
             }
             if (placedBox == null) {
-                Box b = new Box();
+                // Box b = new Box();
+                // b.addArt(a);
+                Box b = Box.createBoxForArt(a);
                 b.addArt(a);
                 boxes.add(b);
             }

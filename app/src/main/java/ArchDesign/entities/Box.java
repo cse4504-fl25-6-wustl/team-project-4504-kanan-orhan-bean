@@ -29,7 +29,7 @@ public class Box {
     protected static final double OVERSIZE_BOX_LIMIT = 44; // or 43.5 ?!?!
 
     // constructor
-    protected Box() {
+    public Box() {
         super();
         this.isFull = false;
         this.arts = new ArrayList<>();
@@ -94,7 +94,7 @@ public class Box {
         }
         // can't do custom boxes
         else {
-            box.setBoxCustom(0, 0, 0);
+            box.setBoxCustom(art.getDepth(), art.getWidth(), art.getHeight());
         }
         box.remainingCapacity = box.width;
         return box;
@@ -106,7 +106,7 @@ public class Box {
             this.arts.add(art);
             setRemainingCapacity(art);
             setWeight(art.getWeight());
-            if (this.remainingCapacity <= SMALLEST_ART_DEPTH) {
+            if (this.remainingCapacity <= art.getDepth()) {
                 this.isFull = true;
             }
             return true;

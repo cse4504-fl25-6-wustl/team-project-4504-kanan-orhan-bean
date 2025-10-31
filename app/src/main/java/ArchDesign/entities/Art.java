@@ -353,7 +353,7 @@ public class Art {
                         return Art.Type.PrintRaisedFloatMount;
                     }
                 }
-                else if (typeStr.contains("printframed")){
+                else if (typeStr.contains("framed")){
                     if (typeStr.contains("titleplate")){
                         return Art.Type.PrintFramedwithTitlePlate;
                     }
