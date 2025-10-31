@@ -59,7 +59,7 @@ process_csv_files() {
 }
 
 # -------- CONFIG --------
-INPUT_DIR="test_cases"
+INPUT_DIR="/Users/orhanerdogan/test_cases"
 CONFIG_DIR="/Users/orhanerdogan/team-project-4504-kanan-orhan-bean/app/input"
 
 NO_CRATES_CONFIG="$CONFIG_DIR/Site_requirements.csv"
