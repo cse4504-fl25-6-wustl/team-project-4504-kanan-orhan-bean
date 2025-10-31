@@ -1,0 +1,2 @@
+job site location,client name,accepts pallets?,accepts crates?,loading dock access?,liftgate required?,inside delivery needed?,service type
+"Chevy Chase, MD",MedStar,y,y,n,n,n,Delivery + Installation
