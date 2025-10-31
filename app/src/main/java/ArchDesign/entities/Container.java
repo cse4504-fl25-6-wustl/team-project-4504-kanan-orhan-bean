@@ -261,8 +261,8 @@ public class Container {
             return false;
         }
         // If Container is Normal Pallet and box is oversized 
-        else if (this.getType() == Type.Pallet && (!this.isCarryingOversizeBox()) && (isBoxOversized) && (this.getCapacity() - this.getCurrentSize() < 2)){
-            return false;
+        else if (this.getType() == Type.Pallet && (isBoxOversized) && (this.getCapacity() - this.getCurrentSize() > 1)){
+            return true;
         }
         else {
             // Assuming we sorted the Box by size before checking, all other cases are

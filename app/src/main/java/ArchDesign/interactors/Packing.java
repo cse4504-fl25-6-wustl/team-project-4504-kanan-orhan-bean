@@ -174,7 +174,7 @@ public class Packing {
 
         // non-mirrors: greedy largest-first
         others.sort(Comparator.comparingDouble(a -> -Math.max(a.getWidth(), a.getHeight())));
-        for (Art a : others) {
+        for (Art a : items) {
             Box placedBox = null;
             for (Box b : boxes) {
                 try {
@@ -196,11 +196,11 @@ public class Packing {
         }
 
         // mirrors: one per box
-        for (Art m : mirrors) {
-            Box b = new Box();
-            b.addArt(m);
-            boxes.add(b);
-        }
+        // for (Art m : mirrors) {
+        //     Box b = new Box();
+        //     b.addArt(m);
+        //     boxes.add(b);
+        // }
         return boxes;
     }
 

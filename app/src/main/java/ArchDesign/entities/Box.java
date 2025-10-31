@@ -25,8 +25,9 @@ public class Box {
     protected static final double OVERSIZE_LENGTH = 44;
     protected static final double OVERSIZE_WIDTH = 13;
     protected static final double OVERSIZE_HEIGHT = 48;
-    protected static final double STANDARD_BOX_LIMIT = 36;
-    protected static final double OVERSIZE_BOX_LIMIT = 44; // or 43.5 ?!?!
+    protected static final double STANDARD_BOX_LIMIT = 36.5;
+    protected static final double OVERSIZE_BOX_LIMIT = 43.5; // or 43.5 ?!?!
+    protected static final double TELESCOPE_HEIGHT = 88.0;
 
     // constructor
     public Box() {
@@ -173,13 +174,13 @@ public class Box {
 // --- checkers ---
 
     private static boolean isArtWithinStandardLimit(Art art) {
-        if (art.getHeight() <= STANDARD_BOX_LIMIT && art.getWidth() <= STANDARD_BOX_LIMIT) {
+        if ((art.getHeight() <= STANDARD_BOX_LIMIT || art.getWidth() <= STANDARD_BOX_LIMIT) && (art.getHeight() <= TELESCOPE_HEIGHT && art.getWidth() <= TELESCOPE_HEIGHT)) {
             return true;
         }
         return false;
     }
     private static boolean isArtWithinOversiveLimit(Art art) {
-        if (art.getHeight() <= OVERSIZE_BOX_LIMIT && art.getWidth() <= OVERSIZE_BOX_LIMIT) {
+        if ((art.getHeight() <= OVERSIZE_BOX_LIMIT || art.getWidth() <= OVERSIZE_BOX_LIMIT) && (art.getHeight() <= TELESCOPE_HEIGHT && art.getWidth() <= TELESCOPE_HEIGHT)) {
             return true;
         }
         return false;

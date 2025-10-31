@@ -253,7 +253,7 @@ public class PalletPackingTest {
             totalCrates++;
         }
         }
-        assertEquals(1, totalPallets);
+        assertEquals(": " + response.getBoxes().size(), 1, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
     }

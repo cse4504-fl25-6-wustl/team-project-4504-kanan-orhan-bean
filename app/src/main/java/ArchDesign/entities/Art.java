@@ -4,9 +4,9 @@ public class Art {
     
     // TODO: Figure out how to handle the Type, Material, and Glazing Enums depending on https://piazza.com/class/mf6woqytzb81zq/post/14
     public enum Type { 
-        AcousticPanelGalleryWrapped(2.5, Art.Material.AcousticPanel, false, true),
-        TwoInchAcousticPanelFloatFrame(2.5, Art.Material.AcousticPanelFramed, false, true),
-        OneInchAcousticPanelFloatFrame(2.5, Art.Material.AcousticPanelFramed, false, true),
+        AcousticPanelGalleryWrapped(2.74, Art.Material.AcousticPanel, false, true),
+        TwoInchAcousticPanelFloatFrame(2.74, Art.Material.AcousticPanelFramed, false, true),
+        OneInchAcousticPanelFloatFrame(2.74, Art.Material.AcousticPanelFramed, false, true),
         VECanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
         UVCanvasGalleryWrapped(2.5, Art.Material.CanvasGallery),
         UVCanvasFramed(2.5, Art.Material.CanvasFramed),
@@ -28,7 +28,7 @@ public class Art {
         PrintFloatMount(0.75, Art.Material.KNOWNBUTGLAZING, true),
         PaperPrintFramed(1.83, Art.Material.KNOWNBUTGLAZING),
         MirrorBeveled(1.83, Art.Material.Mirror),
-        Mirror(1.83, Art.Material.Mirror),
+        Mirror(1.37, Art.Material.Mirror),
         Signage(0.0, Art.Material.Signage, true),
         WoodPrint(1.83, Art.Material.SolidSurface),
         MetalPrint(1.83, Art.Material.SolidSurface),
