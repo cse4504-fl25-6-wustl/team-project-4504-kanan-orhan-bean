@@ -93,6 +93,9 @@ public class PalletPackingTest {
         assertEquals(0, totalPallets);
         assertEquals(3, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(0, response.getStandardPalletCount());
+        assertEquals(3, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -120,6 +123,9 @@ public class PalletPackingTest {
         assertEquals(0, totalPallets);
         assertEquals(4, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(0, response.getStandardPalletCount());
+        assertEquals(4, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -147,6 +153,9 @@ public class PalletPackingTest {
         assertEquals(0, totalPallets);
         assertEquals(1, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(0, response.getStandardPalletCount());
+        assertEquals(1, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
     
     @Test
@@ -174,6 +183,9 @@ public class PalletPackingTest {
         assertEquals(0, totalPallets);
         assertEquals(2, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(0, response.getStandardPalletCount());
+        assertEquals(2, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -201,6 +213,9 @@ public class PalletPackingTest {
         assertEquals(1, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(1, response.getStandardPalletCount());
+        assertEquals(0, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -228,6 +243,9 @@ public class PalletPackingTest {
         assertEquals(2, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(2, response.getStandardPalletCount());
+        assertEquals(0, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -256,6 +274,9 @@ public class PalletPackingTest {
         assertEquals(": " + response.getBoxes().size(), 1, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(1, response.getStandardPalletCount());
+        assertEquals(0, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -284,6 +305,9 @@ public class PalletPackingTest {
         assertEquals(2, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(2, response.getStandardPalletCount());
+        assertEquals(0, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -312,6 +336,9 @@ public class PalletPackingTest {
         assertEquals(1, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(1, response.getStandardPalletCount());
+        assertEquals(0, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -340,6 +367,9 @@ public class PalletPackingTest {
         assertEquals(2, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(2, response.getStandardPalletCount());
+        assertEquals(0, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 
     @Test
@@ -367,5 +397,8 @@ public class PalletPackingTest {
         assertEquals(1, totalPallets);
         assertEquals(0, totalOversizePallets);
         assertEquals(0, totalCrates);
+        assertEquals(1, response.getStandardPalletCount());
+        assertEquals(0, response.getOversizedPalletCount());
+        assertEquals(0, response.getCrateCount());
     }
 }
