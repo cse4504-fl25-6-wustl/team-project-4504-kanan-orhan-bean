@@ -21,7 +21,7 @@ public class Packing {
         public final int side1; // longer side
         public final int side2; // shorter side
         public final int quantity;
-        public final int weight;
+        public final transient int weight;
 
         public oversizeObjects(int side1, int side2, int quantity, int weight) {
             this.side1 = side1;

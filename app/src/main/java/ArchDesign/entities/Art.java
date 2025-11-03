@@ -58,7 +58,7 @@ public class Art {
         WallpaperCovering(0.0, Art.Material.Misc, true),
         VinylWindowFilm(0.0, Art.Material.RolledProduct, true),
         VinylWallGraphic(0.0, Art.Material.RolledProduct, true),
-        UNKNOWN(0.0, Art.Material.RolledProduct, true);
+        UNKNOWN(0.0, Art.Material.UNKNOWN, true, true);
         // PaperPrintFramed(1.83), 
         // PaperPrintFramedWithTitlePlate(1.83), 
         // CanvasGalleryWrapped(2.75),
@@ -232,7 +232,7 @@ public class Art {
         if (this.getType().requiresCustom){
             return true;
         }
-        if (width > CUSTOM_THRESHOLD && this.height > CUSTOM_THRESHOLD){
+        if (width > CUSTOM_THRESHOLD && height > CUSTOM_THRESHOLD){
             return true;
         }
         return false;
@@ -299,7 +299,7 @@ public class Art {
                 }
             }
             else if (typeStr.contains("canvas")){
-                if (typeStr.contains("handembellished")){
+                if (typeStr.contains("embellished")){
                     if (typeStr.contains("gallery")){
                         return Art.Type.HandEmbellishedCanvasGalleryWrapped;
                     }
@@ -310,7 +310,7 @@ public class Art {
                         return Art.Type.HandEmbellishedCanvasFramed;
                     }
                 }
-                else if (typeStr.contains("uvcanvas")){
+                else if (typeStr.contains("uv")){
                     if (typeStr.contains("gallery")){
                         return Art.Type.UVCanvasGalleryWrapped;
                     }
@@ -321,7 +321,7 @@ public class Art {
                         return Art.Type.UVCanvasFramed;
                     }
                 }
-                else if (typeStr.contains("vecanvas")){
+                else if (typeStr.contains("ve")){
                     return Art.Type.VECanvasFloatFrame;
                 }
                 else {
@@ -339,17 +339,17 @@ public class Art {
             else if (typeStr.contains("print")){
                 if (typeStr.contains("raised")){
                     if (typeStr.contains("mat")){
-                        if (typeStr.contains("floatmount")){
+                        if (typeStr.contains("float")){
                             return Art.Type.PrintRaisedFloatMountandRaisedMat;
                         }
                         else{
                             return Art.Type.PrintRaisedMat;
                         }
                     }
-                    else if (typeStr.contains("titleplate")){
+                    else if (typeStr.contains("title")){
                         return Art.Type.PrintRaisedFloatMountwithTitlePlate;
                     }
-                    else if (typeStr.contains("decklededge")){
+                    else if (typeStr.contains("deck")){
                         return Art.Type.PrintRaisedFloatMountandDeckledEdge;
                     }
                     else {
@@ -357,31 +357,31 @@ public class Art {
                     }
                 }
                 else if (typeStr.contains("framed")){
-                    if (typeStr.contains("titleplate")){
+                    if (typeStr.contains("title")){
                         return Art.Type.PrintFramedwithTitlePlate;
                     }
                     else{
                         return Art.Type.PaperPrintFramed;
                     }
                 }
-                else if (typeStr.contains("printfloat")){
-                    if (typeStr.contains("titleplate")){
+                else if (typeStr.contains("float")){
+                    if (typeStr.contains("title")){
                         return Art.Type.PrintFloatMountwithTitlePlate;
                     }
-                    else if (typeStr.contains("decklededge")){
+                    else if (typeStr.contains("deck")){
                         return Art.Type.PrintFloatMountandDeckledEdge;
                     }
                     else {
                         return Art.Type.PrintFloatMount;
                     }
                 }
-                else if (typeStr.contains("woodprint")){
+                else if (typeStr.contains("wood")){
                     return Art.Type.WoodPrint;
                 }
-                else if (typeStr.contains("metalprint")){
+                else if (typeStr.contains("metal")){
                     return Art.Type.MetalPrint;
                 }
-                else if (typeStr.contains("printservices")){
+                else if (typeStr.contains("services")){
                     return Art.Type.PrintServices;
                 }
             }
@@ -414,68 +414,78 @@ public class Art {
                     }
                 }
             }
-            else if (typeStr.contains("sintraframed")){
+            else if (typeStr.contains("sintra")){
                 return Art.Type.SintraFramed;
             }
-            else if (typeStr.contains("patientboard")){
+            else if (typeStr.contains("patient")){
                 return Art.Type.PatientBoard;
             }
-            else if (typeStr.contains("whiteboard")){
+            else if (typeStr.contains("white")){
                 return Art.Type.Whiteboard;
             }
-            else if (typeStr.contains("magneticboard")){
+            else if (typeStr.contains("magnetic")){
                 return Art.Type.MagneticBoardFabricWrapped;
             }
-            else if (typeStr.contains("corkboardlinenwrapped")){
-                return Art.Type.CorkBoardLinenWrapped;
+            else if (typeStr.contains("cork")){
+                if (typeStr.contains("linen")) {
+                    return Art.Type.CorkBoardLinenWrapped;
+                }
+                else {
+                    return Art.Type.CorkBoard;
+                }
             }
-            else if (typeStr.contains("corkboard")){
-                return Art.Type.CorkBoard;
-            }
-            else if (typeStr.contains("chalkboard")){
+            else if (typeStr.contains("chalk")){
                 return Art.Type.Chalkboard;
             }
-            else if (typeStr.contains("tactilepanelflat")){
-                return Art.Type.TactilePanelFlat;
+            else if (typeStr.contains("tactile")){
+                if (typeStr.contains("dimension")) {
+                    return Art.Type.TactilePanelDimensional;
+                } 
+                else {
+                    return Art.Type.TactilePanelFlat;
+                }
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
-                return Art.Type.TactilePanelDimensional;
-            }
-            else if (typeStr.contains("tactilepaneldimensional")){
+            else if (typeStr.contains("shadow")){
                 return Art.Type.Shadowbox;
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
+            else if (typeStr.contains("object")){
                 return Art.Type.ObjectFramed;
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
+            else if (typeStr.contains("hardware")){
                 return Art.Type.HardwareOnly;
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
+            else if (typeStr.contains("hanging")){
                 return Art.Type.HangingSystem;
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
-                return Art.Type.SpecialtyProduct;
+            else if (typeStr.contains("specialty")){
+                if (typeStr.contains("product")) {
+                    return Art.Type.SpecialtyProduct;
+                }
+                else {
+                    return Art.Type.SpecialtyFramingItem;
+                }
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
-                return Art.Type.SpecialtyFramingItem;
-            }
-            else if (typeStr.contains("tactilepaneldimensional")){
+            else if (typeStr.contains("commission")){
                 return Art.Type.Commission;
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
+            else if (typeStr.contains("plaque")){
                 return Art.Type.PlaqueOnly;
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
-                return Art.Type.WallDecor;
+            else if (typeStr.contains("wall")){
+                if (typeStr.contains("paper")) {
+                    return Art.Type.WallpaperCovering;
+                }
+                else {
+                    return Art.Type.WallDecor;
+                }
             }
-            else if (typeStr.contains("tactilepaneldimensional")){
-                return Art.Type.WallpaperCovering;
-            }
-            else if (typeStr.contains("tactilepaneldimensional")){
-                return Art.Type.VinylWindowFilm;
-            }
-            else if (typeStr.contains("tactilepaneldimensional")){
-                return Art.Type.VinylWallGraphic;
+            else if (typeStr.contains("vinyl")){
+                if (typeStr.contains("window")) {
+                    return Art.Type.VinylWindowFilm;
+                }
+                else {
+                    return Art.Type.VinylWallGraphic;
+                }
             }
             // if (typeStr.contains("print")) {
             //     if (typeStr.contains("metal")) {
@@ -516,7 +526,7 @@ public class Art {
                 return Art.Glazing.Glass;
             } else if (glazingStr.contains("acrylic")) {
                 return Art.Glazing.Acrylic;
-            } else if (glazingStr.contains("glaze")) {
+            } else if (glazingStr.contains("glaze") || glazingStr.contains("no")) {
                 return Art.Glazing.NoGlaze;
             }
         }

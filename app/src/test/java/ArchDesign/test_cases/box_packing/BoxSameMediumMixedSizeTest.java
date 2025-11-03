@@ -1,4 +1,4 @@
-package ArchDesign.entities;
+package ArchDesign.test_cases.box_packing;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ArchDesign.entities.Art;
+import ArchDesign.entities.Client;
+import ArchDesign.entities.Art.Glazing;
+import ArchDesign.entities.Art.Type;
 import ArchDesign.interactors.Packing;
 import ArchDesign.parser.Parser;
 import ArchDesign.requests.Request;
