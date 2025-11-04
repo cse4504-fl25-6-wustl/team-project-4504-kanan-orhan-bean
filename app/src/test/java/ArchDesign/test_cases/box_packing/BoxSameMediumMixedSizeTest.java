@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import ArchDesign.entities.Art;
 import ArchDesign.entities.Client;
-import ArchDesign.entities.Art.Glazing;
-import ArchDesign.entities.Art.Type;
 import ArchDesign.interactors.Packing;
 import ArchDesign.parser.Parser;
 import ArchDesign.requests.Request;
 import ArchDesign.responses.Response;
+import ArchDesign.interactors.BeanPacking;
+
 
 public class BoxSameMediumMixedSizeTest {
 
@@ -52,8 +52,10 @@ public class BoxSameMediumMixedSizeTest {
       addArts(arts, r);
     Client client = Parser.parseClient("input/Site_requirements.csv");
     Request req = new Request(arts, client);
-    Packing pk = new Packing();
-    return pk.packEverything(req);
+    // Packing pk = new Packing();
+    // return pk.packEverything(req);
+
+    return BeanPacking.packEverything(req);
   }
 
   @Test
@@ -82,6 +84,21 @@ public class BoxSameMediumMixedSizeTest {
     assertEquals(1, r.getLargeBoxCount());
     assertEquals(0, r.getCustomPieceCount());
   }
+
+  // failing (standard box count, actual = 1)
+  @Test
+  public void standard1_large2() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 1, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
+    rows.add("1, 2, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(3, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(1, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
   @Test
   public void large2_standard1() {
     List<String> rows = new ArrayList<>();
@@ -95,19 +112,7 @@ public class BoxSameMediumMixedSizeTest {
     assertEquals(0, r.getCustomPieceCount());
   }
 
-  @Test
-  public void standard1_large2() {
-    List<String> rows = new ArrayList<>();
-    rows.add("1, 1, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
-    rows.add("1, 2, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
-
-    Response r = buildResponse(rows);
-    assertEquals(3, r.getTotalPieces());
-    assertEquals(0, r.getStandardBoxCount());
-    assertEquals(1, r.getLargeBoxCount());
-    assertEquals(0, r.getCustomPieceCount());
-  }
-  
+  // failing (standard box count, actual = 1)
   @Test
   public void standard2_large1() {
     List<String> rows = new ArrayList<>();
@@ -120,8 +125,10 @@ public class BoxSameMediumMixedSizeTest {
     assertEquals(1, r.getLargeBoxCount());
     assertEquals(0, r.getCustomPieceCount());
   }
+
+  // failing (standard box count, actual = 0)
   @Test
-  public void large6_standard6() {
+  public void standard6_large6() {
     List<String> rows = new ArrayList<>();
     rows.add("1, 3, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
     rows.add("1, 3, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
@@ -134,5 +141,4 @@ public class BoxSameMediumMixedSizeTest {
     assertEquals(1, r.getLargeBoxCount());
     assertEquals(0, r.getCustomPieceCount());
   }
-    
 }

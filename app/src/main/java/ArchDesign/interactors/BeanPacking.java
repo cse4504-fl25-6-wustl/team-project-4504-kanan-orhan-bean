@@ -10,48 +10,40 @@ import java.util.LinkedHashMap;
 import ArchDesign.entities.Art;
 import ArchDesign.entities.Box;
 import ArchDesign.entities.Container;
+import ArchDesign.interactors.Packing.oversizeObjects;
+import ArchDesign.entities.Client.DeliveryCapabilities;
 import ArchDesign.entities.Client;
 import ArchDesign.requests.Request;
 import ArchDesign.responses.Response;
 
-public class Packing {
 
-    /** DTO for the JSON oversized_pieces array */
-    public static class oversizeObjects {
-        public final int side1; // longer side (height)
-        public final int side2; // shorter side (width)
-        public final int quantity;
-        public final transient int weight;
+public class BeanPacking {
 
-        public oversizeObjects(int side1, int side2, int quantity, int weight) {
-            this.side1 = side1;
-            this.side2 = side2;
-            this.quantity = quantity;
-            this.weight = weight;
-        }
-    }
-
-    private Client currentClient;
-
-    public Response packEverything(Request request) {
+// * CHANGED!!!
+    public static Response packEverything(Request request) {
         Objects.requireNonNull(request, "request must not be null");
-        this.currentClient = Objects.requireNonNull(request.getClient(), "client must not be null");
+        final Client currentClient = Objects.requireNonNull(request.getClient(), "client must not be null");
         final List<Art> arts = Objects.requireNonNull(request.getArts(), "arts must not be null");
 
-        // 1) Box up the art
-        List<Box> boxes = constructBoxesForArtsHypo(arts);
+        DeliveryCapabilities caps = currentClient.getDeliveryCapabilities();
+        List<Box> boxes = null;
 
-        // 2) Containerize (try both pallet-first and oversize-first, choose fewer)
-        var caps = currentClient.getDeliveryCapabilities();
-        boolean acceptsPallets = caps.doesAcceptPallets();
-        boolean acceptsCrates = caps.doesAcceptCrates();
+        // if they DO accept crates, will use crate boxes directly NOT standard/oversized boxes !!
+        if (!caps.doesAcceptCrates()) {
+            if (caps.doesAcceptPallets()) {
+                boxes = constructBoxesForArts(arts);
+            }
+            // can't currently handle cases where neither crates nor pallets are accepted
+        }
+        else {
+            // TODO: implement logic for filling crate boxes
+        }
+        int standardBoxCount = (int) boxes.stream().filter(Box::isNormal).count();
 
-        List<Container> containersPallet = constructContainersForBoxesLocal(boxes, acceptsPallets, acceptsCrates);
-        List<Container> containersOversize = constructContainersForBoxesLocalOversize(boxes, acceptsPallets,
-                acceptsCrates);
-        List<Container> containers = (containersOversize.size() < containersPallet.size())
-                ? containersOversize
-                : containersPallet;
+        // NOTHING FROM THIS POINT ON IN PACK_EVERYTHING WAS CHANGED
+        List<Container> containersPallet = constructContainersForBoxesLocal(boxes, caps.doesAcceptPallets(), caps.doesAcceptCrates());
+        List<Container> containersOversize = constructContainersForBoxesLocalOversize(boxes, caps.doesAcceptPallets(), caps.doesAcceptCrates());
+        List<Container> containers = (containersOversize.size() < containersPallet.size()) ? containersOversize : containersPallet;
 
         // 3) Weights
         int totalArtworkWeight = sumArtworkWeight(arts);
@@ -63,36 +55,57 @@ public class Packing {
         int standardSizePieces = (int) arts.stream().filter(a -> !a.isOversized()).count();
         int customPieceCount = (int) arts.stream().filter(Art::isCustom).count();
 
-        int standardBoxCount = (int) boxes.stream().filter(b -> !b.isOversized() && !b.isCustom()).count();
         int largeBoxCount = (int) boxes.stream().filter(Box::isOversized).count();
 
         int standardPalletCount = (int) containers.stream().filter(c -> c.getType() == Container.Type.Pallet).count();
-        int oversizedPalletCount = (int) containers.stream().filter(c -> c.getType() == Container.Type.Oversize)
-                .count();
+        int oversizedPalletCount = (int) containers.stream().filter(c -> c.getType() == Container.Type.Oversize).count();
         int crateCount = (int) containers.stream().filter(c -> c.getType() == Container.Type.Crate).count();
 
         oversizeObjects[] oversizedPieces = buildOversizePieces(arts);
 
         // 5) Build the Response (no summary string here—serializers will handle
         // presentation)
-        return new Response(
-                arts,
-                boxes,
-                containers,
-                totalPieces,
-                standardSizePieces,
-                oversizedPieces,
-                standardBoxCount,
-                largeBoxCount,
-                customPieceCount,
-                standardPalletCount,
-                oversizedPalletCount,
-                crateCount,
-                totalArtworkWeight,
-                totalPackagingWeight,
-                finalShipmentWeight);
+        return new Response(arts, boxes, containers, totalPieces, standardSizePieces, oversizedPieces,
+                standardBoxCount, largeBoxCount, customPieceCount, standardPalletCount,oversizedPalletCount,
+                crateCount, totalArtworkWeight, totalPackagingWeight, finalShipmentWeight);
     }
 
+// * CHANGED!!!
+    private static List<Box> constructBoxesForArts(List<Art> items) {
+        List<Box> boxes = new ArrayList<>();
+        if (items == null || items.isEmpty())
+            return boxes;
+
+        // partition
+        List<Art> mirrors = new ArrayList<>();
+        List<Art> others = new ArrayList<>();
+        for (Art a : items) {
+            if (a.getType() == Art.Type.Mirror)
+                mirrors.add(a);
+            else
+                others.add(a);
+        }
+
+        // non-mirrors: greedy largest-first
+        others.sort(Comparator.comparingDouble(Art::getWidth).reversed());
+        // *DON'T PACK CUSTOM ARTS !!!
+        others.removeIf(Art::isCustom);
+        boxes.add(Box.createBoxForArt(others.get(0)));
+        int boxIndex = 0;
+
+        for (Art a : others) {
+            if (!boxes.get(boxIndex).addArt(a)) {
+                boxes.add(Box.createBoxForArt(a));
+                ++boxIndex;
+                boxes.get(boxIndex).addArt(a);
+            }
+        }
+
+        // TODO: figure out how to handle mirrors if crates not allowed (typically goes straight into crate box?)
+        return boxes;
+    }
+
+// * EVERYTHING BELOW IS UNCHANGED    
     /* ======================== metrics helpers ======================== */
 
     private static int sumArtworkWeight(List<Art> arts) {
@@ -129,7 +142,7 @@ public class Packing {
         return bucket.values().toArray(new oversizeObjects[0]);
     }
 
-    private int computeTotalWeight(List<Art> arts, List<Box> boxes, List<Container> containers) {
+    private static int computeTotalWeight(List<Art> arts, List<Box> boxes, List<Container> containers) {
         try {
             if (!containers.isEmpty()) {
                 int sum = 0;
@@ -151,58 +164,6 @@ public class Packing {
     }
 
     /* ===================== packing helpers ===================== */
-
-    /**
-     * Build boxes for all arts. Mirrors are modeled as hypothetical boxes:
-     * one mirror per box; no mixing mirrors with other art inside a box.
-     * Non-mirrors are packed greedily (largest side first) using Box.canArtFit().
-     */
-    private static List<Box> constructBoxesForArtsHypo(List<Art> items) {
-        List<Box> boxes = new ArrayList<>();
-        if (items == null || items.isEmpty())
-            return boxes;
-
-        // partition
-        List<Art> mirrors = new ArrayList<>();
-        List<Art> others = new ArrayList<>();
-        for (Art a : items) {
-            if (a.getType() == Art.Type.Mirror)
-                mirrors.add(a);
-            else
-                others.add(a);
-        }
-
-        // non-mirrors: greedy largest-first
-        others.sort(Comparator.comparingDouble(a -> -Math.max(a.getWidth(), a.getHeight())));
-        for (Art a : items) {
-            Box placedBox = null;
-            for (Box b : boxes) {
-                try {
-                    if (b.canArtFit(a)) {
-                        b.addArt(a);
-                        placedBox = b;
-                        break;
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-            if (placedBox == null) {
-                // Box b = new Box();
-                // b.addArt(a);
-                Box b = Box.createBoxForArt(a);
-                b.addArt(a);
-                boxes.add(b);
-            }
-        }
-
-        // mirrors: one per box
-        // for (Art m : mirrors) {
-        //     Box b = new Box();
-        //     b.addArt(m);
-        //     boxes.add(b);
-        // }
-        return boxes;
-    }
 
     /** Pallet-default strategy */
     private static List<Container> constructContainersForBoxesLocal(
@@ -334,4 +295,5 @@ public class Packing {
             return 0.0;
         }
     }
+    
 }
