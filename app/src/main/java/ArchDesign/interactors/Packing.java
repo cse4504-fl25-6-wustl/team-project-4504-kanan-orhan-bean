@@ -80,7 +80,7 @@ public class Packing {
         int standardSizePieces = (int) arts.stream().filter(a -> !a.isOversized()).count();
         int customPieceCount = (int) arts.stream().filter(Art::isCustom).count();
 
-        int standardBoxCount = (int) boxes.stream().filter(b -> !b.isOversized() && !b.isCustom()).count();
+        int standardBoxCount = (int) boxes.stream().filter(Box::isNormal).count();
         int largeBoxCount = (int) boxes.stream().filter(Box::isOversized).count();
 
         int standardPalletCount = (int) containers.stream().filter(c -> c.getType() == Container.Type.Pallet).count();
@@ -238,6 +238,8 @@ public class Packing {
         // non-mirrors: greedy largest-first
         // others.sort(Comparator.comparing(Art::getHeight).thenComparing(Art::getWidth));
         others.reversed();
+        // *DON'T PACK CUSTOM ARTS !!!
+        others.removeIf(Art::isCustom);
         for (Art a : others) {
             Box placedBox = null;
             for (Box b : boxes) {
