@@ -130,7 +130,7 @@ public class BoxTest {
     // 3.3) after 1 addition, normal sized
     @Test
     public void testBox_checkCapacity_oversized() {
-        double expected = 11 - (oversizedArt.getDepth());
+        double expected = 13 - (oversizedArt.getDepth());
         assertEquals("wrong remaining capacity calculated for oversized box after 1st addition", expected, oversizedBox.getCapacity(), 0.00001);
     }
 

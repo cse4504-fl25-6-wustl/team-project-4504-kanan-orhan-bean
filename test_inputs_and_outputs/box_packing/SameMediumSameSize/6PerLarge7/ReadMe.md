@@ -1,1 +1,1 @@
-We decided to keep their logic of 6 items in both standard and large boxes.
+We decided to keep our logic of 6 items in a standard box and 7 items in a large boxes.

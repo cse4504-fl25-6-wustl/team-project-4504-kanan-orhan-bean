@@ -64,23 +64,23 @@ public class ArtTest {
     assertEquals(expectedMirror, art(Type.Mirror, Glazing.NoGlaze, 10, 20).getWeight(), 1e-9);
   }
 
-  // isCustom(): boundary at 43.5" (strictly greater)
+  // isCustom(): boundary at 44" (greater or equal)
   @Test
   public void isCustom_boundaryChecks_43point5in() {
     // below threshold on both -> false
-    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 43.4, 43.4).isCustom());
+    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 43.9, 43.9).isCustom());
 
     // exactly at threshold on either -> false
-    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 43.5, 10.0).isCustom());
-    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 10.0, 43.5).isCustom());
+    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 44.0, 10.0).isCustom());
+    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 10.0, 44.0).isCustom());
 
     // one above threshold on either -> false
-    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 43.6, 10.0).isCustom());
-    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 10.0, 43.6).isCustom());
+    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 44.1, 10.0).isCustom());
+    assertFalse(art(Type.PaperPrintFramed, Glazing.Glass, 10.0, 44.1).isCustom());
 
     // both above threshold on either -> true
-    assertTrue(art(Type.PaperPrintFramed, Glazing.Glass, 43.6, 43.6).isCustom());
-    assertTrue(art(Type.PaperPrintFramed, Glazing.Glass, 43.6, 43.6).isCustom());
+    assertTrue(art(Type.PaperPrintFramed, Glazing.Glass, 44.1, 44.1).isCustom());
+    assertTrue(art(Type.PaperPrintFramed, Glazing.Glass, 44.1, 44.1).isCustom());
   }
 
   // isOversize(): boundary at 44" (strictly greater)
