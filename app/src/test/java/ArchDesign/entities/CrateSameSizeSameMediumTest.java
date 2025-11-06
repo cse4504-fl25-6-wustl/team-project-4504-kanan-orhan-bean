@@ -44,7 +44,7 @@ public class CrateSameSizeSameMediumTest {
         List<Art> arts = new ArrayList<>();
         for (String r : rows)
             addArts(arts, r);
-        Client client = Parser.parseClient("input/Site_requirements.csv");
+        Client client = Parser.parseClient("input/Site_requirements_crate.csv");
         Request req = new Request(arts, client);
         Packing pk = new Packing();
         return pk.packEverything(req);

@@ -1,22 +1,25 @@
 package ArchDesign.entities;
 
-public class Art {
+import java.util.Collections;
+import java.util.Comparator;
+
+public class Art implements Comparable<Art>{
     
     // TODO: Figure out how to handle the Type, Material, and Glazing Enums depending on https://piazza.com/class/mf6woqytzb81zq/post/14
     public enum Type { 
-        AcousticPanelGalleryWrapped(2.74, Art.Material.AcousticPanel, false, true),
-        TwoInchAcousticPanelFloatFrame(2.74, Art.Material.AcousticPanelFramed, false, true),
-        OneInchAcousticPanelFloatFrame(2.74, Art.Material.AcousticPanelFramed, false, true),
-        VECanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
-        UVCanvasGalleryWrapped(2.5, Art.Material.CanvasGallery),
-        UVCanvasFramed(2.5, Art.Material.CanvasFramed),
-        UVCanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
-        HandEmbellishedCanvasGalleryWrapped(2.5, Art.Material.CanvasGallery),
-        HandEmbellishedCanvasFramed(2.5, Art.Material.CanvasFramed),
-        HandEmbellishedCanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
-        CanvasGalleryWrapped(2.5, Art.Material.CanvasGallery),
-        CanvasFramed(2.5, Art.Material.CanvasFramed),
-        CanvasFloatFrame(2.5, Art.Material.CanvasFramed, false, true),
+        AcousticPanelGalleryWrapped(2.75, Art.Material.AcousticPanel, false, true),
+        TwoInchAcousticPanelFloatFrame(2.75, Art.Material.AcousticPanelFramed, false, true),
+        OneInchAcousticPanelFloatFrame(2.75, Art.Material.AcousticPanelFramed, false, true),
+        VECanvasFloatFrame(2.75, Art.Material.CanvasFramed, false, true),
+        UVCanvasGalleryWrapped(2.75, Art.Material.CanvasGallery),
+        UVCanvasFramed(2.75, Art.Material.CanvasFramed),
+        UVCanvasFloatFrame(2.75, Art.Material.CanvasFramed, false, true),
+        HandEmbellishedCanvasGalleryWrapped(2.75, Art.Material.CanvasGallery),
+        HandEmbellishedCanvasFramed(2.75, Art.Material.CanvasFramed),
+        HandEmbellishedCanvasFloatFrame(2.75, Art.Material.CanvasFramed, false, true),
+        CanvasGalleryWrapped(2.75, Art.Material.CanvasGallery),
+        CanvasFramed(2.75, Art.Material.CanvasFramed),
+        CanvasFloatFrame(2.75, Art.Material.CanvasFramed, false, true),
         PrintRaisedMat(1.0, Art.Material.KNOWNBUTGLAZING, true),
         PrintRaisedFloatMountwithTitlePlate(0.625, Art.Material.KNOWNBUTGLAZING, true),
         PrintRaisedFloatMountandRaisedMat(1.0, Art.Material.KNOWNBUTGLAZING, true),
@@ -147,8 +150,9 @@ public class Art {
     private Material material;
     private boolean isOversized;
 
-    protected final double CUSTOM_THRESHOLD = 43.5;
+    protected final double CUSTOM_THRESHOLD = 44;
     protected final double IS_OVERSIZE_THRESHOLD = 44;
+    protected final double HEIGHT_THRESHOLD = 88;
 
     public Art(Type type, Glazing glazing, int lineNumber, double width, double height, int hardware) {
         super();
@@ -232,7 +236,10 @@ public class Art {
         if (this.getType().requiresCustom){
             return true;
         }
-        if (width > CUSTOM_THRESHOLD && this.height > CUSTOM_THRESHOLD){
+        if (this.width >= CUSTOM_THRESHOLD && this.height >= CUSTOM_THRESHOLD){
+            return true;
+        }
+        if (this.width > HEIGHT_THRESHOLD || this.height > HEIGHT_THRESHOLD){
             return true;
         }
         return false;
@@ -537,5 +544,13 @@ public class Art {
         }
 
         return Integer.parseInt(digits);
+    }
+
+    @Override
+    public int compareTo(Art otherArt) {
+        if (this.getHeight() == otherArt.getHeight()){
+            return Double.compare(-this.getWidth(), -otherArt.getWidth());
+        }
+        return Double.compare(-this.getHeight(), -otherArt.getHeight());
     }
 }

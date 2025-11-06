@@ -3,7 +3,7 @@ package ArchDesign.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Box {
+public class Box implements Comparable<Box>{
 
     private boolean isOversized;
     private boolean isNormal;
@@ -95,7 +95,7 @@ public class Box {
         }
         else if (isArtWithinOversiveLimit(art)) {
             box.setBoxOversize();
-            box.remainingCapacity = 11;
+            box.remainingCapacity = 13;
         }
         // can't do custom boxes
         else {
@@ -208,5 +208,13 @@ public class Box {
         }
         System.err.println("Error: box type not determined before asking if art can fit");
         return false;
+    }
+
+    @Override
+    public int compareTo(Box otherBox) {
+        if (this.getHeight() == otherBox.getHeight()){
+            return Double.compare(-this.getLength(), -otherBox.getLength());
+        }
+        return Double.compare(-this.getLength(), -otherBox.getLength());
     }
 }
