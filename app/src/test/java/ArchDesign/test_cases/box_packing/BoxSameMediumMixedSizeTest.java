@@ -52,10 +52,10 @@ public class BoxSameMediumMixedSizeTest {
       addArts(arts, r);
     Client client = Parser.parseClient("input/Site_requirements.csv");
     Request req = new Request(arts, client);
-    // Packing pk = new Packing();
-    // return pk.packEverything(req);
+    Packing pk = new Packing();
+    return pk.packEverything(req);
 
-    return BeanPacking.packEverything(req);
+    // return BeanPacking.packEverything(req);
   }
 
   @Test

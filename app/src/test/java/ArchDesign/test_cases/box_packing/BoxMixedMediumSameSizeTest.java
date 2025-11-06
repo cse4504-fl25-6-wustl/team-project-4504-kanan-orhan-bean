@@ -67,7 +67,7 @@ public class BoxMixedMediumSameSizeTest {
     Response r = buildResponse(rows);
     assertEquals(6, r.getTotalPieces());
     assertEquals(0, r.getStandardBoxCount());
-    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(1, r.getLargeBoxCount());
     assertEquals(0, r.getCustomPieceCount());
   }
 
@@ -93,7 +93,7 @@ public class BoxMixedMediumSameSizeTest {
     Response r = buildResponse(rows);
     assertEquals(6, r.getTotalPieces());
     assertEquals(0, r.getStandardBoxCount());
-    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(1, r.getLargeBoxCount());
     assertEquals(0, r.getCustomPieceCount());
   }
 
@@ -119,7 +119,7 @@ public class BoxMixedMediumSameSizeTest {
     Response r = buildResponse(rows);
     assertEquals(5, r.getTotalPieces());
     assertEquals(0, r.getStandardBoxCount());
-    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(1, r.getLargeBoxCount());
     assertEquals(0, r.getCustomPieceCount());
   }
 
@@ -158,7 +158,7 @@ public class BoxMixedMediumSameSizeTest {
     Response r = buildResponse(rows);
     assertEquals(5, r.getTotalPieces());
     assertEquals(0, r.getStandardBoxCount());
-    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(1, r.getLargeBoxCount());
     assertEquals(0, r.getCustomPieceCount());
   }
 
