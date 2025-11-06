@@ -1,6 +1,7 @@
 package ArchDesign.interactors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,20 +39,36 @@ public class Packing {
         this.currentClient = Objects.requireNonNull(request.getClient(), "client must not be null");
         final List<Art> arts = Objects.requireNonNull(request.getArts(), "arts must not be null");
 
-        // 1) Box up the art
-        List<Box> boxes = constructBoxesForArtsHypo(arts);
+        List<Art> sortedArts = new ArrayList<>(arts);
+        Collections.sort(sortedArts);
 
-        // 2) Containerize (try both pallet-first and oversize-first, choose fewer)
-        var caps = currentClient.getDeliveryCapabilities();
-        boolean acceptsPallets = caps.doesAcceptPallets();
-        boolean acceptsCrates = caps.doesAcceptCrates();
+        List<Box> boxes = null;
+        List<Container> containers = null;
+        if (this.currentClient.getDeliveryCapabilities().doesAcceptCrates()){
+            boxes = new ArrayList<>();
+            containers = constructCratesForArtsHypo(sortedArts, true);
+        }
+        else {
+            // 1) Box up the art
+            boxes = constructBoxesForArtsHypo(sortedArts);
 
-        List<Container> containersPallet = constructContainersForBoxesLocal(boxes, acceptsPallets, acceptsCrates);
-        List<Container> containersOversize = constructContainersForBoxesLocalOversize(boxes, acceptsPallets,
-                acceptsCrates);
-        List<Container> containers = (containersOversize.size() < containersPallet.size())
-                ? containersOversize
-                : containersPallet;
+            List<Box> sortedBoxes = new ArrayList<>(boxes);
+            Collections.sort(sortedBoxes);
+
+            // 2) Containerize (try both pallet-first and oversize-first, choose fewer)
+            var caps = currentClient.getDeliveryCapabilities();
+            boolean acceptsPallets = caps.doesAcceptPallets();
+            boolean acceptsCrates = caps.doesAcceptCrates();
+
+            containers = constructContainersForBoxesLocalStandardAndOversize(sortedBoxes, acceptsPallets, acceptsCrates);
+
+            // List<Container> containersPallet = constructContainersForBoxesLocal(boxes, acceptsPallets, acceptsCrates);
+            // List<Container> containersOversize = constructContainersForBoxesLocalOversize(boxes, acceptsPallets,
+            //         acceptsCrates);
+            // containers = (containersOversize.size() < containersPallet.size())
+            //         ? containersOversize
+            //         : containersPallet;
+        }
 
         // 3) Weights
         int totalArtworkWeight = sumArtworkWeight(arts);
@@ -108,7 +125,7 @@ public class Packing {
      * Groups oversized pieces by (longerSide, shorterSide) and counts quantity.
      * side lengths are rounded up to integers to match the example schema.
      */
-    private static oversizeObjects[] buildOversizePieces(List<Art> arts) {
+    protected static oversizeObjects[] buildOversizePieces(List<Art> arts) {
         Map<String, oversizeObjects> bucket = new LinkedHashMap<>();
         for (Art a : arts) {
             if (!a.isOversized())
@@ -157,6 +174,49 @@ public class Packing {
      * one mirror per box; no mixing mirrors with other art inside a box.
      * Non-mirrors are packed greedily (largest side first) using Box.canArtFit().
      */
+    private static List<Container> constructCratesForArtsHypo(List<Art> items, boolean canAcceptCrate) {
+        List<Container> crates = new ArrayList<>();
+        if (items == null || items.isEmpty())
+            return crates;
+
+        // partition
+        List<Art> customs = new ArrayList<>();
+        List<Art> others = new ArrayList<>();
+        for (Art a : items) {
+            if (a.getWidth() > 46)
+                customs.add(a);
+            else
+                others.add(a);
+        }
+
+        // others.sort(Comparator.comparing(Art::getHeight).thenComparing(Art::getWidth));
+        for (Art a : others) {
+            Container placedContainer = null;
+            for (Container crate : crates) {
+                try {
+                    if (crate.canArtFit(a)) {
+                        crate.addArt(a);
+                        placedContainer = crate;
+                        break;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+            if (placedContainer == null) {
+                Container newCrate = Container.constructContainerForArt(a, canAcceptCrate);
+                newCrate.addArt(a);
+                crates.add(newCrate);
+            }
+        }
+        // throw new IllegalArgumentException("Given Art size: " + others.size()+ " Current2 Crate size: " + crates.size());
+        return crates;
+    }
+
+    /**
+     * Build boxes for all arts. Mirrors are modeled as hypothetical boxes:
+     * one mirror per box; no mixing mirrors with other art inside a box.
+     * Non-mirrors are packed greedily (largest side first) using Box.canArtFit().
+     */
     private static List<Box> constructBoxesForArtsHypo(List<Art> items) {
         List<Box> boxes = new ArrayList<>();
         if (items == null || items.isEmpty())
@@ -166,24 +226,25 @@ public class Packing {
         List<Art> mirrors = new ArrayList<>();
         List<Art> others = new ArrayList<>();
         for (Art a : items) {
-            if (a.getType() == Art.Type.Mirror)
+            if (a.getType() == Art.Type.Mirror){
                 mirrors.add(a);
-            else
                 others.add(a);
+            }
+            else{
+                others.add(a);
+            }
         }
 
         // non-mirrors: greedy largest-first
-        others.sort(Comparator.comparingDouble(a -> -Math.max(a.getWidth(), a.getHeight())));
-        for (Art a : items) {
+        // others.sort(Comparator.comparing(Art::getHeight).thenComparing(Art::getWidth));
+        others.reversed();
+        for (Art a : others) {
             Box placedBox = null;
             for (Box b : boxes) {
-                try {
-                    if (b.canArtFit(a)) {
-                        b.addArt(a);
-                        placedBox = b;
-                        break;
-                    }
-                } catch (Exception ignored) {
+                if (b.canArtFit(a)) {
+                    b.addArt(a);
+                    placedBox = b;
+                    break;
                 }
             }
             if (placedBox == null) {
@@ -244,6 +305,63 @@ public class Packing {
                     }
                 }
             }
+        }
+        return result;
+    }
+
+    /** Mix-pallet-default strategy */
+    private static List<Container> constructContainersForBoxesLocalStandardAndOversize(
+            List<Box> myBoxes, boolean acceptsPallets, boolean canAcceptCrates) {
+
+        List<Container> result = new ArrayList<>();
+        if (myBoxes == null || myBoxes.isEmpty())
+            return result;
+        if (!acceptsPallets && !canAcceptCrates)
+            return result;
+
+        int remainingBoxes = myBoxes.size();
+
+        for (Box box : myBoxes) {
+            boolean added = false;
+
+            for (Container cont : result) {
+                try {
+                    if (cont.canBoxFit(box)) {
+                        cont.addBox(box);
+                        added = true;
+                        break;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+
+            if (!added) {
+                if (box.isOversized()){
+                    tryCreateAndPlace(box, Container.Type.Pallet, canAcceptCrates, result);
+                }
+                else if (remainingBoxes%5 == 0){
+                    tryCreateAndPlace(box, Container.Type.Oversize, canAcceptCrates, result);
+                }
+                else if (remainingBoxes%4 == 0){
+                    tryCreateAndPlace(box, Container.Type.Pallet, canAcceptCrates, result);
+                }
+                else {
+                    tryCreateAndPlace(box, Container.Type.Pallet, canAcceptCrates, result);
+                }
+                // Container.Type preferred = (isMirrorOnly(box) && canAcceptCrates) ? Container.Type.Crate
+                //         : acceptsPallets ? Container.Type.Oversize : canAcceptCrates ? Container.Type.Crate : null;
+                // if (preferred == null)
+                //     continue;
+
+                // if (!tryCreateAndPlace(box, preferred, canAcceptCrates, result)) {
+                //     if (preferred == Container.Type.Oversize && canAcceptCrates) {
+                //         tryCreateAndPlace(box, Container.Type.Crate, canAcceptCrates, result);
+                //     } else if (preferred == Container.Type.Crate && acceptsPallets) {
+                //         tryCreateAndPlace(box, Container.Type.Pallet, canAcceptCrates, result);
+                //     }
+                // }
+            }
+            remainingBoxes--;
         }
         return result;
     }
