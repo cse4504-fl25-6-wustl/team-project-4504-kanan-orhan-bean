@@ -19,10 +19,10 @@ public class Packing {
 
     /** DTO for the JSON oversized_pieces array */
     public static class oversizeObjects {
-        public final int side1; // longer side
-        public final int side2; // shorter side
+        public final int side1; // longer side (height)
+        public final int side2; // shorter side (width)
         public final int quantity;
-        public final int weight;
+        public final transient int weight;
 
         public oversizeObjects(int side1, int side2, int quantity, int weight) {
             this.side1 = side1;

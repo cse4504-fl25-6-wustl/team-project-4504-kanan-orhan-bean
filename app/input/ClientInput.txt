@@ -1,9 +1,0 @@
-Job Site Location: "Chevy Chase, MD"
-- Client Name: "MedStar" (for business rules lookup)
-- Delivery Capabilities:
-  * Accepts pallets? (Y/N) Y
-  * Accepts crates? (Y/N) Y
-  * Loading dock access? (Y/N) Y
-  * Liftgate required? (Y/N) Y
-  * Inside delivery needed? (Y/N) Y
-- Service Type: "Delivery + Installation" (most common)

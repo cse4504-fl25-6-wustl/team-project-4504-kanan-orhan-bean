@@ -43,7 +43,7 @@ public class Response {
         this.containers = Collections
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(containers, "containers must not be null")));
         this.shipmentSummary = new ShipmentSummary(total_pieces, standard_size_pieces, oversized_pieces, standard_box_count, large_box_count, custom_piece_count, 
-            standard_pallet_count, oversized_pallet_count, crate_count, total_artwork_weight, total_packaging_weight);
+            standard_pallet_count, oversized_pallet_count, crate_count, total_artwork_weight, total_packaging_weight, final_shipment_weight);
 
         this.total_pieces = total_pieces;
         this.standard_size_pieces = standard_size_pieces;

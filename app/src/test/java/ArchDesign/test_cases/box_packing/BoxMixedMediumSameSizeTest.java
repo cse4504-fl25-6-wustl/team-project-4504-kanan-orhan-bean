@@ -1,4 +1,4 @@
-package ArchDesign.entities;
+package ArchDesign.test_cases.box_packing;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ArchDesign.entities.Art;
+import ArchDesign.entities.Client;
 import ArchDesign.interactors.Packing;
 import ArchDesign.parser.Parser;
 import ArchDesign.requests.Request;
@@ -56,6 +58,122 @@ public class BoxMixedMediumSameSizeTest {
   // =============== LARGE BOXES (43 x 43) ===============
   // =========================================================
 
+  @Test
+  public void largeBox_1_4PerBox_5_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 1, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 5, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(6, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_1_4PerBox_6_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 1, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 6, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(7, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_2_4PerBox_4_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 2, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 4, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(6, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_2_4PerBox_5_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 2, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 5, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(7, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_3_4PerBox_2_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 3, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 2, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(5, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_3_4PerBox_3_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 3, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 3, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(6, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_3_4PerBox_4_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 3, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 4, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(7, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_4_4PerBox_1_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 4, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 1, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(5, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
+
+  @Test
+  public void largeBox_4_4PerBox_2_6PerBox() {
+    List<String> rows = new ArrayList<>();
+    rows.add("1, 4, 1, Canvas - Gallery, 43, 43, n/a, N/A, N/A");
+    rows.add("1, 2, 1, Paper Print - Framed, 43, 43, Regular Glass, N/A, N/A");
+
+    Response r = buildResponse(rows);
+    assertEquals(6, r.getTotalPieces());
+    assertEquals(0, r.getStandardBoxCount());
+    assertEquals(2, r.getLargeBoxCount());
+    assertEquals(0, r.getCustomPieceCount());
+  }
 
   // =========================================================
   // ============== STANDARD BOXES (33 x 43) ===============
@@ -64,7 +182,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_1_4PerBox_4_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 1, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 1, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 4, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
@@ -77,7 +195,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_1_4PerBox_5_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 1, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 1, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 5, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
@@ -90,7 +208,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_1_4PerBox_6_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 1, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 1, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 6, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
@@ -103,7 +221,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_2_4PerBox_3_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 2, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 2, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 3, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
@@ -116,7 +234,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_2_4PerBox_4_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 2, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 2, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 4, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
@@ -129,7 +247,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_3_4PerBox_1_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 3, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 3, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 1, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
@@ -142,7 +260,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_3_4PerBox_2_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 3, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 3, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 2, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
@@ -155,7 +273,7 @@ public class BoxMixedMediumSameSizeTest {
   @Test
   public void standardbox_3_4PerBox_3_6PerBox() {
     List<String> rows = new ArrayList<>();
-    rows.add("1, 3, 1, Canvas - Gallery, 33, 43, Z, N/A, N/A");
+    rows.add("1, 3, 1, Canvas - Gallery, 33, 43, n/a, N/A, N/A");
     rows.add("1, 3, 1, Paper Print - Framed, 33, 43, Regular Glass, N/A, N/A");
 
     Response r = buildResponse(rows);
