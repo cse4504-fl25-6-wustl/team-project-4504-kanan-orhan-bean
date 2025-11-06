@@ -406,6 +406,9 @@ public class BoxVaryingSizesTest {
             totalStandardBoxes++;
         }
         }
+        assertEquals(0, response.getStandardBoxCount());
+        assertEquals(1, response.getLargeBoxCount());
+        assertEquals(0, response.getBoxes().size() - (response.getStandardBoxCount() + response.getLargeBoxCount()));
         assertEquals(0, totalStandardBoxes);
         assertEquals(1, totalOversizeBoxes);
         assertEquals(0, totalCustomBoxes);

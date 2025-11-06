@@ -122,6 +122,8 @@ public class ArtFileParser extends FileParser {
 
             // process each row
             while ((currLine = br.readLine()) != null) {
+                currLine = currLine.trim();
+                if (currLine.isEmpty()) continue;
                 String[] values = currLine.split(",");
 
                 // Process each column, extract values
