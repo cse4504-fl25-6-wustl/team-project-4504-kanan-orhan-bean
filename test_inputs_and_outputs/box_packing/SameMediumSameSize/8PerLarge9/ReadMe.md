@@ -1,0 +1,1 @@
+We decided to keep our logic of 8 items in a standard box and 9 items in a large boxes.

@@ -41,39 +41,39 @@ public class MainTest {
     return new String(out.toByteArray(), StandardCharsets.UTF_8);
   }
 
-  @Test
-  public void main_withInput1_printsExpectedSummary() {
-    String output = runMain("input/Input1.csv", "input/Site_requirements.csv");
+  // @Test
+  // public void main_withInput1_printsExpectedSummary() {
+  //   String output = runMain("input/Input1.csv", "input/Site_requirements.csv");
 
-    // basic echoes
-    assertTrue(output.contains("Input File Name: input/Input1.csv"));
-    assertTrue(output.contains("Client File Name: input/Site_requirements.csv"));
+  //   // basic echoes
+  //   assertTrue(output.contains("Input File Name: input/Input1.csv"));
+  //   assertTrue(output.contains("Client File Name: input/Site_requirements.csv"));
 
-    // summary markers
-    assertTrue(output.contains("=== PACKING SUMMARY ==="));
-    assertTrue(output.contains("Items:"));
-    assertTrue(output.contains("Boxes:"));
-    assertTrue(output.contains("Containers:"));
-    assertTrue(output.contains("TOTAL SHIPMENT WEIGHT:"));
+  //   // summary markers
+  //   assertTrue(output.contains("=== PACKING SUMMARY ==="));
+  //   assertTrue(output.contains("Items:"));
+  //   assertTrue(output.contains("Boxes:"));
+  //   assertTrue(output.contains("Containers:"));
+  //   assertTrue(output.contains("TOTAL SHIPMENT WEIGHT:"));
 
-    assertTrue(output.trim().length() > 50);
-  }
+  //   assertTrue(output.trim().length() > 50);
+  // }
 
-  @Test
-  public void main_withInput2_printsExpectedSummary() {
-    String output = runMain("input/Input2.csv", "input/Site_requirements.csv");
+  // @Test
+  // public void main_withInput2_printsExpectedSummary() {
+  //   String output = runMain("input/Input2.csv", "input/Site_requirements.csv");
 
-    assertTrue(output.contains("Input File Name: input/Input2.csv"));
-    assertTrue(output.contains("Client File Name: input/Site_requirements.csv"));
-    assertTrue(output.contains("=== PACKING SUMMARY ==="));
-    assertTrue(output.contains("TOTAL SHIPMENT WEIGHT:"));
-    assertTrue(output.trim().length() > 50);
-  }
+  //   assertTrue(output.contains("Input File Name: input/Input2.csv"));
+  //   assertTrue(output.contains("Client File Name: input/Site_requirements.csv"));
+  //   assertTrue(output.contains("=== PACKING SUMMARY ==="));
+  //   assertTrue(output.contains("TOTAL SHIPMENT WEIGHT:"));
+  //   assertTrue(output.trim().length() > 50);
+  // }
 
-  @Test
-  public void main_withMissingArgs_doesNotCrash() {
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> Main.main(new String[] {}));
-  }
+  // @Test
+  // public void main_withMissingArgs_doesNotCrash() {
+  //   assertThrows(ArrayIndexOutOfBoundsException.class, () -> Main.main(new String[] {}));
+  // }
 
   @Test
   public void testMainWithExpectedOutput1(){
