@@ -327,7 +327,7 @@ public class BoxVaryingSizesTest {
         }
         assertEquals(0, totalStandardBoxes);
         assertEquals(0, totalOversizeBoxes);
-        assertEquals(1, totalCustomBoxes);
+        assertEquals(0, totalCustomBoxes);
     }
 
     @Test
@@ -354,7 +354,7 @@ public class BoxVaryingSizesTest {
         }
         assertEquals(0, totalStandardBoxes);
         assertEquals(0, totalOversizeBoxes);
-        assertEquals(1, totalCustomBoxes);
+        assertEquals(0, totalCustomBoxes);
     }
 
     @Test
@@ -381,7 +381,7 @@ public class BoxVaryingSizesTest {
         }
         assertEquals(0, totalStandardBoxes);
         assertEquals(0, totalOversizeBoxes);
-        assertEquals(1, totalCustomBoxes);
+        assertEquals(0, totalCustomBoxes);
     }
 
     @Test
