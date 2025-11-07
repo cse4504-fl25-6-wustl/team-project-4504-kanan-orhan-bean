@@ -2,7 +2,7 @@
 .args
 javac.*.args
 *.dmg
-.msi
+*.msi
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,gradle,macos,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,gradle,macos,windows
