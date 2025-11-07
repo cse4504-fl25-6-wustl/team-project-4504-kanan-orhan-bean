@@ -24,6 +24,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // MainWindow.show();
+
         if (args.length == 0){
             MainWindow.show();
         }
@@ -33,19 +35,21 @@ public class Main {
             return;
         }
 
-        String inputFileName = args[0];
-        String inputClientFileName = args[1];
+        else {
+            String inputFileName = args[0];
+            String inputClientFileName = args[1];
 
-        Response response = generateResponseForMain(inputFileName, inputClientFileName);
+            Response response = generateResponseForMain(inputFileName, inputClientFileName);
 
-        if (args.length == 3) {
-            String outputFileName = args[2];
-            JSONSerializer.ShipmentToJSONSummary(response, outputFileName);
+            if (args.length == 3) {
+                String outputFileName = args[2];
+                JSONSerializer.ShipmentToJSONSummary(response, outputFileName);
+            }
+
+            // CLI summary is produced by the serializer (not the interactor)
+            CommandLineSerializer cli = new CommandLineSerializer(response);
+            System.out.println(cli.getSummary());
         }
-
-        // CLI summary is produced by the serializer (not the interactor)
-        CommandLineSerializer cli = new CommandLineSerializer(response);
-        System.out.println(cli.getSummary());
     }
 
     public static Response generateResponseForMain(String inputfile, String clientFile) {
