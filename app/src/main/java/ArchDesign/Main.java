@@ -2,6 +2,7 @@ package ArchDesign;
 
 import java.util.List;
 
+import ArchDesign.GUI.MainWindow;
 import ArchDesign.entities.Art;
 import ArchDesign.interactors.Packing;
 import ArchDesign.entities.Client;
@@ -23,7 +24,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if (args.length < 2 || args.length > 3) {
+        if (args.length == 0){
+            MainWindow.show();
+        }
+
+        else if (args.length < 2 || args.length > 3) {
             System.err.println(USAGE);
             return;
         }
