@@ -48,6 +48,7 @@ tasks.register<Exec>("createMacApp") {
     commandLine(
         "jpackage",
         "--name", "mac-dmg",
+        "--dest", "build/distributions/mac",
         "--input", "build/libs",
         "--main-jar", "app-all.jar",
         "--main-class", "ArchDesign.Main",
@@ -60,11 +61,12 @@ tasks.register<Exec>("createWindowsApp") {
     dependsOn("shadowJar")
     commandLine(
         "jpackage",
-        "--name", "windows-exe",
+        "--name", "windows-msi",
+        "--dest", "build/distributions/windows",
         "--input", "build/libs",
         "--main-jar", "app-all.jar",
         "--main-class", "ArchDesign.Main",
-        "--type", "exe",
+        "--type", "msi",
         "--runtime-image", System.getenv("JAVA_HOME")
     )
 }
