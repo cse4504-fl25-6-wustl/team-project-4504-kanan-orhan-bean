@@ -24,6 +24,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // MainWindow.show();
+
         if (args.length == 0){
             MainWindow.run();
         }
