@@ -61,12 +61,14 @@ tasks.register<Exec>("createWindowsApp") {
     dependsOn("shadowJar")
     commandLine(
         "jpackage",
-        "--name", "windows-exe",
+        "--name", "windows-msi",
         "--dest", "build/distributions/windows",
         "--input", "build/libs",
         "--main-jar", "app-all.jar",
         "--main-class", "ArchDesign.Main",
-        "--type", "exe",
+        "--type", "msi",
+        "--win-shortcut",
+        "--win-menu",
         "--runtime-image", System.getenv("JAVA_HOME")
     )
 }
