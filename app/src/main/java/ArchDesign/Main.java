@@ -27,14 +27,14 @@ public class Main {
         // MainWindow.show();
 
         if (args.length == 0){
-            MainWindow.show();
+            MainWindow.run();
         }
 
         else if (args.length < 2 || args.length > 3) {
             System.err.println(USAGE);
             return;
         }
-
+        
         else {
             String inputFileName = args[0];
             String inputClientFileName = args[1];
@@ -42,8 +42,8 @@ public class Main {
             Response response = generateResponseForMain(inputFileName, inputClientFileName);
 
             if (args.length == 3) {
-                String outputFileName = args[2];
-                JSONSerializer.ShipmentToJSONSummary(response, outputFileName);
+            String outputFileName = args[2];
+            JSONSerializer.ShipmentToJSONSummary(response, outputFileName);
             }
 
             // CLI summary is produced by the serializer (not the interactor)
