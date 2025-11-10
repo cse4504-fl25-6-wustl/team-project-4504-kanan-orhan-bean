@@ -50,11 +50,11 @@ jobs:
       - name: Build Windows App
         run: ./gradlew clean build createWindowsApp
 
-      - name: Upload Windows MSI
+      - name: Upload Windows EXE
         uses: actions/upload-artifact@v4
         with: 
-          name: windows-msi
-          path: app/build/distributions/windows/*.msi
+          name: windows-exe
+          path: app/build/distributions/windows/*.exe
           retention-days: 1
       
   create-release:
@@ -69,10 +69,10 @@ jobs:
           name: mac-dmg
           path: ./artifacts/mac
 
-      - name: Download Windows MSI
+      - name: Download Windows EXE
         uses: actions/download-artifact@v4
         with:
-          name: windows-msi
+          name: windows-exe
           path: ./artifacts/windows
 
       - name: Create Release
@@ -80,7 +80,7 @@ jobs:
         with:
           files: |
             ./artifacts/mac/*.dmg
-            ./artifacts/windows/*.msi
+            ./artifacts/windows/*.exe
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
