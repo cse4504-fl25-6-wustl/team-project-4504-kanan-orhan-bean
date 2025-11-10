@@ -43,12 +43,12 @@ public class ArtFileParser extends FileParser {
         if (extension.endsWith(".xlsx")) {
             // return parseExcel(filePath);
             System.err.println("excel type not yet supported for line input parsing");
-            return null;
+            return ParseReturnVals.INVALID_FILE_TYPE;
         } else if (extension.endsWith(".csv")) {
             return parseCSV(filePath);
         } else if (extension.endsWith(".txt")) {
             System.err.println("txt type not yet supported for line input parsing");
-            return null;
+            return ParseReturnVals.INVALID_FILE_TYPE;
         } else {
             System.err.println("invalid file type for line item parsing");
             return ParseReturnVals.INVALID_FILE_TYPE;
