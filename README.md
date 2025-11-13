@@ -142,3 +142,7 @@ Then once it is built successfully you can go to the following directory `app/bu
 
 1. `Main.java`: Coder #3
   - main()
+
+# Alpha Release Assignment
+
+To create a one-click executable for Mac simply run `gradle createMacApp` on your terminal, and to create a one-click executable for Windows run `gradle createWindowsApp` on your terminal. For the Windows executable make sure you have WiX toolset installed. To download WiX toolset if you don't have it, follow this [link](https://github.com/wixtoolset).

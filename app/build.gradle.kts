@@ -69,6 +69,7 @@ tasks.register<Exec>("createWindowsApp") {
         "--type", "msi",
         "--win-shortcut",
         "--win-menu",
+        "--win-dir-chooser",
         "--runtime-image", System.getenv("JAVA_HOME")
     )
 }
