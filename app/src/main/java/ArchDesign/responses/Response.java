@@ -36,14 +36,38 @@ public class Response {
             int standard_pallet_count, int oversized_pallet_count, int crate_count,
             int total_artwork_weight, int total_packaging_weight, int final_shipment_weight) {
 
+        if (arts == null) {
+            throw new IllegalArgumentException("Error: Cannot build response because art list is missing.");
+        }
+        if (boxes == null) {
+            throw new IllegalArgumentException("Error: Cannot build response because box list is missing.");
+        }
+        if (containers == null) {
+            throw new IllegalArgumentException("Error: Cannot build response because container list is missing.");
+        }
+        if (total_pieces < 0 || standard_size_pieces < 0) {
+            throw new IllegalArgumentException("Error: Piece counts cannot be negative in the shipment summary.");
+        }
+        if (total_artwork_weight < 0 || total_packaging_weight < 0 || final_shipment_weight < 0) {
+            throw new IllegalArgumentException("Error: Weights cannot be negative in the shipment summary.");
+        }
+
+        // If oversized_pieces is null, treat as no oversized pieces instead of
+        // blowing up
+        if (oversized_pieces == null) {
+            oversized_pieces = new oversizeObjects[0];
+        }
+
         this.arts = Collections
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(arts, "arts must not be null")));
         this.boxes = Collections
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(boxes, "boxes must not be null")));
         this.containers = Collections
                 .unmodifiableList(new ArrayList<>(Objects.requireNonNull(containers, "containers must not be null")));
-        this.shipmentSummary = new ShipmentSummary(total_pieces, standard_size_pieces, oversized_pieces, standard_box_count, large_box_count, custom_piece_count, 
-            standard_pallet_count, oversized_pallet_count, crate_count, total_artwork_weight, total_packaging_weight, final_shipment_weight);
+        this.shipmentSummary = new ShipmentSummary(total_pieces, standard_size_pieces, oversized_pieces,
+                standard_box_count, large_box_count, custom_piece_count,
+                standard_pallet_count, oversized_pallet_count, crate_count, total_artwork_weight,
+                total_packaging_weight, final_shipment_weight);
 
         this.total_pieces = total_pieces;
         this.standard_size_pieces = standard_size_pieces;

@@ -20,10 +20,27 @@ public class Request {
     public Request(List<Art> arts, Client client) {
         // a. Art objects to be packaged up
         // b. Client site information: does the client accept crates or not, etc.
-        Objects.requireNonNull(arts, "arts must not be null");
-        Objects.requireNonNull(client, "client must not be null");
-        List<Art> copy = new ArrayList<>(arts);
+        // Objects.requireNonNull(arts, "arts must not be null");
+        // Objects.requireNonNull(client, "client must not be null");
 
+        if (arts == null) {
+            throw new IllegalArgumentException("Error: Art list cannot be null.");
+        }
+        if (client == null) {
+            throw new IllegalArgumentException("Error: Client information cannot be null.");
+        }
+
+        if (arts.isEmpty()) {
+            throw new IllegalArgumentException("Error: No art items were provided in the request.");
+        }
+
+        for (Art a : arts) {
+            if (a == null) {
+                throw new IllegalArgumentException("Error: One of the art entries was null.");
+            }
+        }
+
+        List<Art> copy = new ArrayList<>(arts);
         this.arts = Collections.unmodifiableList(copy);
         this.client = client;
     }
