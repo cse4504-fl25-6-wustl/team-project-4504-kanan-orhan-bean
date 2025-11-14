@@ -90,6 +90,23 @@ public class Packing {
 
         oversizeObjects[] oversizedPieces = buildOversizePieces(arts);
 
+        
+        List<Art> customArts = new ArrayList();
+        int standard_size_pieces_weight = 0;
+        int oversized_pieces_weight = 0;
+
+        for (Art art : sortedArts){
+            if(art.isCustom()){
+                customArts.add(art);
+            }
+            if(art.isOversized()){
+                oversized_pieces_weight += art.getWeight();
+            }
+            if(!art.isOversized()){
+                standard_size_pieces_weight += art.getWeight();
+            }
+        }
+
         // 5) Build the Response (no summary string here—serializers will handle
         // presentation)
         return new Response(
@@ -107,7 +124,10 @@ public class Packing {
                 crateCount,
                 totalArtworkWeight,
                 totalPackagingWeight,
-                finalShipmentWeight);
+                finalShipmentWeight,
+                customArts,
+                standard_size_pieces_weight,
+                oversized_pieces_weight);
     }
 
     /* ======================== metrics helpers ======================== */
