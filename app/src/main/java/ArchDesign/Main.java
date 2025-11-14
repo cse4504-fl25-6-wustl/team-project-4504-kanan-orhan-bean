@@ -2,6 +2,7 @@ package ArchDesign;
 
 import java.util.List;
 
+import ArchDesign.GUI.MainWindow;
 import ArchDesign.entities.Art;
 import ArchDesign.interactors.Packing;
 import ArchDesign.entities.Client;
@@ -23,24 +24,32 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if (args.length < 2 || args.length > 3) {
+        // MainWindow.show();
+
+        if (args.length == 0){
+            MainWindow.run();
+        }
+
+        else if (args.length < 2 || args.length > 3) {
             System.err.println(USAGE);
             return;
         }
+        
+        else {
+            String inputFileName = args[0];
+            String inputClientFileName = args[1];
 
-        String inputFileName = args[0];
-        String inputClientFileName = args[1];
+            Response response = generateResponseForMain(inputFileName, inputClientFileName);
 
-        Response response = generateResponseForMain(inputFileName, inputClientFileName);
-
-        if (args.length == 3) {
+            if (args.length == 3) {
             String outputFileName = args[2];
             JSONSerializer.ShipmentToJSONSummary(response, outputFileName);
-        }
+            }
 
-        // CLI summary is produced by the serializer (not the interactor)
-        CommandLineSerializer cli = new CommandLineSerializer(response);
-        System.out.println(cli.getSummary());
+            // CLI summary is produced by the serializer (not the interactor)
+            CommandLineSerializer cli = new CommandLineSerializer(response);
+            System.out.println(cli.getSummary());
+        }
     }
 
     public static Response generateResponseForMain(String inputfile, String clientFile) {

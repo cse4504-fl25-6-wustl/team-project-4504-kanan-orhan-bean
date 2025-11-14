@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 repositories {
@@ -36,4 +37,39 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "ArchDesign.Main"
+}
+
+tasks.named("build") {
+    dependsOn("shadowJar")
+}
+
+tasks.register<Exec>("createMacApp") {
+    dependsOn("shadowJar")
+    commandLine(
+        "jpackage",
+        "--name", "mac-dmg",
+        "--dest", "build/distributions/mac",
+        "--input", "build/libs",
+        "--main-jar", "app-all.jar",
+        "--main-class", "ArchDesign.Main",
+        "--type", "dmg",
+        "--runtime-image", System.getenv("JAVA_HOME")
+    )
+}
+
+tasks.register<Exec>("createWindowsApp") {
+    dependsOn("shadowJar")
+    commandLine(
+        "jpackage",
+        "--name", "windows-msi",
+        "--dest", "build/distributions/windows",
+        "--input", "build/libs",
+        "--main-jar", "app-all.jar",
+        "--main-class", "ArchDesign.Main",
+        "--type", "msi",
+        "--win-shortcut",
+        "--win-menu",
+        "--win-dir-chooser",
+        "--runtime-image", System.getenv("JAVA_HOME")
+    )
 }
