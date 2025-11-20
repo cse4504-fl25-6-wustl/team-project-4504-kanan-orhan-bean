@@ -10,7 +10,7 @@
 package ArchDesign.parser;
 
 public abstract class FileParser {
-    
+
     // Possible outcomes of parsing
     public static enum ParseReturnVals {
         SUCCESS,
