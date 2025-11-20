@@ -64,6 +64,7 @@ public class Container {
         this.boxes = new ArrayList<>();
         this.isEmpty = true;
         this.isFull = false;
+        this.setPalletDimensions();
     }
 
     // v--- This is how packing could implement packBoxIntoContainers ---v
@@ -598,6 +599,20 @@ public class Container {
     }
 
     // ---------------- helpers ----------------
+
+    private boolean setPalletDimensions(){
+        if (this.getType() == ArchDesign.entities.Container.Type.Pallet){
+            this.setPalletNormal();
+            return true;
+        }
+        else if (this.getType() == ArchDesign.entities.Container.Type.Oversize){
+            this.setPalletOversize();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     private boolean setMirrorCrate(boolean bool) {
         this.isMirrorCrate = bool;

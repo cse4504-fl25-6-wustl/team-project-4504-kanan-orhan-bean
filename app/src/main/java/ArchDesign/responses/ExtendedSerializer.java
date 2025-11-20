@@ -1,7 +1,5 @@
 package ArchDesign.responses;
 
-import java.awt.Container;
-
 import ArchDesign.interactors.Packing.oversizeObjects;
 
 public class ExtendedSerializer {
@@ -56,6 +54,7 @@ public class ExtendedSerializer {
         concatToSummary("- Crates: (50\"x38\"): " + response.getCrateCount() + " crates");
         concatToSummary("");
         concatToSummary("Final Dimensions:");
+        String dimensions_string = "";
         int i = 1;
         ArchDesign.entities.Container.Type prevType = ArchDesign.entities.Container.Type.Custom;
         for (ArchDesign.entities.Container container : response.getContainers()){
@@ -63,10 +62,13 @@ public class ExtendedSerializer {
                 i = 1;
             }
             prevType = container.getType();
-            concatToSummary("- " + container.getType() + " " + i + ": " + container.getLength() + "\"x" + 
-            container.getWidth() + "\"x" + container.getHeight() + "\"H @ " + container.getWeight() + " lbs");
+            dimensions_string += "- " + container.getType() + " " + i + ": " + container.getLength() + "\"x" + 
+            container.getWidth() + "\"x" + container.getHeight() + "\"H @ " + container.getWeight() + " lbs " + "\n";
+            // concatToSummary("- " + container.getType() + " " + i + ": " + container.getLength() + "\"x" + 
+            // container.getWidth() + "\"x" + container.getHeight() + "\"H @ " + container.getWeight() + " lbs");
             i++;
         }
+        concatToSummary(dimensions_string);
         concatToSummary("");
         concatToSummary("3. Business Intelligence");
         concatToSummary("Oversized Items Flagged: ");
@@ -80,6 +82,25 @@ public class ExtendedSerializer {
             concatToSummary("- Line Number: " + customArt.getLineNumber() + ". Dimensions: " + customArt.getHeight() + 
             "\" x " + customArt.getWidth() + ". Weight: " + customArt.getWeight() + " lbs");
         }
+        concatToSummary("");
+        concatToSummary("4. Freight Carrier Export Formats");
+        concatToSummary("Air, Land & Sea Email Format: ");
+        concatToSummary("Subject: Quote Request - " + response.getClient().getName());
+        concatToSummary("");
+        concatToSummary("Shipment Details: ");
+        concatToSummary("- Total Weight: " + response.getTotalWeight());
+        concatToSummary("- Pieces: " + 
+        response.getStandardPalletCount() + " Standard Pallets, " +
+        response.getOversizedPalletCount() + " Oversized Pallets, " +
+        response.getCrateCount() + " Crates");
+        concatToSummary("- Dimensions: ");
+        concatToSummary(dimensions_string);
+        concatToSummary("- Pickup: ARCH Design, St. Louis, MO");
+        concatToSummary("- Delivery: " + response.getClient().getLocation());
+        concatToSummary("- Special Requirements: ");
+        concatToSummary("- Has Loading Dock Access: "+ response.getClient().getDeliveryCapabilities().hasLoadingDockAccess());
+        concatToSummary("- Is Liftgate Required: "+ response.getClient().getDeliveryCapabilities().isLiftgateRequired());
+        concatToSummary("- Is Inside Delivery Needed: "+ response.getClient().getDeliveryCapabilities().isInsideDeliveryNeeded());
     }
 
     public String getSummary() {

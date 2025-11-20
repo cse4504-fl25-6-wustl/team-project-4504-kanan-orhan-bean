@@ -127,7 +127,8 @@ public class Packing {
                 finalShipmentWeight,
                 customArts,
                 standard_size_pieces_weight,
-                oversized_pieces_weight);
+                oversized_pieces_weight,
+                this.currentClient);
     }
 
     /* ======================== metrics helpers ======================== */
