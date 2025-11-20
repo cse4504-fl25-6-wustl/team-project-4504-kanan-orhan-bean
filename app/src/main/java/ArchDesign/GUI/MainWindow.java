@@ -151,7 +151,7 @@ public class MainWindow {
 
             String fileName = "ArchDesign Shipping Information"; // could make dynamic later
 
-            int userSelection = fileChooser.showSaveDialog(frame);
+            int userSelection = fileChooser.showOpenDialog(frame); //https://stackoverflow.com/questions/1134370/part-of-path-returned-from-directories-only-jfilechooser-is-sometimes-duplicated
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File targetFolder = fileChooser.getSelectedFile();
                 File targetFile = new File(targetFolder, fileName);
