@@ -13,7 +13,7 @@ public class CommandLineSerializer {
         this.summaryMessage += "- Standard Size Pieces: " + response.getStandardSizePieces() + "\n";
         this.summaryMessage += "- Oversize Pieces: " + response.getOversizedPieces().length + "\n";
         for (oversizeObjects oversizeObject : response.getOversizedPieces()){
-            this.summaryMessage += "o " + oversizeObject.side1 + "\" x " + oversizeObject.side2 + " \" (Qty: " + oversizeObject.quantity + ") = " + oversizeObject.weight + " lbs \n";
+            this.summaryMessage += "o " + oversizeObject.side1 + "\" x " + oversizeObject.side2 + " \" (Qty: " + oversizeObject.quantity + ") = " + oversizeObject.weight + " lbs ea. " + oversizeObject.weight*oversizeObject.quantity + " total lbs.\n";
         }
         this.summaryMessage += "Total Artwork Weight: " + response.getTotalArtworkWeight() + "\n";
         this.summaryMessage += "Total Packaging Weight: " + response.getTotalPackagingWeight() + "\n";

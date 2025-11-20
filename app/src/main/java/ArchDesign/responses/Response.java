@@ -29,12 +29,17 @@ public class Response {
     private final int crate_count;
     private final int total_artwork_weight;
     private final int total_packaging_weight;
+    private final List<Art> custom_arts;
+    private final int standard_size_pieces_weight;
+    private final int oversized_pieces_weight;
+    private final ArchDesign.entities.Client client;
 
     public Response(List<Art> arts, List<Box> boxes, List<Container> containers,
             int total_pieces, int standard_size_pieces, oversizeObjects[] oversized_pieces,
             int standard_box_count, int large_box_count, int custom_piece_count,
             int standard_pallet_count, int oversized_pallet_count, int crate_count,
-            int total_artwork_weight, int total_packaging_weight, int final_shipment_weight) {
+            int total_artwork_weight, int total_packaging_weight, int final_shipment_weight,
+            List<Art> custom_arts, int standard_size_pieces_weight, int oversized_pieces_weight, ArchDesign.entities.Client client) {
 
         if (arts == null) {
             throw new IllegalArgumentException("Error: Cannot build response because art list is missing.");
@@ -81,6 +86,10 @@ public class Response {
         this.total_artwork_weight = total_artwork_weight;
         this.total_packaging_weight = total_packaging_weight;
         this.final_shipment_weight = final_shipment_weight;
+        this.custom_arts = custom_arts;
+        this.standard_size_pieces_weight = standard_size_pieces_weight;
+        this.oversized_pieces_weight = oversized_pieces_weight;
+        this.client = client;
     }
 
     /* Collections */
@@ -151,5 +160,21 @@ public class Response {
 
     public ShipmentSummary getShipmentSummary() {
         return this.shipmentSummary;
+    }
+
+    public List<Art> getCustomArts(){
+        return this.custom_arts;
+    }
+
+    public int getStandardSizePiecesWeight(){
+        return this.standard_size_pieces_weight;
+    }
+
+    public int getOversizeSizePiecesWeight(){
+        return this.oversized_pieces_weight;
+    }
+
+    public ArchDesign.entities.Client getClient(){
+        return this.client;
     }
 }

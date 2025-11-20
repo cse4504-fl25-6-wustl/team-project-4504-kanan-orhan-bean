@@ -68,6 +68,7 @@ process_csv_files() {
 
 # -------- CONFIG --------
 INPUT_DIR="/Users/orhanerdogan/test_cases" #This is where you cloned test_cases
+AMBIGUOUS_DIR="/Users/orhanerdogan/team-project-4504-kanan-orhan-bean/test_inputs_and_outputs" #This is the location of your Ambiguous Cases
 CONFIG_DIR="/Users/orhanerdogan/team-project-4504-kanan-orhan-bean/app/input" #This is where you cloned this project + /app/input
 
 NO_CRATES_CONFIG="$CONFIG_DIR/Site_requirements.csv"
@@ -75,7 +76,21 @@ ALLOW_CRATES_CONFIG="$CONFIG_DIR/Site_requirements_crate.csv"
 
 # -------- RUN TESTS --------
 echo -e "\n${YELLOW}=== Running box_packing tests ===${NC}"
-process_csv_files "$INPUT_DIR/box_packing" "$NO_CRATES_CONFIG"
+
+echo -e "\n${YELLOW}=== Running MixedMediumSameSize/pack_by_depth tests ===${NC}"
+process_csv_files "$INPUT_DIR/box_packing/MixedMediumSameSize/pack_by_depth" "$NO_CRATES_CONFIG"
+
+echo -e "\n${YELLOW}=== Running SameMediumMixedSize tests ===${NC}"
+process_csv_files "$INPUT_DIR/box_packing/SameMediumMixedSize" "$NO_CRATES_CONFIG"
+
+echo -e "\n${YELLOW}=== Running SameMediumSameSize tests ===${NC}"
+process_csv_files "$INPUT_DIR/box_packing/SameMediumSameSize" "$NO_CRATES_CONFIG"
+
+echo -e "\n${YELLOW}=== Running VaryingSized tests ===${NC}"
+process_csv_files "$INPUT_DIR/box_packing/VaryingSized" "$NO_CRATES_CONFIG"
+
+echo -e "\n${YELLOW}=== Running Ambiguous tests ===${NC}"
+process_csv_files "$AMBIGUOUS_DIR" "$NO_CRATES_CONFIG"
 
 echo -e "\n${YELLOW}=== Running pallet_packing tests ===${NC}"
 process_csv_files "$INPUT_DIR/pallet_packing" "$NO_CRATES_CONFIG"
