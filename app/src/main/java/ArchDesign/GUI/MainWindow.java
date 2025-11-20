@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import ArchDesign.Main;
 import ArchDesign.responses.CommandLineSerializer;
+import ArchDesign.responses.ExtendedSerializer;
 import ArchDesign.responses.Response;
 
 import java.awt.*;
@@ -107,8 +108,8 @@ public class MainWindow {
                 try {
                     Response response = Main.generateResponseForMain(selectedFiles[0].getAbsolutePath(), selectedFiles[1].getAbsolutePath());
                     CommandLineSerializer cli = new CommandLineSerializer(response);
-                    String advancedOutput = "Needs to be replaces with Orhan's advanced info serializer later!!!";
-                    showResultPanel(cli.getSummary(), advancedOutput);
+                    ExtendedSerializer extendedCLI = new ExtendedSerializer(response);
+                    showResultPanel(cli.getSummary(), extendedCLI.getSummary());
                 }
                 catch (NullPointerException err) {
                     showResultPanel(err.getMessage(), errString);
