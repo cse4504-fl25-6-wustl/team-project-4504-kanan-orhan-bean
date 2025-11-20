@@ -38,6 +38,8 @@ public class JSONSerializerTest {
         }
         tempFile = Files.createTempFile(outputDir, "ShipmentTestOutput", ".json");
 
+        Client client = new Client("", "", false, false, false, false, false, null);
+
         this.art = new Art(Art.Type.PaperPrintFramed, Art.Glazing.Glass, 1, 25, 25, 4);
         this.box = Box.createBoxForArt(art);
         this.box.addArt(art);
@@ -46,7 +48,7 @@ public class JSONSerializerTest {
         this.containers = new ArrayList<Container>();
         this.containers.add(pallet);
         this.oversized_pieces = new oversizeObjects[]{new oversizeObjects(10, 45, 1, 25)};
-        this.response = new Response(box.getArts(), pallet.getBoxes(), containers, 1, 1, oversized_pieces, 1, 0, 0, 1, 0, 0, 50, 100, 125);
+        this.response = new Response(box.getArts(), pallet.getBoxes(), containers, 1, 1, oversized_pieces, 1, 0, 0, 1, 0, 0, 50, 100, 125, box.getArts(), 0, 0, client);
     }
 
     @After
