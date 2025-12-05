@@ -301,6 +301,9 @@ public class Art implements Comparable<Art>{
                         return Art.Type.OneInchAcousticPanelFloatFrame;
                     }
                 }
+                else if(typeStr.contains("framed")){
+                    return Art.Type.OneInchAcousticPanelFloatFrame;
+                }
                 else {
                     return Art.Type.AcousticPanelGalleryWrapped;
                 }

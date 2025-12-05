@@ -98,6 +98,12 @@ process_csv_files "$INPUT_DIR/pallet_packing" "$NO_CRATES_CONFIG"
 echo -e "\n${YELLOW}=== Running crate_packing tests ===${NC}"
 process_csv_files "$INPUT_DIR/crate_packing" "$ALLOW_CRATES_CONFIG"
 
+echo -e "\n${YELLOW}=== Running all stress tests ===${NC}"
+process_csv_files "$INPUT_DIR/stress_tests/all" "$NO_CRATES_CONFIG"
+
+echo -e "\n${YELLOW}=== Running pack_by_depth stress tests ===${NC}"
+process_csv_files "$INPUT_DIR/stress_tests/pack_by_depth" "$NO_CRATES_CONFIG"
+
 echo -e "\n${GREEN}✅ All test batches complete.${NC}"
 
 # -------- SUMMARY --------

@@ -71,14 +71,14 @@ public class Packing {
         }
 
         // 3) Weights
-        int totalArtworkWeight = sumArtworkWeight(arts);
-        int finalShipmentWeight = computeTotalWeight(arts, boxes, containers);
+        int totalArtworkWeight = sumArtworkWeight(sortedArts);
+        int finalShipmentWeight = computeTotalWeight(sortedArts, boxes, containers);
         int totalPackagingWeight = Math.max(0, finalShipmentWeight - totalArtworkWeight);
 
         // 4) Counts & metrics for schema
-        int totalPieces = arts.size();
-        int standardSizePieces = (int) arts.stream().filter(a -> !a.isOversized()).count();
-        int customPieceCount = (int) arts.stream().filter(Art::isCustom).count();
+        int totalPieces = sortedArts.size();
+        int standardSizePieces = (int) sortedArts.stream().filter(a -> !a.isOversized()).count();
+        int customPieceCount = (int) sortedArts.stream().filter(Art::isCustom).count();
 
         int standardBoxCount = (int) boxes.stream().filter(Box::isNormal).count();
         int largeBoxCount = (int) boxes.stream().filter(Box::isOversized).count();
@@ -92,6 +92,7 @@ public class Packing {
 
         
         List<Art> customArts = new ArrayList();
+        List<Art> nonCustomArts = new ArrayList<>();
         int standard_size_pieces_weight = 0;
         int oversized_pieces_weight = 0;
 
@@ -99,18 +100,21 @@ public class Packing {
             if(art.isCustom()){
                 customArts.add(art);
             }
-            if(art.isOversized()){
-                oversized_pieces_weight += art.getWeight();
-            }
-            if(!art.isOversized()){
-                standard_size_pieces_weight += art.getWeight();
+            else {
+                nonCustomArts.add(art);
+                if(art.isOversized()){
+                    oversized_pieces_weight += art.getWeight();
+                }
+                if(!art.isOversized()){
+                    standard_size_pieces_weight += art.getWeight();
+                }
             }
         }
 
         // 5) Build the Response (no summary string here—serializers will handle
         // presentation)
         return new Response(
-                arts,
+                sortedArts,
                 boxes,
                 containers,
                 totalPieces,
@@ -136,7 +140,7 @@ public class Packing {
     private static int sumArtworkWeight(List<Art> arts) {
         int sum = 0;
         for (Art a : arts) {
-            if (a != null)
+            if (a != null && !a.isCustom())
                 sum += a.getWeight();
         }
         return sum;

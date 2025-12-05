@@ -69,6 +69,18 @@ public class ExtendedSerializer {
             i++;
         }
         concatToSummary(dimensions_string);
+        String boxes_string = "";
+        int j = 1;
+        for (ArchDesign.entities.Box boxes : response.getBoxes()){
+            boxes_string += "Box Number " + j + " - Is Large? " + boxes.isOversized() + ": " + boxes.getLength() + "\"x" + 
+            boxes.getWidth() + "\"x" + boxes.getHeight() + "\"H @ " + boxes.getWeight() + " lbs " + "\n";
+            boxes_string += "- Arts " + "\n";
+            for (ArchDesign.entities.Art arts : boxes.getArts()){
+                boxes_string += "- Art LineNumber " + arts.getLineNumber()  + "\n";
+            }
+            j++;
+        }
+        concatToSummary(boxes_string);
         concatToSummary("");
         concatToSummary("3. Business Intelligence");
         concatToSummary("Oversized Items Flagged: ");
