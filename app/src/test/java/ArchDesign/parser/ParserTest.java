@@ -23,15 +23,17 @@ public class ParserTest {
     // 1) invalid file extension
     @Test
     public void testParseArt_invalidExtension() {
-        List<Art> result = Parser.parseArt(invalidExtensionInput);
-        assertNull("Expected null for unsupported line input file extension", result);
+        // List<Art> result = Parser.parseArt(invalidExtensionInput);
+        // assertNull("Expected null for unsupported line input file extension", result);
+        assertThrows("Expected an Error", IllegalArgumentException.class, ()-> Parser.parseArt(invalidExtensionInput));
     }
 
     // 2) file not found
     @Test
     public void testParseArt_fileNotFound() {
-        List<Art> result = Parser.parseArt("input/parserTesting/nonexistent.csv");
-        assertNull("Expected null for nonexistent line input file name", result);
+        // List<Art> result = Parser.parseArt("input/parserTesting/nonexistent.csv");
+        // assertNull("Expected null for nonexistent line input file name", result);
+        assertThrows("Expected an Error", IllegalArgumentException.class, ()-> Parser.parseArt("input/parserTesting/nonexistent.csv"));
     }
 
     // 3) parsing failure
@@ -72,22 +74,25 @@ public class ParserTest {
     // 1) invalid file extension
     @Test
     public void testParseClient_invalidExtension() {
-        Client result = Parser.parseClient(invalidExtensionInput);
-        assertNull("Expected null for unsupported client file extension", result);
+        // Client result = Parser.parseClient(invalidExtensionInput);
+        // assertNull("Expected null for unsupported client file extension", result);
+        assertThrows("Expected an Error", IllegalArgumentException.class, ()-> Parser.parseClient(invalidExtensionInput));
     }
 
     // 2) file not found
     @Test
     public void testParseClient_fileNotFound() {
-        Client result = Parser.parseClient("input/parserTesting/nonexistent.csv");
-        assertNull("Expected null for nonexistent client file name", result);
+        // Client result = Parser.parseClient("input/parserTesting/nonexistent.csv");
+        // assertNull("Expected null for nonexistent client file name", result);
+        assertThrows("Expected an Error", IllegalArgumentException.class, ()-> Parser.parseClient("input/parserTesting/nonexistent.csv"));
     }
 
     // 3) parsing failure
     @Test
     public void testParseClient_csv_invalidFormat() {
-        Client result = Parser.parseClient(malformattedClientInput);
-        assertNull("Expected null for badly formatted client file", result);
+        // Client result = Parser.parseClient(malformattedClientInput);
+        // assertNull("Expected null for badly formatted client file", result);
+        assertThrows("Expected an Error", IllegalArgumentException.class, ()-> Parser.parseClient(malformattedClientInput));
     }
 
     // 4) correct values assigned

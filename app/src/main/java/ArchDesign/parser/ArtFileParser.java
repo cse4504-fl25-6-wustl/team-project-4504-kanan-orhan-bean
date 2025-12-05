@@ -126,33 +126,68 @@ public class ArtFileParser extends FileParser {
                 if (currLine.isEmpty()) continue;
                 String[] values = currLine.split(",");
 
-                // Process each column, extract values
-                int lineNumber = Integer.parseInt(values[0].trim());
-                int quantity = Integer.parseInt(values[1].trim());
-                int tagNumber = Integer.parseInt(values[2].trim());
-                
-                // Type enum mapping
-                String typeStr = values[3].trim();
-                Art.Type type = Art.assignType(typeStr);
-                
-                double width = Double.parseDouble(values[4].trim());
-                double height = Double.parseDouble(values[5].trim());
+                if (values.length == 9){
+                    // Process each column, extract values
+                    int lineNumber = Integer.parseInt(values[0].trim());
+                    int quantity = Integer.parseInt(values[1].trim());
+                    int tagNumber = Integer.parseInt(values[2].trim());
+                    
+                    // Type enum mapping
+                    String typeStr = values[3].trim();
+                    Art.Type type = Art.assignType(typeStr);
+                    
+                    double width = Double.parseDouble(values[4].trim());
+                    double height = Double.parseDouble(values[5].trim());
 
-                // Glazing enum mapping
-                String glazingStr = values[6].trim();
-                Art.Glazing glazing = Art.assignGlazingType(glazingStr);
+                    // Glazing enum mapping
+                    String glazingStr = values[6].trim();
+                    Art.Glazing glazing = Art.assignGlazingType(glazingStr);
 
-                String frameMoulding = values[7].trim();
+                    String frameMoulding = values[7].trim();
 
-                // hardware int extracting
-                String hardwareStr = values[8].trim();
-                int hardware = Art.assignHardware(hardwareStr);
+                    // hardware int extracting
+                    String hardwareStr = values[8].trim();
+                    int hardware = Art.assignHardware(hardwareStr);
 
-                // Build ArtPiece and add to collection
-                for (int i=1; i<=quantity; ++i) {
-                    Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
-                this.artCollection.add(artPiece);
+                    // Build ArtPiece and add to collection
+                    for (int i=1; i<=quantity; ++i) {
+                        Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
+                    this.artCollection.add(artPiece);
+                    }
                 }
+                else if (values.length == 14){
+                    // Process each column, extract values
+                    int lineNumber = Integer.parseInt(values[0].trim());
+                    int quantity = Integer.parseInt(values[1].trim());
+                    int tagNumber = Integer.parseInt(values[4].trim());
+                    
+                    // Type enum mapping
+                    String typeStr = values[7].trim();
+                    Art.Type type = Art.assignType(typeStr);
+                    
+                    double width = Double.parseDouble(values[5].trim());
+                    double height = Double.parseDouble(values[6].trim());
+
+                    // Glazing enum mapping
+                    String glazingStr = values[11].trim();
+                    Art.Glazing glazing = Art.assignGlazingType(glazingStr);
+
+                    String frameMoulding = values[12].trim();
+
+                    // hardware int extracting
+                    String hardwareStr = values[13].trim();
+                    int hardware = Art.assignHardware(hardwareStr);
+
+                    // Build ArtPiece and add to collection
+                    for (int i=1; i<=quantity; ++i) {
+                        Art artPiece = new Art(type, glazing, lineNumber, width, height, hardware);
+                    this.artCollection.add(artPiece);
+                    }
+                }
+                else {
+                    return ParseReturnVals.INVALID_FORMAT;
+                }
+                
             }
             return ParseReturnVals.SUCCESS;
 

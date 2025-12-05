@@ -10,6 +10,7 @@ import ArchDesign.parser.Parser;
 import ArchDesign.requests.Request;
 import ArchDesign.responses.JSONSerializer;
 import ArchDesign.responses.CommandLineSerializer;
+import ArchDesign.responses.ExtendedSerializer;
 import ArchDesign.responses.Response;
 
 public class Main {
@@ -49,6 +50,8 @@ public class Main {
             // CLI summary is produced by the serializer (not the interactor)
             CommandLineSerializer cli = new CommandLineSerializer(response);
             System.out.println(cli.getSummary());
+            ExtendedSerializer extendCli = new ExtendedSerializer(response);
+            System.out.println(extendCli.getSummary());
         }
     }
 
