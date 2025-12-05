@@ -34,6 +34,14 @@ public class ClientFileParser extends FileParser {
     // check for type, call appropriate parser
     @Override
     protected ParseReturnVals parse(String filePath) {
+        if (filePath == "GUI_crate") {
+            this.client = new Client("Chevy Chase MD", "MedStar", true, true, false, false, false, Client.ServiceType.DELIVERY_AND_INSTALLATION);
+            return ParseReturnVals.SUCCESS;
+        }
+        if (filePath == "GUI_noCrate") {
+            this.client = new Client("Chevy Chase MD", "MedStar", true, false, false, false, false, Client.ServiceType.DELIVERY_AND_INSTALLATION);
+            return ParseReturnVals.SUCCESS;
+        }
         // Normalize case and extract extension
         String extension = Path.of(filePath).getFileName().toString().toLowerCase();
 

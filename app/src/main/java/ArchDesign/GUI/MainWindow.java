@@ -26,8 +26,8 @@ public class MainWindow {
     // private static JLabel clientLabel;
     private static JButton submitButton;
     private static final File[] selectedFiles = {null, null};
-    private static String cratePath = "/input/Site_Requirements_crate.csv";
-    private static String noCratePath = "/input/Site_Requirements.csv";
+    private static final String cratePath = "GUI_crate";
+    private static final String noCratePath = "GUI_noCrate";
     private static final String errString = "error";
     
 
@@ -99,17 +99,20 @@ public class MainWindow {
                 submitButton.setEnabled(false);
                 submitButton.setText("loading");
                 // accepts crates (yes)
-                String cwd = System.getProperty("user.dir");
+                // String cwd = System.getProperty("user.dir");
+                String clientString = "";
                 if (clientDropdown.getSelectedIndex() == 0) {
                     // selectedFiles[1] = new File(cratePath);
-                    selectedFiles[1] = new File(cwd + cratePath);
+                    // selectedFiles[1] = new File(cwd + cratePath);
+                    clientString = cratePath;
                 }
                 else {
                     // selectedFiles[1] = new File(noCratePath);
-                    selectedFiles[1] = new File(cwd + noCratePath);
+                    // selectedFiles[1] = new File(cwd + noCratePath);
+                    clientString = noCratePath;
                 }
                 try {
-                    Response response = Main.generateResponseForMain(selectedFiles[0].getAbsolutePath(), selectedFiles[1].getAbsolutePath());
+                    Response response = Main.generateResponseForMain(selectedFiles[0].getAbsolutePath(), clientString);
                     CommandLineSerializer cli = new CommandLineSerializer(response);
                     ExtendedSerializer extendedCLI = new ExtendedSerializer(response);
                     showResultPanel(cli.getSummary(), extendedCLI.getSummary());
