@@ -26,8 +26,8 @@ public class MainWindow {
     // private static JLabel clientLabel;
     private static JButton submitButton;
     private static final File[] selectedFiles = {null, null};
-    private static final String cratePath = "input/Site_Requirements_crate.csv";
-    private static final String noCratePath = "input/Site_Requirements.csv";
+    private static String cratePath = "/input/Site_Requirements_crate.csv";
+    private static String noCratePath = "/input/Site_Requirements.csv";
     private static final String errString = "error";
     
 
@@ -99,11 +99,14 @@ public class MainWindow {
                 submitButton.setEnabled(false);
                 submitButton.setText("loading");
                 // accepts crates (yes)
+                String cwd = System.getProperty("user.dir");
                 if (clientDropdown.getSelectedIndex() == 0) {
-                    selectedFiles[1] = new File(cratePath);
+                    // selectedFiles[1] = new File(cratePath);
+                    selectedFiles[1] = new File(cwd + cratePath);
                 }
                 else {
-                    selectedFiles[1] = new File(noCratePath);
+                    // selectedFiles[1] = new File(noCratePath);
+                    selectedFiles[1] = new File(cwd + noCratePath);
                 }
                 try {
                     Response response = Main.generateResponseForMain(selectedFiles[0].getAbsolutePath(), selectedFiles[1].getAbsolutePath());
